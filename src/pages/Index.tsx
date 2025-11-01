@@ -42,6 +42,7 @@ export default function Link2Insulin() {
   const [syncInterval, setSyncInterval] = useState(5);
   const [lastSync, setLastSync] = useState<Date | null>(null);
   const [showLlupConfig, setShowLlupConfig] = useState(false);
+  const [syncError, setSyncError] = useState<string | null>(null);
 
   // Original v2.1 state
   const [glycemia, setGlycemia] = useState<string>("");
@@ -90,12 +91,17 @@ export default function Link2Insulin() {
     if (!llupConnected || !autoSync) return;
 
     const fetchGlucose = async () => {
-      const reading = await llupService.fetchLatestGlucose();
-      if (reading) {
-        setCurrentGlucose(reading);
-        setGlycemia(Math.round(reading.value).toString());
-        setLastSync(new Date());
-        showToast(`Glycémie mise à jour: ${Math.round(reading.value)} mg/dL`);
+      try {
+        const reading = await llupService.fetchLatestGlucose();
+        if (reading) {
+          setCurrentGlucose(reading);
+          setGlycemia(Math.round(reading.value).toString());
+          setLastSync(new Date());
+          setSyncError(null);
+          showToast(`Glycémie mise à jour: ${Math.round(reading.value)} mg/dL`);
+        }
+      } catch (error: any) {
+        setSyncError(error.message || 'Erreur inconnue lors de la synchronisation');
       }
     };
 

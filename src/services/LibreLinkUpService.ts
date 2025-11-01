@@ -41,9 +41,9 @@ export class LibreLinkUpService {
         return reading;
       }
       return null;
-    } catch (error) {
+    } catch (error: any) {
       console.error('LibreLinkUp API error:', error);
-      return null;
+      throw new Error(error?.message || 'Erreur inconnue LibreLinkUp');
     }
   }
 
