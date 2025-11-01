@@ -93,6 +93,7 @@ export default function Link2Insulin() {
     const fetchGlucose = async () => {
       try {
         const reading = await llupService.fetchLatestGlucose();
+        console.log('Lecture LibreLinkUp réussie:', reading);
         if (reading) {
           setCurrentGlucose(reading);
           setGlycemia(Math.round(reading.value).toString());
@@ -101,6 +102,7 @@ export default function Link2Insulin() {
           showToast(`Glycémie mise à jour: ${Math.round(reading.value)} mg/dL`);
         }
       } catch (error: any) {
+        console.log('Erreur attrapée dans useEffect:', error);
         setSyncError(error.message || 'Erreur inconnue lors de la synchronisation');
       }
     };
@@ -518,6 +520,13 @@ export default function Link2Insulin() {
             onSyncIntervalChange={setSyncInterval}
             onClose={() => setShowLlupConfig(false)}
           />
+        )}
+
+        {/* Sync Error Display */}
+        {syncError && (
+          <div style={{ color: 'red', fontWeight: 'bold', padding: 8, marginBottom: 8 }}>
+            ⚠️ Échec synchronisation : {syncError}
+          </div>
         )}
 
         {/* Current Glucose Display */}

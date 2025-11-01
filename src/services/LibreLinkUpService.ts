@@ -21,13 +21,13 @@ export class LibreLinkUpService {
 
   async fetchLatestGlucose(): Promise<GlucoseReading | null> {
     if (!this.config) return null;
-    
+
     try {
       const { read } = LibreLinkUpClient({
         username: this.config.username,
         password: this.config.password
       });
-      
+
       const response = await read();
 
       if (response && response.current) {
@@ -41,8 +41,9 @@ export class LibreLinkUpService {
         return reading;
       }
       return null;
+
     } catch (error: any) {
-      console.error('LibreLinkUp API error:', error);
+      console.error('Erreur attrapée dans fetchLatestGlucose:', error);
       throw new Error(error?.message || 'Erreur inconnue LibreLinkUp');
     }
   }
