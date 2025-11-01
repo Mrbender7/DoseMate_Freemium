@@ -27,7 +27,7 @@ import {
   DEFAULT_CARB_RATIO,
   DISPLAY_MAX,
   MAX_CALCULATED,
-  DEFAULT_LYUMJEV_TABLE,
+  DEFAULT_INSULIN_TABLE,
 } from "@/types/insulin";
 
 export default function Link2Insulin() {
@@ -54,7 +54,7 @@ export default function Link2Insulin() {
     evening: 110,
     extra: 110,
   });
-  const [customLyumjevTable, setCustomLyumjevTable] = useState<DoseRange[]>(DEFAULT_LYUMJEV_TABLE);
+  const [customInsulinTable, setCustomInsulinTable] = useState<DoseRange[]>(DEFAULT_INSULIN_TABLE);
   const [useCustomTable, setUseCustomTable] = useState<boolean>(false);
   const [modeExpert, setModeExpert] = useState<boolean>(false);
   const [darkMode, setDarkMode] = useState<boolean>(true);
@@ -182,7 +182,7 @@ export default function Link2Insulin() {
       const customTableRaw = localStorage.getItem(STORAGE_CUSTOM_TABLE_KEY);
       if (customTableRaw) {
         const customTableData = JSON.parse(customTableRaw);
-        setCustomLyumjevTable(customTableData.table);
+        setCustomInsulinTable(customTableData.table);
         setUseCustomTable(customTableData.useCustom || false);
       }
     } catch (e) {
@@ -199,10 +199,10 @@ export default function Link2Insulin() {
 
   useEffect(() => {
     try {
-      const customTableData = { table: customLyumjevTable, useCustom: useCustomTable };
+      const customTableData = { table: customInsulinTable, useCustom: useCustomTable };
       localStorage.setItem(STORAGE_CUSTOM_TABLE_KEY, JSON.stringify(customTableData));
     } catch (e) {}
-  }, [customLyumjevTable, useCustomTable]);
+  }, [customInsulinTable, useCustomTable]);
 
   function showToast(text: string, ms = 2800) {
     const id = uid("toast");
@@ -236,7 +236,7 @@ export default function Link2Insulin() {
       note: null,
     };
 
-    const activeTable = useCustomTable ? customLyumjevTable : DEFAULT_LYUMJEV_TABLE;
+    const activeTable = useCustomTable ? customInsulinTable : DEFAULT_INSULIN_TABLE;
     if (!Number.isNaN(gly)) {
       if (gly < 70) result.hypo = true;
       const range = activeTable.find((r) => gly >= r.min && gly <= r.max);
@@ -285,10 +285,17 @@ export default function Link2Insulin() {
     }
 
     return result;
-  }, [glycemia, foodItems, customLyumjevTable, useCustomTable, sensitivityFactor, targetByMoment, carbRatio, modeExpert, forceExtra]);
+  }, [glycemia, foodItems, customInsulinTable, useCustomTable, sensitivityFactor, targetByMoment, carbRatio, modeExpert, forceExtra]);
 
   useEffect(() => {
-    setAlertHypo(Boolean(calculation.hypo));
+    if (calculation.hypo) {
+      const timeout = setTimeout(() => {
+        setAlertHypo(true);
+      }, 2000); // Délai x2 (était implicite à ~1s, maintenant 2s)
+      return () => clearTimeout(timeout);
+    } else {
+      setAlertHypo(false);
+    }
   }, [calculation.hypo]);
 
   const resultDisplay = useMemo(() => {
@@ -435,7 +442,7 @@ export default function Link2Insulin() {
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-foreground">Link2Insulin</h1>
               <p className="text-sm text-muted-foreground">
-                {llupConnected ? "🔗 LibreLinkUp connecté" : "Calculateur Lyumjev — v2.1 Pro"}
+                {llupConnected ? "🔗 LibreLinkUp connecté" : "Calculateur insuline lispro — v2.1 Pro"}
               </p>
             </div>
           </div>
@@ -583,11 +590,11 @@ export default function Link2Insulin() {
           <ExpertSettings
             sensitivityFactor={sensitivityFactor}
             targetByMoment={targetByMoment}
-            customLyumjevTable={customLyumjevTable}
+            customInsulinTable={customInsulinTable}
             useCustomTable={useCustomTable}
             onSensitivityChange={setSensitivityFactor}
             onTargetChange={(moment, value) => setTargetByMoment((s) => ({ ...s, [moment]: value }))}
-            onCustomTableChange={setCustomLyumjevTable}
+            onCustomTableChange={setCustomInsulinTable}
             onToggleCustomTable={() => setUseCustomTable(!useCustomTable)}
             showToast={showToast}
           />

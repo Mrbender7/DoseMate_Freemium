@@ -1,7 +1,8 @@
 import type { LibreLinkUpConfig, GlucoseReading } from "@/types/insulin";
+import { LibreLinkUpClient } from '@diakem/libre-link-up-api-client';
 
 /* ============================
-   LibreLinkUp Service (Simplified)
+   LibreLinkUp Service (Real Integration)
    ============================ */
 
 export class LibreLinkUpService {
@@ -10,15 +11,7 @@ export class LibreLinkUpService {
 
   async connect(username: string, password: string, region: string = 'EU'): Promise<boolean> {
     try {
-      // Note: @diakem/libre-link-up-api-client usage will be implemented here
-      // For now, storing config for future API calls
       this.config = { username, password, region };
-      
-      // Simulate initial fetch (replace with real API call)
-      // const LibreLinkUpClient = (await import('@diakem/libre-link-up-api-client')).default;
-      // const client = new LibreLinkUpClient({ username, password });
-      // const data = await client.read();
-      
       return true;
     } catch (error) {
       console.error('LibreLinkUp connection failed:', error);
@@ -30,24 +23,26 @@ export class LibreLinkUpService {
     if (!this.config) return null;
     
     try {
-      // Simulate API call (replace with real implementation)
-      // const LibreLinkUpClient = (await import('@diakem/libre-link-up-api-client')).default;
-      // const client = new LibreLinkUpClient(this.config);
-      // const data = await client.read();
+      const { read } = LibreLinkUpClient({
+        username: this.config.username,
+        password: this.config.password
+      });
       
-      // For demonstration, return simulated data
-      // In production, parse real API response
-      const simulatedReading: GlucoseReading = {
-        value: 120 + Math.random() * 60,
-        timestamp: new Date(),
-        trend: 'stable',
-        source: 'librelinkup'
-      };
-      
-      this.lastReading = simulatedReading;
-      return simulatedReading;
+      const response = await read();
+
+      if (response && response.current) {
+        const reading: GlucoseReading = {
+          value: response.current.value,
+          timestamp: response.current.date,
+          trend: response.current.trend || 'stable',
+          source: 'librelinkup'
+        };
+        this.lastReading = reading;
+        return reading;
+      }
+      return null;
     } catch (error) {
-      console.error('Failed to fetch glucose:', error);
+      console.error('LibreLinkUp API error:', error);
       return null;
     }
   }

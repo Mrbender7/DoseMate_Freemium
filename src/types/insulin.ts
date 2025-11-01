@@ -55,7 +55,7 @@ export const DISPLAY_MAX = 20;
 export const MAX_CALCULATED = 25;
 export const DEFAULT_CARB_RATIO = 10;
 
-export const DEFAULT_LYUMJEV_TABLE: DoseRange[] = [
+export const DEFAULT_INSULIN_TABLE: DoseRange[] = [
   { min: -Infinity, max: 70, doses: { morning: 4, noon: 0, evening: 4, extra: 2 } },
   { min: 71, max: 100, doses: { morning: 6, noon: 2, evening: 6, extra: 3 } },
   { min: 101, max: 150, doses: { morning: 9, noon: 4, evening: 10, extra: 4 } },

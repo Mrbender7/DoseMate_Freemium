@@ -5,12 +5,12 @@ import { Separator } from "@/components/ui/separator";
 import { RotateCcw } from "lucide-react";
 import { parseNumberInput } from "@/utils/calculations";
 import type { MomentKey, DoseRange } from "@/types/insulin";
-import { DEFAULT_LYUMJEV_TABLE } from "@/types/insulin";
+import { DEFAULT_INSULIN_TABLE } from "@/types/insulin";
 
 interface ExpertSettingsProps {
   sensitivityFactor: number | "";
   targetByMoment: Record<MomentKey, number>;
-  customLyumjevTable: DoseRange[];
+  customInsulinTable: DoseRange[];
   useCustomTable: boolean;
   onSensitivityChange: (value: number | "") => void;
   onTargetChange: (moment: MomentKey, value: number) => void;
@@ -22,7 +22,7 @@ interface ExpertSettingsProps {
 export function ExpertSettings({
   sensitivityFactor,
   targetByMoment,
-  customLyumjevTable,
+  customInsulinTable,
   useCustomTable,
   onSensitivityChange,
   onTargetChange,
@@ -113,7 +113,7 @@ export function ExpertSettings({
               </Button>
               <Button
                 onClick={() => {
-                  onCustomTableChange([...DEFAULT_LYUMJEV_TABLE]);
+                  onCustomTableChange([...DEFAULT_INSULIN_TABLE]);
                   showToast("Tableau réinitialisé aux valeurs par défaut");
                 }}
                 variant="outline"
@@ -137,7 +137,7 @@ export function ExpertSettings({
                 </tr>
               </thead>
               <tbody>
-                {customLyumjevTable.map((range, idx) => (
+                {customInsulinTable.map((range, idx) => (
                   <tr key={idx} className="hover:bg-muted/20">
                     <td className="border border-border p-2 text-sm">
                       {range.min === -Infinity ? "≤" : range.min} - {range.max === Infinity ? "∞" : range.max} mg/dL
@@ -148,7 +148,7 @@ export function ExpertSettings({
                         min="0"
                         value={range.doses.morning}
                         onChange={(e) => {
-                          const newTable = [...customLyumjevTable];
+                          const newTable = [...customInsulinTable];
                           newTable[idx].doses.morning = Number(e.target.value) || 0;
                           onCustomTableChange(newTable);
                         }}
@@ -162,7 +162,7 @@ export function ExpertSettings({
                         min="0"
                         value={range.doses.noon}
                         onChange={(e) => {
-                          const newTable = [...customLyumjevTable];
+                          const newTable = [...customInsulinTable];
                           newTable[idx].doses.noon = Number(e.target.value) || 0;
                           onCustomTableChange(newTable);
                         }}
@@ -176,7 +176,7 @@ export function ExpertSettings({
                         min="0"
                         value={range.doses.evening}
                         onChange={(e) => {
-                          const newTable = [...customLyumjevTable];
+                          const newTable = [...customInsulinTable];
                           newTable[idx].doses.evening = Number(e.target.value) || 0;
                           onCustomTableChange(newTable);
                         }}
@@ -190,7 +190,7 @@ export function ExpertSettings({
                         min="0"
                         value={range.doses.extra}
                         onChange={(e) => {
-                          const newTable = [...customLyumjevTable];
+                          const newTable = [...customInsulinTable];
                           newTable[idx].doses.extra = Number(e.target.value) || 0;
                           onCustomTableChange(newTable);
                         }}
@@ -205,7 +205,7 @@ export function ExpertSettings({
           </div>
 
           <div className="text-xs text-muted-foreground bg-muted/30 p-3 rounded-lg">
-            <p>💡 Active le tableau personnalisé pour modifier les doses du protocole Lyumjev.</p>
+            <p>💡 Active le tableau personnalisé pour modifier les doses du protocole insuline lispro.</p>
             <p className="mt-1">Les modifications sont sauvegardées automatiquement dans votre navigateur.</p>
           </div>
         </div>
