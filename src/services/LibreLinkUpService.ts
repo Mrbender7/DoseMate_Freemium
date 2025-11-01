@@ -12,9 +12,19 @@ export class LibreLinkUpService {
   async connect(username: string, password: string, region: string = 'EU'): Promise<boolean> {
     try {
       this.config = { username, password, region };
+
+      const { read } = LibreLinkUpClient({
+        username,
+        password
+      });
+
+      // Validation login : appel réel
+      await read();
+
       return true;
     } catch (error) {
-      console.error('LibreLinkUp connection failed:', error);
+      console.error('Échec de connexion LibreLinkUp:', error);
+      this.config = null; // reset config en cas d'erreur
       return false;
     }
   }
