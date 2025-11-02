@@ -101,9 +101,10 @@ export function ExpertSettings({
 
         {/* Custom Protocol Table */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="space-y-3">
             <h3 className="text-lg font-semibold text-foreground">Tableau de protocole personnalisé</h3>
-            <div className="flex gap-2">
+            
+            <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
               <Button
                 onClick={onToggleCustomTable}
                 variant={useCustomTable ? "default" : "outline"}
@@ -125,7 +126,7 @@ export function ExpertSettings({
             </div>
           </div>
 
-          <div className="table-container portrait:overflow-x-auto landscape:overflow-x-visible">
+          <div className="table-container overflow-x-auto lg:overflow-x-visible">
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-muted/50">
