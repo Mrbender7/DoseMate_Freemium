@@ -121,3 +121,28 @@ All colors MUST be HSL.
 .dose-danger {
   @apply bg-red-500/10 border border-red-500/30;
 }
+
+/* Table sticky column and horizontal scroll */
+.table-container {
+  overflow-x: auto;
+}
+
+.table-container th:first-child,
+.table-container td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  background: hsl(var(--background));
+}
+
+.dark .table-container th:first-child,
+.dark .table-container td:first-child {
+  background: hsl(var(--background));
+}
+
+/* Disable horizontal scroll in landscape mode */
+@media (orientation: landscape) {
+  .table-container {
+    overflow-x: visible !important;
+  }
+}

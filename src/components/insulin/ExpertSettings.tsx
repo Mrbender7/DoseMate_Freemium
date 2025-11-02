@@ -125,11 +125,11 @@ export function ExpertSettings({
             </div>
           </div>
 
-          <div className="overflow-x-auto">
+          <div className="table-container portrait:overflow-x-auto landscape:overflow-x-visible">
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-muted/50">
-                  <th className="border border-border p-2 text-left text-sm font-semibold">Plage glycémie</th>
+                  <th className="border border-border p-2 text-left text-sm font-semibold sticky left-0 z-10 bg-background">Plage glycémie</th>
                   <th className="border border-border p-2 text-center text-sm font-semibold">☀️ Matin</th>
                   <th className="border border-border p-2 text-center text-sm font-semibold">🌤️ Midi</th>
                   <th className="border border-border p-2 text-center text-sm font-semibold">🌙 Soir</th>
@@ -139,7 +139,7 @@ export function ExpertSettings({
               <tbody>
                 {customInsulinTable.map((range, idx) => (
                   <tr key={idx} className="hover:bg-muted/20">
-                    <td className="border border-border p-2 text-sm">
+                    <td className="border border-border p-2 text-sm sticky left-0 z-10 bg-background">
                       {range.min === -Infinity ? "≤" : range.min} - {range.max === Infinity ? "∞" : range.max} mg/dL
                     </td>
                     <td className="border border-border p-2">
