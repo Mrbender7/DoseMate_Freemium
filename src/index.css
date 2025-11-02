@@ -121,35 +121,3 @@ All colors MUST be HSL.
 .dose-danger {
   @apply bg-red-500/10 border border-red-500/30;
 }
-
-/* Table sticky column and horizontal scroll */
-.table-container {
-  position: relative;
-}
-
-/* Sticky first column in portrait mode */
-@media (orientation: portrait) and (max-width: 1023px) {
-  .table-container th:first-child,
-  .table-container td:first-child {
-    position: sticky;
-    left: 0;
-    z-index: 10;
-    background: hsl(var(--background));
-    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
-  }
-
-  .dark .table-container th:first-child,
-  .dark .table-container td:first-child {
-    background: hsl(var(--background));
-    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.3);
-  }
-}
-
-/* No sticky in landscape or large screens - full table visible */
-@media (orientation: landscape) or (min-width: 1024px) {
-  .table-container th:first-child,
-  .table-container td:first-child {
-    position: static;
-    box-shadow: none;
-  }
-}

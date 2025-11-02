@@ -101,10 +101,9 @@ export function ExpertSettings({
 
         {/* Custom Protocol Table */}
         <div className="space-y-4">
-          <div className="space-y-3">
+          <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-foreground">Tableau de protocole personnalisé</h3>
-            
-            <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
+            <div className="flex gap-2">
               <Button
                 onClick={onToggleCustomTable}
                 variant={useCustomTable ? "default" : "outline"}
@@ -126,11 +125,11 @@ export function ExpertSettings({
             </div>
           </div>
 
-          <div className="table-container overflow-x-auto lg:overflow-x-visible">
+          <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-muted/50">
-                  <th className="border border-border p-2 text-left text-sm font-semibold sticky left-0 z-10 bg-background">Plage glycémie</th>
+                  <th className="border border-border p-2 text-left text-sm font-semibold">Plage glycémie</th>
                   <th className="border border-border p-2 text-center text-sm font-semibold">☀️ Matin</th>
                   <th className="border border-border p-2 text-center text-sm font-semibold">🌤️ Midi</th>
                   <th className="border border-border p-2 text-center text-sm font-semibold">🌙 Soir</th>
@@ -140,7 +139,7 @@ export function ExpertSettings({
               <tbody>
                 {customInsulinTable.map((range, idx) => (
                   <tr key={idx} className="hover:bg-muted/20">
-                    <td className="border border-border p-2 text-sm sticky left-0 z-10 bg-background">
+                    <td className="border border-border p-2 text-sm">
                       {range.min === -Infinity ? "≤" : range.min} - {range.max === Infinity ? "∞" : range.max} mg/dL
                     </td>
                     <td className="border border-border p-2">
