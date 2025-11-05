@@ -11,7 +11,9 @@ export class LibreLinkUpService {
 
   async connect(username: string, password: string, region: string = 'EU'): Promise<boolean> {
     try {
-      // Ne pas définir this.config ici
+      // Méthode DRFROST : définir config avant validation
+      this.config = { username, password, region };
+      
       const { read } = LibreLinkUpClient({
         username,
         password
@@ -19,9 +21,6 @@ export class LibreLinkUpService {
 
       // Validation des identifiants par appel API réel
       await read();
-
-      // Connexion réussie : configuration validée ici
-      this.config = { username, password, region };
 
       return true;
     } catch (error) {

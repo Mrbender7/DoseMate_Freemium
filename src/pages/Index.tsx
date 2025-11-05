@@ -653,7 +653,7 @@ export default function Link2Insulin() {
       {showScrollTop && (
         <button
           onClick={scrollToTop}
-          className="fixed right-4 bottom-4 p-2.5 rounded-full bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/30 transition-all duration-300 z-40 animate-fade-in md:hidden"
+          className="fixed right-4 bottom-14 p-2.5 rounded-full bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/30 transition-all duration-300 z-40 animate-fade-in md:hidden"
           aria-label="Remonter en haut"
         >
           <ArrowUp className="h-5 w-5 text-primary" />

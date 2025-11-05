@@ -1,0 +1,17 @@
+{
+  "name": "Link2Insulin - Calculateur Lyumjev Pro",
+  "short_name": "Link2Insulin",
+  "description": "Calculateur d'insuline Lyumjev avec intégration LibreLinkUp pour la gestion du diabète",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ]
+}

@@ -3,8 +3,9 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Alert, AlertDescription } from "../ui/alert";
 import { Badge } from "../ui/badge";
-import { Wifi, WifiOff, RefreshCw } from "lucide-react";
+import { Wifi, WifiOff, RefreshCw, Eye, EyeOff } from "lucide-react";
 import type { GlucoseReading } from "../../types/insulin";
+import { useState } from "react";
 
 interface LibreLinkUpPanelProps {
   llupConnected: boolean;
@@ -45,6 +46,8 @@ export function LibreLinkUpPanel({
   onSyncIntervalChange,
   onClose,
 }: LibreLinkUpPanelProps) {
+  const [showPassword, setShowPassword] = useState(false);
+
   return (
     <Card className="shadow-lg border-2 border-primary/30">
       <CardHeader>
@@ -77,13 +80,26 @@ export function LibreLinkUpPanel({
 
               <div>
                 <label className="text-sm font-medium text-muted-foreground">Mot de passe</label>
-                <Input
-                  type="password"
-                  value={llupPassword}
-                  onChange={(e) => onPasswordChange(e.target.value)}
-                  placeholder="••••••••"
-                  className="mt-1"
-                />
+                <div className="relative mt-1">
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    value={llupPassword}
+                    onChange={(e) => onPasswordChange(e.target.value)}
+                    placeholder="••••••••"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
               </div>
 
               <div>
