@@ -193,11 +193,17 @@ export default function GlucoFlow() {
     if (r.base !== null && r.base !== undefined) parts.push(`${r.base}u base`);
     if (r.correction !== null && r.correction !== undefined) parts.push(`${r.correction}u corr`);
     if (r.meal !== null && r.meal !== undefined) parts.push(`${r.meal}u repas`);
-    parts.push(`= ${r.totalAdministered}u (admin.)`);
-    if (r.alertMax && r.totalCalculated !== undefined) {
-      parts.push(`(réelle ${Number(r.totalCalculated.toFixed(1))}u)`);
+    
+    let display = "";
+    if (parts.length > 0) {
+      display = parts.join(" + ") + " = ";
     }
-    return parts.join(" + ");
+    display += `${r.totalAdministered}u (admin.)`;
+    
+    if (r.alertMax && r.totalCalculated !== undefined) {
+      display += ` (réelle ${Number(r.totalCalculated.toFixed(1))}u)`;
+    }
+    return display;
   }, [calculation]);
 
   function pushToHistory() {

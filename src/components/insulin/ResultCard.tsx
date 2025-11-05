@@ -33,14 +33,20 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
     if (r.base !== null && r.base !== undefined) parts.push(`${r.base}u base`);
     if (r.correction !== null && r.correction !== undefined) parts.push(`${r.correction}u corr`);
     if (r.meal !== null && r.meal !== undefined) parts.push(`${r.meal}u repas`);
-    parts.push(`= ${r.totalAdministered}u (admin.)`);
-    if (r.alertMax && r.totalCalculated !== undefined) {
-      parts.push(`(réelle ${Number(r.totalCalculated.toFixed(1))}u)`);
+    
+    let display = "";
+    if (parts.length > 0) {
+      display = parts.join(" + ") + " = ";
     }
-    const resultDisplay = parts.join(" + ");
+    display += `${r.totalAdministered}u (admin.)`;
+    
+    if (r.alertMax && r.totalCalculated !== undefined) {
+      display += ` (réelle ${Number(r.totalCalculated.toFixed(1))}u)`;
+    }
+    const resultDisplay = display;
 
     return (
-      <Card ref={ref} className={`shadow-xl border-2 border-primary/20 transition-all duration-500 ${pulse ? 'animate-pulse ring-4 ring-primary/30 shadow-[0_0_30px_rgba(59,130,246,0.4)]' : ''}`}>
+      <Card ref={ref} className="shadow-xl border-2 border-primary/20">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <span className="text-primary">Résultat du calcul</span>
@@ -70,7 +76,7 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
 
           <div className="text-center">
             <p className="text-sm text-muted-foreground mb-2 md:mb-3">Dose totale à administrer</p>
-            <div className={`p-4 md:p-6 rounded-2xl inline-block ${doseStyleClass(calculation.totalAdministered)} transition-all duration-300`}>
+            <div className={`p-4 md:p-6 rounded-2xl inline-block ${doseStyleClass(calculation.totalAdministered)} transition-all duration-500 ${pulse ? 'animate-pulse ring-4 ring-primary/30 shadow-[0_0_30px_rgba(59,130,246,0.4)]' : ''}`}>
               <div className="font-bold text-5xl md:text-6xl text-foreground">{calculation.totalAdministered} U</div>
               <div className="text-xs opacity-70 mt-2">Arrondi à l'unité la plus proche</div>
             </div>
