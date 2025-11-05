@@ -1,12 +1,12 @@
 import { forwardRef } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Separator } from "@/components/ui/separator";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import { Alert, AlertDescription } from "../ui/alert";
+import { Separator } from "../ui/separator";
 import { Wifi, Utensils, AlertTriangle } from "lucide-react";
-import { momentIcon, momentLabel, doseStyleClass } from "@/utils/calculations";
-import type { MomentKey, GlucoseReading } from "@/types/insulin";
+import { momentIcon, momentLabel, doseStyleClass } from "../../utils/calculations";
+import type { MomentKey, GlucoseReading } from "../../types/insulin";
 
 interface Calculation {
   moment: MomentKey;

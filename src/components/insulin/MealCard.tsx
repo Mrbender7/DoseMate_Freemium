@@ -1,10 +1,10 @@
 import { forwardRef } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Card, CardContent } from "../ui/card";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 import { Utensils, Plus, Minus } from "lucide-react";
-import type { FoodItem } from "@/types/insulin";
+import type { FoodItem } from "../../types/insulin";
 
 interface MealCardProps {
   foodItems: FoodItem[];

@@ -1,4 +1,4 @@
-import type { LibreLinkUpConfig, GlucoseReading } from "@/types/insulin";
+import type { LibreLinkUpConfig, GlucoseReading } from "../types/insulin";
 import { LibreLinkUpClient } from '@diakem/libre-link-up-api-client';
 
 /* ============================

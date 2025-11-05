@@ -1,10 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Alert, AlertDescription } from "../ui/alert";
+import { Badge } from "../ui/badge";
 import { Wifi, WifiOff, RefreshCw } from "lucide-react";
-import type { GlucoseReading } from "@/types/insulin";
+import type { GlucoseReading } from "../../types/insulin";
 
 interface LibreLinkUpPanelProps {
   llupConnected: boolean;

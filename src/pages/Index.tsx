@@ -1,24 +1,24 @@
 import { useEffect, useMemo, useState, useRef } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Alert, AlertDescription } from "../components/ui/alert";
+import { Badge } from "../components/ui/badge";
 import { Calculator, Sun, Moon, ArrowUp, Wifi, WifiOff, RefreshCw, AlertTriangle } from "lucide-react";
-import { LibreLinkUpService } from "@/services/LibreLinkUpService";
-import { LibreLinkUpPanel } from "@/components/insulin/LibreLinkUpPanel";
-import { GlycemiaCard } from "@/components/insulin/GlycemiaCard";
-import { MealCard } from "@/components/insulin/MealCard";
-import { ExpertSettings } from "@/components/insulin/ExpertSettings";
-import { ResultCard } from "@/components/insulin/ResultCard";
-import { HistoryCard } from "@/components/insulin/HistoryCard";
-import { uid, parseNumberInput, nowISO, getMomentOfDay } from "@/utils/calculations";
+import { LibreLinkUpService } from "../services/LibreLinkUpService";
+import { LibreLinkUpPanel } from "../components/insulin/LibreLinkUpPanel";
+import { GlycemiaCard } from "../components/insulin/GlycemiaCard";
+import { MealCard } from "../components/insulin/MealCard";
+import { ExpertSettings } from "../components/insulin/ExpertSettings";
+import { ResultCard } from "../components/insulin/ResultCard";
+import { HistoryCard } from "../components/insulin/HistoryCard";
+import { uid, parseNumberInput, nowISO, getMomentOfDay } from "../utils/calculations";
 import type { 
   FoodItem, 
   HistoryEntry, 
   MomentKey, 
   GlucoseReading,
   DoseRange
-} from "@/types/insulin";
+} from "../types/insulin";
 import {
   STORAGE_KEY,
   STORAGE_META_KEY,
@@ -28,7 +28,7 @@ import {
   DISPLAY_MAX,
   MAX_CALCULATED,
   DEFAULT_INSULIN_TABLE,
-} from "@/types/insulin";
+} from "../types/insulin";
 
 export default function Link2Insulin() {
   // LibreLinkUp state

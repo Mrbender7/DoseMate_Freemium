@@ -1,10 +1,10 @@
 import { useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
 import { Download, RotateCcw, Wifi } from "lucide-react";
-import { momentIcon } from "@/utils/calculations";
-import type { HistoryEntry } from "@/types/insulin";
+import { momentIcon } from "../../utils/calculations";
+import type { HistoryEntry } from "../../types/insulin";
 import * as XLSX from "xlsx";
 
 interface HistoryCardProps {

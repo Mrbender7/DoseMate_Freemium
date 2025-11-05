@@ -1,11 +1,11 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Separator } from "../ui/separator";
 import { RotateCcw } from "lucide-react";
-import { parseNumberInput } from "@/utils/calculations";
-import type { MomentKey, DoseRange } from "@/types/insulin";
-import { DEFAULT_INSULIN_TABLE } from "@/types/insulin";
+import { parseNumberInput } from "../../utils/calculations";
+import type { MomentKey, DoseRange } from "../../types/insulin";
+import { DEFAULT_INSULIN_TABLE } from "../../types/insulin";
 
 interface ExpertSettingsProps {
   sensitivityFactor: number | "";
