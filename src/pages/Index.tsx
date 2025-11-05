@@ -276,9 +276,24 @@ export default function GlucoFlow() {
       } catch (e) {
         console.warn("autosave fail", e);
       }
-    }, 800);
+    }, 1200);
     return () => clearTimeout(timeout);
   }, [resultDisplay, glycemia, calculation]);
+
+  useEffect(() => {
+    const hasWeight = foodItems.some(item => {
+      const weight = parseNumberInput(item.weight);
+      return weight && weight > 0;
+    });
+    
+    if (!hasWeight) return;
+    
+    const timeout = setTimeout(() => {
+      resultRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 1200);
+    
+    return () => clearTimeout(timeout);
+  }, [foodItems]);
 
   function resetInputs() {
     setGlycemia("");
