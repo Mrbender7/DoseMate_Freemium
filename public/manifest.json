@@ -1,7 +1,7 @@
 {
-  "name": "Link2Insulin - Calculateur Lyumjev Pro",
-  "short_name": "Link2Insulin",
-  "description": "Calculateur d'insuline Lyumjev avec intégration LibreLinkUp pour la gestion du diabète",
+  "name": "GlucoFlow - Calculateur Insuline",
+  "short_name": "GlucoFlow",
+  "description": "Calculateur d'insuline pour la gestion du diabète",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

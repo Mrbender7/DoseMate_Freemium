@@ -41,7 +41,7 @@ export function HistoryCard({ history, onClearHistory, showToast }: HistoryCardP
     const blob = new Blob([exportCSV()], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = "link2insulin_history.csv";
+    link.download = "glucoflow_history.csv";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -63,7 +63,7 @@ export function HistoryCard({ history, onClearHistory, showToast }: HistoryCardP
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.aoa_to_sheet(ws_data);
     XLSX.utils.book_append_sheet(wb, ws, "Historique");
-    XLSX.writeFile(wb, "link2insulin_history.xlsx");
+    XLSX.writeFile(wb, "glucoflow_history.xlsx");
     showToast("XLSX téléchargé");
   }
   
@@ -71,7 +71,7 @@ export function HistoryCard({ history, onClearHistory, showToast }: HistoryCardP
     const blob = new Blob([JSON.stringify(history, null, 2)], { type: "application/json" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = "link2insulin_history.json";
+    link.download = "glucoflow_history.json";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

@@ -25,7 +25,7 @@ import {
   DEFAULT_INSULIN_TABLE,
 } from "../types/insulin";
 
-export default function Link2Insulin() {
+export default function GlucoFlow() {
   // Original v2.1 state
   const [glycemia, setGlycemia] = useState<string>("");
   const [foodItems, setFoodItems] = useState<FoodItem[]>([{ id: "f-1", carbsPer100: "", weight: "" }]);
@@ -325,9 +325,9 @@ export default function Link2Insulin() {
           <div className="flex items-center gap-3">
             <Calculator className="h-8 w-8 text-primary" />
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-foreground">Link2Insulin</h1>
+              <h1 className="text-2xl md:text-3xl font-bold text-foreground">GlucoFlow</h1>
               <p className="text-sm text-muted-foreground">
-                Calculateur insuline lispro — v2.1 Pro
+                Calculateur insuline lispro
               </p>
             </div>
           </div>
@@ -429,9 +429,12 @@ export default function Link2Insulin() {
           </CardContent>
         </Card>
 
-        <div className="text-center pb-2">
+        <div className="text-center pb-2 space-y-1">
           <p className="text-xs text-muted-foreground/60">
-            Link2Insulin — Fait par et pour Franck Malherbe
+            All rights reserved © F. Malherbe
+          </p>
+          <p className="text-xs text-muted-foreground/40">
+            v1 pro
           </p>
         </div>
       </div>
