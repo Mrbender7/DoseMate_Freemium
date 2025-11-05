@@ -126,10 +126,10 @@ export function HistoryCard({ history, onClearHistory, showToast }: HistoryCardP
                   <div className="text-xs text-muted-foreground">
                     {momentIcon(h.moment)} {new Date(h.dateISO).toLocaleString("fr-FR")}
                   </div>
-                  {h.source === 'librelinkup' && (
+                  {h.source === 'nightscout' && (
                     <Badge variant="outline" className="text-xs">
                       <Wifi className="h-2 w-2 mr-1" />
-                      Auto
+                      Nightscout
                     </Badge>
                   )}
                 </div>

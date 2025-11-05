@@ -4,9 +4,7 @@ import { Button } from "../components/ui/button";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Badge } from "../components/ui/badge";
 import { Calculator, Sun, Moon, ArrowUp, Wifi, WifiOff, RefreshCw, AlertTriangle } from "lucide-react";
-import { LibreLinkUpService } from "../services/LibreLinkUpService";
 import { NightscoutService } from "../services/NightscoutService";
-import { LibreLinkUpPanel } from "../components/insulin/LibreLinkUpPanel";
 import { NightscoutPanel } from "../components/insulin/NightscoutPanel";
 import { GlycemiaCard } from "../components/insulin/GlycemiaCard";
 import { MealCard } from "../components/insulin/MealCard";
@@ -25,7 +23,6 @@ import {
   STORAGE_KEY,
   STORAGE_META_KEY,
   STORAGE_CUSTOM_TABLE_KEY,
-  STORAGE_LLUP_KEY,
   STORAGE_NS_KEY,
   DEFAULT_CARB_RATIO,
   DISPLAY_MAX,
@@ -34,22 +31,12 @@ import {
 } from "../types/insulin";
 
 export default function Link2Insulin() {
-  // CGM Service selection
-  const [cgmService, setCgmService] = useState<'none' | 'librelinkup' | 'nightscout'>('none');
-  const [showCgmConfig, setShowCgmConfig] = useState(false);
-
-  // LibreLinkUp state
-  const [llupService] = useState(() => new LibreLinkUpService());
-  const [llupConnected, setLlupConnected] = useState(false);
-  const [llupUsername, setLlupUsername] = useState("");
-  const [llupPassword, setLlupPassword] = useState("");
-  const [llupRegion, setLlupRegion] = useState("EU");
-
   // Nightscout state
   const [nsService] = useState(() => new NightscoutService());
   const [nsConnected, setNsConnected] = useState(false);
   const [nsUrl, setNsUrl] = useState("");
   const [nsApiSecret, setNsApiSecret] = useState("");
+  const [showNsConfig, setShowNsConfig] = useState(false);
 
   // Common CGM state
   const [currentGlucose, setCurrentGlucose] = useState<GlucoseReading | null>(null);
@@ -83,43 +70,29 @@ export default function Link2Insulin() {
   const mealRef = useRef<HTMLDivElement>(null);
 
   /* ============================
-     CGM Integration Logic
+     Nightscout Integration Logic
      ============================ */
 
-  // Load configs on mount
+  // Load Nightscout config on mount
   useEffect(() => {
     try {
-      const savedLlupConfig = localStorage.getItem(STORAGE_LLUP_KEY);
-      if (savedLlupConfig) {
-        const config = JSON.parse(savedLlupConfig);
-        setLlupUsername(config.username || "");
-        setLlupRegion(config.region || "EU");
-      }
-
       const savedNsConfig = localStorage.getItem(STORAGE_NS_KEY);
       if (savedNsConfig) {
         const config = JSON.parse(savedNsConfig);
         setNsUrl(config.url || "");
       }
     } catch (e) {
-      console.warn("Failed to load CGM configs", e);
+      console.warn("Failed to load Nightscout config", e);
     }
   }, []);
 
-  // Auto-sync with active CGM service
+  // Auto-sync with Nightscout
   useEffect(() => {
-    const isConnected = llupConnected || nsConnected;
-    if (!isConnected || !autoSync) return;
+    if (!nsConnected || !autoSync) return;
 
     const fetchGlucose = async () => {
       try {
-        let reading: GlucoseReading | null = null;
-        
-        if (llupConnected) {
-          reading = await llupService.fetchLatestGlucose();
-        } else if (nsConnected) {
-          reading = await nsService.fetchLatestGlucose();
-        }
+        const reading = await nsService.fetchLatestGlucose();
 
         if (reading) {
           setCurrentGlucose(reading);
@@ -137,52 +110,7 @@ export default function Link2Insulin() {
     const interval = setInterval(fetchGlucose, syncInterval * 60 * 1000);
 
     return () => clearInterval(interval);
-  }, [llupConnected, nsConnected, autoSync, syncInterval]);
-
-  // Handle LibreLinkUp connection
-  async function handleLlupConnect() {
-    if (!llupUsername || !llupPassword) {
-      showToast("Identifiant et mot de passe requis", 3000);
-      return;
-    }
-
-    const success = await llupService.connect(llupUsername, llupPassword, llupRegion);
-    
-    if (success) {
-      setLlupConnected(true);
-      setCgmService('librelinkup');
-      setShowCgmConfig(false);
-      
-      try {
-        localStorage.setItem(STORAGE_LLUP_KEY, JSON.stringify({
-          username: llupUsername,
-          region: llupRegion
-        }));
-      } catch (e) {
-        console.warn("Failed to save config", e);
-      }
-
-      showToast("✅ Connecté à LibreLinkUp");
-      
-      const reading = await llupService.fetchLatestGlucose();
-      if (reading) {
-        setCurrentGlucose(reading);
-        setGlycemia(Math.round(reading.value).toString());
-        setLastSync(new Date());
-      }
-    } else {
-      showToast("❌ Échec connexion LibreLinkUp", 4000);
-    }
-  }
-
-  function handleLlupDisconnect() {
-    llupService.disconnect();
-    setLlupConnected(false);
-    setCgmService('none');
-    setCurrentGlucose(null);
-    setLastSync(null);
-    showToast("Déconnecté de LibreLinkUp");
-  }
+  }, [nsConnected, autoSync, syncInterval]);
 
   // Handle Nightscout connection
   async function handleNsConnect() {
@@ -195,8 +123,7 @@ export default function Link2Insulin() {
     
     if (success) {
       setNsConnected(true);
-      setCgmService('nightscout');
-      setShowCgmConfig(false);
+      setShowNsConfig(false);
       
       try {
         localStorage.setItem(STORAGE_NS_KEY, JSON.stringify({
@@ -222,23 +149,15 @@ export default function Link2Insulin() {
   function handleNsDisconnect() {
     nsService.disconnect();
     setNsConnected(false);
-    setCgmService('none');
     setCurrentGlucose(null);
     setLastSync(null);
     showToast("Déconnecté de Nightscout");
   }
 
   async function handleManualSync() {
-    const isConnected = llupConnected || nsConnected;
-    if (!isConnected) return;
+    if (!nsConnected) return;
     
-    let reading: GlucoseReading | null = null;
-    
-    if (llupConnected) {
-      reading = await llupService.fetchLatestGlucose();
-    } else if (nsConnected) {
-      reading = await nsService.fetchLatestGlucose();
-    }
+    const reading = await nsService.fetchLatestGlucose();
     
     if (reading) {
       setCurrentGlucose(reading);
@@ -523,31 +442,29 @@ export default function Link2Insulin() {
   return (
     <div className="min-h-screen p-3 md:p-6 transition-colors duration-200">
       <div className="max-w-4xl mx-auto space-y-2 md:space-y-3">
-        {/* Header with LibreLinkUp status */}
+        {/* Header with Nightscout status */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Calculator className="h-8 w-8 text-primary" />
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-foreground">Link2Insulin</h1>
               <p className="text-sm text-muted-foreground">
-                {llupConnected ? "🔗 LibreLinkUp connecté" : "Calculateur insuline lispro — v2.1 Pro"}
+                {nsConnected ? "🌙 Nightscout connecté" : "Calculateur insuline lispro — v2.1 Pro"}
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setShowCgmConfig(!showCgmConfig)}
-              className={`glass-button-sm p-2 flex items-center gap-2 ${(llupConnected || nsConnected) ? 'bg-green-500/10' : ''}`}
-              title="CGM"
+              onClick={() => setShowNsConfig(!showNsConfig)}
+              className={`glass-button-sm p-2 flex items-center gap-2 ${nsConnected ? 'bg-green-500/10' : ''}`}
+              title="Nightscout"
             >
-              {(llupConnected || nsConnected) ? <Wifi className="h-4 w-4 text-green-500" /> : <WifiOff className="h-4 w-4 text-gray-400" />}
-              <span className="text-xs md:text-sm">
-                {llupConnected ? "LibreLinkUp" : nsConnected ? "Nightscout" : "CGM"}
-              </span>
+              {nsConnected ? <Wifi className="h-4 w-4 text-green-500" /> : <WifiOff className="h-4 w-4 text-gray-400" />}
+              <span className="text-xs md:text-sm">{nsConnected ? "Nightscout" : "CGM"}</span>
             </button>
 
-            {(llupConnected || nsConnected) && (
+            {nsConnected && (
               <button
                 onClick={handleManualSync}
                 className="glass-button-sm p-2"
@@ -581,88 +498,25 @@ export default function Link2Insulin() {
           </div>
         </div>
 
-        {/* CGM Connection Panel */}
-        {showCgmConfig && (
-          <>
-            {cgmService === 'none' && (
-              <Card className="shadow-lg border-2 border-primary/30">
-                <CardContent className="pt-6 space-y-4">
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Choisissez votre service de glycémie continue :
-                  </p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <Button 
-                      onClick={() => setCgmService('librelinkup')}
-                      variant="outline"
-                      className="h-auto py-4 flex flex-col gap-2"
-                    >
-                      <span className="font-semibold">LibreLinkUp</span>
-                      <span className="text-xs text-muted-foreground">Abbott FreeStyle Libre</span>
-                    </Button>
-                    <Button 
-                      onClick={() => setCgmService('nightscout')}
-                      variant="outline"
-                      className="h-auto py-4 flex flex-col gap-2"
-                    >
-                      <span className="font-semibold">Nightscout</span>
-                      <span className="text-xs text-muted-foreground">Open source CGM</span>
-                    </Button>
-                  </div>
-                  <Button onClick={() => setShowCgmConfig(false)} variant="ghost" className="w-full">
-                    Annuler
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
-
-            {cgmService === 'librelinkup' && (
-              <LibreLinkUpPanel
-                llupConnected={llupConnected}
-                llupUsername={llupUsername}
-                llupPassword={llupPassword}
-                llupRegion={llupRegion}
-                currentGlucose={currentGlucose}
-                autoSync={autoSync}
-                syncInterval={syncInterval}
-                lastSync={lastSync}
-                onUsernameChange={setLlupUsername}
-                onPasswordChange={setLlupPassword}
-                onRegionChange={setLlupRegion}
-                onConnect={handleLlupConnect}
-                onDisconnect={handleLlupDisconnect}
-                onManualSync={handleManualSync}
-                onAutoSyncChange={setAutoSync}
-                onSyncIntervalChange={setSyncInterval}
-                onClose={() => {
-                  setCgmService('none');
-                  setShowCgmConfig(false);
-                }}
-              />
-            )}
-
-            {cgmService === 'nightscout' && (
-              <NightscoutPanel
-                nsConnected={nsConnected}
-                nsUrl={nsUrl}
-                nsApiSecret={nsApiSecret}
-                currentGlucose={currentGlucose}
-                autoSync={autoSync}
-                syncInterval={syncInterval}
-                lastSync={lastSync}
-                onUrlChange={setNsUrl}
-                onApiSecretChange={setNsApiSecret}
-                onConnect={handleNsConnect}
-                onDisconnect={handleNsDisconnect}
-                onManualSync={handleManualSync}
-                onAutoSyncChange={setAutoSync}
-                onSyncIntervalChange={setSyncInterval}
-                onClose={() => {
-                  setCgmService('none');
-                  setShowCgmConfig(false);
-                }}
-              />
-            )}
-          </>
+        {/* Nightscout Connection Panel */}
+        {showNsConfig && (
+          <NightscoutPanel
+            nsConnected={nsConnected}
+            nsUrl={nsUrl}
+            nsApiSecret={nsApiSecret}
+            currentGlucose={currentGlucose}
+            autoSync={autoSync}
+            syncInterval={syncInterval}
+            lastSync={lastSync}
+            onUrlChange={setNsUrl}
+            onApiSecretChange={setNsApiSecret}
+            onConnect={handleNsConnect}
+            onDisconnect={handleNsDisconnect}
+            onManualSync={handleManualSync}
+            onAutoSyncChange={setAutoSync}
+            onSyncIntervalChange={setSyncInterval}
+            onClose={() => setShowNsConfig(false)}
+          />
         )}
 
         {/* Sync Error Display */}
@@ -673,7 +527,7 @@ export default function Link2Insulin() {
         )}
 
         {/* Current Glucose Display */}
-        {llupConnected && currentGlucose && (
+        {nsConnected && currentGlucose && (
           <Card className="shadow-md bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30">
             <CardContent className="py-4">
               <div className="flex items-center justify-between">
@@ -719,7 +573,7 @@ export default function Link2Insulin() {
           glycemia={glycemia}
           carbRatio={carbRatio}
           moment={calculation.moment}
-          llupConnected={llupConnected}
+          llupConnected={nsConnected}
           forceExtra={forceExtra}
           onGlycemiaChange={setGlycemia}
           onCarbRatioChange={setCarbRatio}
@@ -762,7 +616,7 @@ export default function Link2Insulin() {
           ref={resultRef}
           calculation={calculation}
           currentGlucose={currentGlucose}
-          llupConnected={llupConnected}
+          llupConnected={nsConnected}
           onScrollToMeal={() => mealRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })}
         />
 
@@ -777,9 +631,9 @@ export default function Link2Insulin() {
             <p className="text-xs text-muted-foreground text-center">
               ⚠️ Usage personnel uniquement — ceci n'est pas un avis médical. Consultez toujours votre endocrinologue avant d'appliquer des modifications à votre traitement.
             </p>
-            {llupConnected && (
+            {nsConnected && (
               <p className="text-xs text-blue-600 dark:text-blue-400 text-center mt-2">
-                🔒 LibreLinkUp : lecture cloud Abbott sécurisée • aucun accès direct au capteur
+                🌙 Nightscout : lecture CGM sécurisée • données synchronisées automatiquement
               </p>
             )}
           </CardContent>
