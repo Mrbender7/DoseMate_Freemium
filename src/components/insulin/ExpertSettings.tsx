@@ -6,6 +6,7 @@ import { RotateCcw } from "lucide-react";
 import { parseNumberInput } from "../../utils/calculations";
 import type { MomentKey, DoseRange } from "../../types/insulin";
 import { DEFAULT_INSULIN_TABLE } from "../../types/insulin";
+import { useState } from "react";
 
 interface ExpertSettingsProps {
   sensitivityFactor: number | "";
@@ -30,6 +31,15 @@ export function ExpertSettings({
   onToggleCustomTable,
   showToast,
 }: ExpertSettingsProps) {
+  const [selectedMoment, setSelectedMoment] = useState<MomentKey>("morning");
+
+  const momentLabels: Record<MomentKey, string> = {
+    morning: "☀️ Matin",
+    noon: "🌤️ Midi",
+    evening: "🌙 Soir",
+    extra: "+ Extra"
+  };
+
   return (
     <Card className="shadow-lg">
       <CardHeader>
@@ -101,9 +111,9 @@ export function ExpertSettings({
 
         {/* Custom Protocol Table */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-3">
             <h3 className="text-lg font-semibold text-foreground">Tableau de protocole personnalisé</h3>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Button
                 onClick={onToggleCustomTable}
                 variant={useCustomTable ? "default" : "outline"}
@@ -125,7 +135,8 @@ export function ExpertSettings({
             </div>
           </div>
 
-          <div className="overflow-x-auto">
+          {/* Desktop Table - hidden on mobile */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-muted/50">
@@ -202,6 +213,59 @@ export function ExpertSettings({
                 ))}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile Table - visible only on mobile */}
+          <div className="md:hidden space-y-3">
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium text-muted-foreground whitespace-nowrap">Moment:</label>
+              <select
+                value={selectedMoment}
+                onChange={(e) => setSelectedMoment(e.target.value as MomentKey)}
+                className="flex-1 p-2 rounded-md border border-input bg-background text-foreground shadow-sm focus:ring-2 focus:ring-primary focus:border-primary z-50 relative"
+              >
+                <option value="morning">☀️ Matin</option>
+                <option value="noon">🌤️ Midi</option>
+                <option value="evening">🌙 Soir</option>
+                <option value="extra">+ Extra</option>
+              </select>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-muted/50">
+                    <th className="border border-border p-2 text-left text-sm font-semibold">Plage glycémie</th>
+                    <th className="border border-border p-2 text-center text-sm font-semibold">
+                      {momentLabels[selectedMoment]}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {customInsulinTable.map((range, idx) => (
+                    <tr key={idx} className="hover:bg-muted/20">
+                      <td className="border border-border p-2 text-sm whitespace-nowrap">
+                        {range.min === -Infinity ? "≤" : range.min} - {range.max === Infinity ? "∞" : range.max} mg/dL
+                      </td>
+                      <td className="border border-border p-2">
+                        <Input
+                          type="number"
+                          min="0"
+                          value={range.doses[selectedMoment]}
+                          onChange={(e) => {
+                            const newTable = [...customInsulinTable];
+                            newTable[idx].doses[selectedMoment] = Number(e.target.value) || 0;
+                            onCustomTableChange(newTable);
+                          }}
+                          className="w-full max-w-[100px] mx-auto text-center"
+                          disabled={!useCustomTable}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
 
           <div className="text-xs text-muted-foreground bg-muted/30 p-3 rounded-lg">
