@@ -216,28 +216,23 @@ export function ExpertSettings({
           </div>
 
           {/* Mobile Table - visible only on mobile */}
-          <div className="md:hidden space-y-3">
-            <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-muted-foreground whitespace-nowrap">Moment:</label>
-              <select
-                value={selectedMoment}
-                onChange={(e) => setSelectedMoment(e.target.value as MomentKey)}
-                className="flex-1 p-2 rounded-md border border-input bg-background text-foreground shadow-sm focus:ring-2 focus:ring-primary focus:border-primary z-50 relative"
-              >
-                <option value="morning">☀️ Matin</option>
-                <option value="noon">🌤️ Midi</option>
-                <option value="evening">🌙 Soir</option>
-                <option value="extra">+ Extra</option>
-              </select>
-            </div>
-
+          <div className="md:hidden">
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="bg-muted/50">
                     <th className="border border-border p-2 text-left text-sm font-semibold">Plage glycémie</th>
                     <th className="border border-border p-2 text-center text-sm font-semibold">
-                      {momentLabels[selectedMoment]}
+                      <select
+                        value={selectedMoment}
+                        onChange={(e) => setSelectedMoment(e.target.value as MomentKey)}
+                        className="w-full p-1 rounded border border-border bg-background text-foreground text-sm font-semibold shadow-sm focus:ring-2 focus:ring-primary focus:border-primary z-50"
+                      >
+                        <option value="morning">☀️ Matin</option>
+                        <option value="noon">🌤️ Midi</option>
+                        <option value="evening">🌙 Soir</option>
+                        <option value="extra">+ Extra</option>
+                      </select>
                     </th>
                   </tr>
                 </thead>
