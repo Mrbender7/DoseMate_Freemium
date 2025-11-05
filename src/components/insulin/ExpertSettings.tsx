@@ -1,9 +1,7 @@
-import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RotateCcw } from "lucide-react";
 import { parseNumberInput } from "@/utils/calculations";
 import type { MomentKey, DoseRange } from "@/types/insulin";
@@ -32,15 +30,6 @@ export function ExpertSettings({
   onToggleCustomTable,
   showToast,
 }: ExpertSettingsProps) {
-  const [selectedMoment, setSelectedMoment] = useState<MomentKey>("morning");
-
-  const momentLabels: Record<MomentKey, string> = {
-    morning: "☀️ Matin",
-    noon: "🌤️ Midi",
-    evening: "🌙 Soir",
-    extra: "+ Extra"
-  };
-
   return (
     <Card className="shadow-lg">
       <CardHeader>
@@ -112,29 +101,28 @@ export function ExpertSettings({
 
         {/* Custom Protocol Table */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-foreground">Tableau de protocole personnalisé</h3>
-          
-          <div className="flex flex-col sm:flex-row gap-2 items-center justify-center">
-            <Button
-              onClick={onToggleCustomTable}
-              variant={useCustomTable ? "default" : "outline"}
-              size="sm"
-              className="w-full sm:w-auto"
-            >
-              {useCustomTable ? "✓ Tableau personnalisé" : "Tableau par défaut"}
-            </Button>
-            <Button
-              onClick={() => {
-                onCustomTableChange([...DEFAULT_INSULIN_TABLE]);
-                showToast("Tableau réinitialisé aux valeurs par défaut");
-              }}
-              variant="outline"
-              size="sm"
-              className="w-full sm:w-auto"
-            >
-              <RotateCcw className="h-4 w-4 mr-1" />
-              Reset
-            </Button>
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-foreground">Tableau de protocole personnalisé</h3>
+            <div className="flex gap-2">
+              <Button
+                onClick={onToggleCustomTable}
+                variant={useCustomTable ? "default" : "outline"}
+                size="sm"
+              >
+                {useCustomTable ? "✓ Tableau personnalisé" : "Tableau par défaut"}
+              </Button>
+              <Button
+                onClick={() => {
+                  onCustomTableChange([...DEFAULT_INSULIN_TABLE]);
+                  showToast("Tableau réinitialisé aux valeurs par défaut");
+                }}
+                variant="outline"
+                size="sm"
+              >
+                <RotateCcw className="h-4 w-4 mr-1" />
+                Reset
+              </Button>
+            </div>
           </div>
 
           <div className="overflow-x-auto">
@@ -142,19 +130,10 @@ export function ExpertSettings({
               <thead>
                 <tr className="bg-muted/50">
                   <th className="border border-border p-2 text-left text-sm font-semibold">Plage glycémie</th>
-                  <th className="border border-border p-2 text-center text-sm font-semibold">
-                    <Select value={selectedMoment} onValueChange={(value) => setSelectedMoment(value as MomentKey)}>
-                      <SelectTrigger className="w-full border-0 bg-transparent font-semibold text-sm h-auto p-0">
-                        <SelectValue placeholder="Moment" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="morning">{momentLabels.morning}</SelectItem>
-                        <SelectItem value="noon">{momentLabels.noon}</SelectItem>
-                        <SelectItem value="evening">{momentLabels.evening}</SelectItem>
-                        <SelectItem value="extra">{momentLabels.extra}</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </th>
+                  <th className="border border-border p-2 text-center text-sm font-semibold">☀️ Matin</th>
+                  <th className="border border-border p-2 text-center text-sm font-semibold">🌤️ Midi</th>
+                  <th className="border border-border p-2 text-center text-sm font-semibold">🌙 Soir</th>
+                  <th className="border border-border p-2 text-center text-sm font-semibold">+ Extra</th>
                 </tr>
               </thead>
               <tbody>
@@ -167,10 +146,52 @@ export function ExpertSettings({
                       <Input
                         type="number"
                         min="0"
-                        value={range.doses[selectedMoment]}
+                        value={range.doses.morning}
                         onChange={(e) => {
                           const newTable = [...customInsulinTable];
-                          newTable[idx].doses[selectedMoment] = Number(e.target.value) || 0;
+                          newTable[idx].doses.morning = Number(e.target.value) || 0;
+                          onCustomTableChange(newTable);
+                        }}
+                        className="w-20 mx-auto text-center"
+                        disabled={!useCustomTable}
+                      />
+                    </td>
+                    <td className="border border-border p-2">
+                      <Input
+                        type="number"
+                        min="0"
+                        value={range.doses.noon}
+                        onChange={(e) => {
+                          const newTable = [...customInsulinTable];
+                          newTable[idx].doses.noon = Number(e.target.value) || 0;
+                          onCustomTableChange(newTable);
+                        }}
+                        className="w-20 mx-auto text-center"
+                        disabled={!useCustomTable}
+                      />
+                    </td>
+                    <td className="border border-border p-2">
+                      <Input
+                        type="number"
+                        min="0"
+                        value={range.doses.evening}
+                        onChange={(e) => {
+                          const newTable = [...customInsulinTable];
+                          newTable[idx].doses.evening = Number(e.target.value) || 0;
+                          onCustomTableChange(newTable);
+                        }}
+                        className="w-20 mx-auto text-center"
+                        disabled={!useCustomTable}
+                      />
+                    </td>
+                    <td className="border border-border p-2">
+                      <Input
+                        type="number"
+                        min="0"
+                        value={range.doses.extra}
+                        onChange={(e) => {
+                          const newTable = [...customInsulinTable];
+                          newTable[idx].doses.extra = Number(e.target.value) || 0;
                           onCustomTableChange(newTable);
                         }}
                         className="w-20 mx-auto text-center"
