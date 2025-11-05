@@ -1,16 +1,5 @@
 /* ============================
-   CGM Integration Types
-   ============================ */
-
-export interface GlucoseReading {
-  value: number;
-  timestamp: Date;
-  trend: string;
-  source: 'nightscout' | 'manual';
-}
-
-/* ============================
-   Existing v2.1 Types
+   Types
    ============================ */
 
 export interface FoodItem {
@@ -29,7 +18,6 @@ export interface HistoryEntry {
   totalAdministered: number;
   totalCalculated: number;
   moment: MomentKey;
-  source?: 'nightscout' | 'manual';
 }
 
 export type MomentKey = "morning" | "noon" | "evening" | "extra";
@@ -43,7 +31,6 @@ export interface DoseRange {
 export const STORAGE_KEY = "link2insulin_history";
 export const STORAGE_META_KEY = "link2insulin_meta";
 export const STORAGE_CUSTOM_TABLE_KEY = "link2insulin_customTable";
-export const STORAGE_NS_KEY = "link2insulin_ns_config";
 
 export const DISPLAY_MAX = 20;
 export const MAX_CALCULATED = 25;

@@ -4,9 +4,9 @@ import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { Alert, AlertDescription } from "../ui/alert";
 import { Separator } from "../ui/separator";
-import { Wifi, Utensils, AlertTriangle } from "lucide-react";
+import { Utensils, AlertTriangle } from "lucide-react";
 import { momentIcon, momentLabel, doseStyleClass } from "../../utils/calculations";
-import type { MomentKey, GlucoseReading } from "../../types/insulin";
+import type { MomentKey } from "../../types/insulin";
 
 interface Calculation {
   moment: MomentKey;
@@ -22,13 +22,11 @@ interface Calculation {
 
 interface ResultCardProps {
   calculation: Calculation;
-  currentGlucose: GlucoseReading | null;
-  llupConnected: boolean;
   onScrollToMeal: () => void;
 }
 
 export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
-  ({ calculation, currentGlucose, llupConnected, onScrollToMeal }, ref) => {
+  ({ calculation, onScrollToMeal }, ref) => {
     const r = calculation;
     const parts: string[] = [];
     if (r.base !== null && r.base !== undefined) parts.push(`${r.base}u base`);
@@ -45,12 +43,6 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <span className="text-primary">Résultat du calcul</span>
-            {currentGlucose && llupConnected && (
-              <Badge variant="outline" className="text-xs">
-                <Wifi className="h-3 w-3 mr-1" />
-                LibreLinkUp
-              </Badge>
-            )}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 md:space-y-6">

@@ -1,7 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { Badge } from "../ui/badge";
 import { Clock, Download, RotateCcw } from "lucide-react";
 import { momentIcon, momentLabel } from "../../utils/calculations";
 import type { MomentKey } from "../../types/insulin";
@@ -10,7 +9,6 @@ interface GlycemiaCardProps {
   glycemia: string;
   carbRatio: number;
   moment: MomentKey;
-  llupConnected: boolean;
   forceExtra: boolean;
   onGlycemiaChange: (value: string) => void;
   onCarbRatioChange: (value: number) => void;
@@ -23,7 +21,6 @@ export function GlycemiaCard({
   glycemia,
   carbRatio,
   moment,
-  llupConnected,
   forceExtra,
   onGlycemiaChange,
   onCarbRatioChange,
@@ -41,14 +38,13 @@ export function GlycemiaCard({
           <span className="flex items-center gap-1.5">
             {momentIcon(moment)} {momentLabel(moment)}
           </span>
-          {llupConnected && <Badge variant="outline" className="text-xs">Auto</Badge>}
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
           <div>
             <label className="text-sm font-medium text-muted-foreground">
-              Glycémie (mg/dL) {llupConnected && <span className="text-xs text-green-600">• Auto-remplie</span>}
+              Glycémie (mg/dL)
             </label>
             <Input
               type="number"
@@ -59,7 +55,7 @@ export function GlycemiaCard({
                 onGlycemiaChange(value);
                 if (value.length === 3) (e.target as HTMLInputElement).blur();
               }}
-              placeholder={llupConnected ? "Auto-remplie par LibreLinkUp" : "ex : 145"}
+              placeholder="ex : 145"
               className="mt-1"
             />
           </div>

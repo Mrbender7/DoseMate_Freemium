@@ -2,10 +2,7 @@ import { useEffect, useMemo, useState, useRef } from "react";
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Alert, AlertDescription } from "../components/ui/alert";
-import { Badge } from "../components/ui/badge";
-import { Calculator, Sun, Moon, ArrowUp, Wifi, WifiOff, RefreshCw, AlertTriangle } from "lucide-react";
-import { NightscoutService } from "../services/NightscoutService";
-import { NightscoutPanel } from "../components/insulin/NightscoutPanel";
+import { Calculator, Sun, Moon, ArrowUp, AlertTriangle } from "lucide-react";
 import { GlycemiaCard } from "../components/insulin/GlycemiaCard";
 import { MealCard } from "../components/insulin/MealCard";
 import { ExpertSettings } from "../components/insulin/ExpertSettings";
@@ -16,14 +13,12 @@ import type {
   FoodItem, 
   HistoryEntry, 
   MomentKey, 
-  GlucoseReading,
   DoseRange
 } from "../types/insulin";
 import {
   STORAGE_KEY,
   STORAGE_META_KEY,
   STORAGE_CUSTOM_TABLE_KEY,
-  STORAGE_NS_KEY,
   DEFAULT_CARB_RATIO,
   DISPLAY_MAX,
   MAX_CALCULATED,
@@ -31,20 +26,6 @@ import {
 } from "../types/insulin";
 
 export default function Link2Insulin() {
-  // Nightscout state
-  const [nsService] = useState(() => new NightscoutService());
-  const [nsConnected, setNsConnected] = useState(false);
-  const [nsUrl, setNsUrl] = useState("");
-  const [nsApiSecret, setNsApiSecret] = useState("");
-  const [showNsConfig, setShowNsConfig] = useState(false);
-
-  // Common CGM state
-  const [currentGlucose, setCurrentGlucose] = useState<GlucoseReading | null>(null);
-  const [autoSync, setAutoSync] = useState(true);
-  const [syncInterval, setSyncInterval] = useState(5);
-  const [lastSync, setLastSync] = useState<Date | null>(null);
-  const [syncError, setSyncError] = useState<string | null>(null);
-
   // Original v2.1 state
   const [glycemia, setGlycemia] = useState<string>("");
   const [foodItems, setFoodItems] = useState<FoodItem[]>([{ id: "f-1", carbsPer100: "", weight: "" }]);
@@ -70,107 +51,7 @@ export default function Link2Insulin() {
   const mealRef = useRef<HTMLDivElement>(null);
 
   /* ============================
-     Nightscout Integration Logic
-     ============================ */
-
-  // Load Nightscout config on mount
-  useEffect(() => {
-    try {
-      const savedNsConfig = localStorage.getItem(STORAGE_NS_KEY);
-      if (savedNsConfig) {
-        const config = JSON.parse(savedNsConfig);
-        setNsUrl(config.url || "");
-      }
-    } catch (e) {
-      console.warn("Failed to load Nightscout config", e);
-    }
-  }, []);
-
-  // Auto-sync with Nightscout
-  useEffect(() => {
-    if (!nsConnected || !autoSync) return;
-
-    const fetchGlucose = async () => {
-      try {
-        const reading = await nsService.fetchLatestGlucose();
-
-        if (reading) {
-          setCurrentGlucose(reading);
-          setGlycemia(Math.round(reading.value).toString());
-          setLastSync(new Date());
-          setSyncError(null);
-          showToast(`Glycémie mise à jour: ${Math.round(reading.value)} mg/dL`);
-        }
-      } catch (error: any) {
-        setSyncError(error.message || 'Erreur inconnue lors de la synchronisation');
-      }
-    };
-
-    fetchGlucose();
-    const interval = setInterval(fetchGlucose, syncInterval * 60 * 1000);
-
-    return () => clearInterval(interval);
-  }, [nsConnected, autoSync, syncInterval]);
-
-  // Handle Nightscout connection
-  async function handleNsConnect() {
-    if (!nsUrl) {
-      showToast("URL Nightscout requise", 3000);
-      return;
-    }
-
-    const success = await nsService.connect(nsUrl, nsApiSecret);
-    
-    if (success) {
-      setNsConnected(true);
-      setShowNsConfig(false);
-      
-      try {
-        localStorage.setItem(STORAGE_NS_KEY, JSON.stringify({
-          url: nsUrl
-        }));
-      } catch (e) {
-        console.warn("Failed to save config", e);
-      }
-
-      showToast("✅ Connecté à Nightscout");
-      
-      const reading = await nsService.fetchLatestGlucose();
-      if (reading) {
-        setCurrentGlucose(reading);
-        setGlycemia(Math.round(reading.value).toString());
-        setLastSync(new Date());
-      }
-    } else {
-      showToast("❌ Échec connexion Nightscout", 4000);
-    }
-  }
-
-  function handleNsDisconnect() {
-    nsService.disconnect();
-    setNsConnected(false);
-    setCurrentGlucose(null);
-    setLastSync(null);
-    showToast("Déconnecté de Nightscout");
-  }
-
-  async function handleManualSync() {
-    if (!nsConnected) return;
-    
-    const reading = await nsService.fetchLatestGlucose();
-    
-    if (reading) {
-      setCurrentGlucose(reading);
-      setGlycemia(Math.round(reading.value).toString());
-      setLastSync(new Date());
-      showToast(`Glycémie: ${Math.round(reading.value)} mg/dL`);
-    } else {
-      showToast("Échec synchronisation", 3000);
-    }
-  }
-
-  /* ============================
-     Original v2.1 Logic
+     Logic
      ============================ */
 
   useEffect(() => {
@@ -328,8 +209,7 @@ export default function Link2Insulin() {
       meal: calculation.meal ?? undefined,
       totalAdministered: calculation.totalAdministered,
       totalCalculated: Number(calculation.totalCalculated.toFixed(1)),
-      moment: calculation.moment,
-      source: currentGlucose?.source || 'manual'
+      moment: calculation.moment
     };
     setHistory((prev) => {
       const next = [entry, ...prev].slice(0, 25);
@@ -367,8 +247,7 @@ export default function Link2Insulin() {
               meal: calculation.meal ?? undefined,
               totalAdministered: calculation.totalAdministered,
               totalCalculated: Number(calculation.totalCalculated.toFixed(1)),
-              moment: calculation.moment,
-              source: currentGlucose?.source || 'manual'
+              moment: calculation.moment
             };
             const next = [newEntry, ...prev.slice(1)].slice(0, 25);
             localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
@@ -387,8 +266,7 @@ export default function Link2Insulin() {
           meal: calculation.meal ?? undefined,
           totalAdministered: calculation.totalAdministered,
           totalCalculated: Number(calculation.totalCalculated.toFixed(1)),
-          moment: calculation.moment,
-          source: currentGlucose?.source || 'manual'
+          moment: calculation.moment
         };
         const next = [newEntry, ...(prev || [])].slice(0, 25);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
@@ -400,7 +278,7 @@ export default function Link2Insulin() {
       }
     }, 800);
     return () => clearTimeout(timeout);
-  }, [resultDisplay, glycemia, calculation, currentGlucose]);
+  }, [resultDisplay, glycemia, calculation]);
 
   function resetInputs() {
     setGlycemia("");
@@ -442,38 +320,19 @@ export default function Link2Insulin() {
   return (
     <div className="min-h-screen p-3 md:p-6 transition-colors duration-200">
       <div className="max-w-4xl mx-auto space-y-2 md:space-y-3">
-        {/* Header with Nightscout status */}
+        {/* Header */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Calculator className="h-8 w-8 text-primary" />
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-foreground">Link2Insulin</h1>
               <p className="text-sm text-muted-foreground">
-                {nsConnected ? "🌙 Nightscout connecté" : "Calculateur insuline lispro — v2.1 Pro"}
+                Calculateur insuline lispro — v2.1 Pro
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => setShowNsConfig(!showNsConfig)}
-              className={`glass-button-sm p-2 flex items-center gap-2 ${nsConnected ? 'bg-green-500/10' : ''}`}
-              title="Nightscout"
-            >
-              {nsConnected ? <Wifi className="h-4 w-4 text-green-500" /> : <WifiOff className="h-4 w-4 text-gray-400" />}
-              <span className="text-xs md:text-sm">{nsConnected ? "Nightscout" : "CGM"}</span>
-            </button>
-
-            {nsConnected && (
-              <button
-                onClick={handleManualSync}
-                className="glass-button-sm p-2"
-                title="Synchroniser maintenant"
-              >
-                <RefreshCw className="h-4 w-4" />
-              </button>
-            )}
-
             <button
               onClick={() => {
                 setDarkMode((d) => !d);
@@ -498,67 +357,6 @@ export default function Link2Insulin() {
           </div>
         </div>
 
-        {/* Nightscout Connection Panel */}
-        {showNsConfig && (
-          <NightscoutPanel
-            nsConnected={nsConnected}
-            nsUrl={nsUrl}
-            nsApiSecret={nsApiSecret}
-            currentGlucose={currentGlucose}
-            autoSync={autoSync}
-            syncInterval={syncInterval}
-            lastSync={lastSync}
-            onUrlChange={setNsUrl}
-            onApiSecretChange={setNsApiSecret}
-            onConnect={handleNsConnect}
-            onDisconnect={handleNsDisconnect}
-            onManualSync={handleManualSync}
-            onAutoSyncChange={setAutoSync}
-            onSyncIntervalChange={setSyncInterval}
-            onClose={() => setShowNsConfig(false)}
-          />
-        )}
-
-        {/* Sync Error Display */}
-        {syncError && (
-          <div style={{ color: 'red', fontWeight: 'bold', padding: 8, marginBottom: 8 }}>
-            ⚠️ Échec synchronisation : {syncError}
-          </div>
-        )}
-
-        {/* Current Glucose Display */}
-        {nsConnected && currentGlucose && (
-          <Card className="shadow-md bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30">
-            <CardContent className="py-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-blue-500 rounded-full">
-                    <Wifi className="h-5 w-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Glycémie en temps réel</p>
-                    <p className="text-3xl font-bold font-mono">{Math.round(currentGlucose.value)} mg/dL</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <Badge variant={
-                    currentGlucose.value < 70 ? "destructive" :
-                    currentGlucose.value > 180 ? "secondary" :
-                    "default"
-                  }>
-                    {currentGlucose.trend}
-                  </Badge>
-                  {lastSync && (
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {lastSync.toLocaleTimeString()}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
         {/* Hypo alert */}
         {alertHypo && (
           <Alert className="border-destructive bg-destructive/10 animate-pulse">
@@ -573,7 +371,6 @@ export default function Link2Insulin() {
           glycemia={glycemia}
           carbRatio={carbRatio}
           moment={calculation.moment}
-          llupConnected={nsConnected}
           forceExtra={forceExtra}
           onGlycemiaChange={setGlycemia}
           onCarbRatioChange={setCarbRatio}
@@ -615,8 +412,6 @@ export default function Link2Insulin() {
         <ResultCard
           ref={resultRef}
           calculation={calculation}
-          currentGlucose={currentGlucose}
-          llupConnected={nsConnected}
           onScrollToMeal={() => mealRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })}
         />
 
@@ -631,11 +426,6 @@ export default function Link2Insulin() {
             <p className="text-xs text-muted-foreground text-center">
               ⚠️ Usage personnel uniquement — ceci n'est pas un avis médical. Consultez toujours votre endocrinologue avant d'appliquer des modifications à votre traitement.
             </p>
-            {nsConnected && (
-              <p className="text-xs text-blue-600 dark:text-blue-400 text-center mt-2">
-                🌙 Nightscout : lecture CGM sécurisée • données synchronisées automatiquement
-              </p>
-            )}
           </CardContent>
         </Card>
 

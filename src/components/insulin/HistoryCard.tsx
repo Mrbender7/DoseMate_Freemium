@@ -1,8 +1,7 @@
 import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
-import { Badge } from "../ui/badge";
-import { Download, RotateCcw, Wifi } from "lucide-react";
+import { Download, RotateCcw } from "lucide-react";
 import { momentIcon } from "../../utils/calculations";
 import type { HistoryEntry } from "../../types/insulin";
 import * as XLSX from "xlsx";
@@ -31,9 +30,9 @@ export function HistoryCard({ history, onClearHistory, showToast }: HistoryCardP
   }, [history]);
 
   function exportCSV(): string {
-    let csv = "DateISO,Moment,Glycemia,Base,Meal,TotalAdministered,TotalCalculated,Source,Display\n";
+    let csv = "DateISO,Moment,Glycemia,Base,Meal,TotalAdministered,TotalCalculated,Display\n";
     history.forEach((h) => {
-      csv += `${h.dateISO},${h.moment},${h.glycemia ?? "-"},${h.base ?? "-"},${h.meal ?? "-"},${h.totalAdministered},${h.totalCalculated},${h.source || 'manual'},"${h.display.replace(/"/g, '""')}"\n`;
+      csv += `${h.dateISO},${h.moment},${h.glycemia ?? "-"},${h.base ?? "-"},${h.meal ?? "-"},${h.totalAdministered},${h.totalCalculated},"${h.display.replace(/"/g, '""')}"\n`;
     });
     return csv;
   }
@@ -50,7 +49,7 @@ export function HistoryCard({ history, onClearHistory, showToast }: HistoryCardP
   }
   
   function downloadXLSX() {
-    const ws_data = [["DateISO", "Moment", "Glycemia", "Base", "Meal", "TotalAdministered", "TotalCalculated", "Source", "Display"]];
+    const ws_data = [["DateISO", "Moment", "Glycemia", "Base", "Meal", "TotalAdministered", "TotalCalculated", "Display"]];
     history.forEach((h) => ws_data.push([
       h.dateISO,
       h.moment,
@@ -59,7 +58,6 @@ export function HistoryCard({ history, onClearHistory, showToast }: HistoryCardP
       h.meal !== undefined ? String(h.meal) : "-",
       String(h.totalAdministered),
       String(h.totalCalculated),
-      h.source || 'manual',
       h.display
     ]));
     const wb = XLSX.utils.book_new();
@@ -126,12 +124,6 @@ export function HistoryCard({ history, onClearHistory, showToast }: HistoryCardP
                   <div className="text-xs text-muted-foreground">
                     {momentIcon(h.moment)} {new Date(h.dateISO).toLocaleString("fr-FR")}
                   </div>
-                  {h.source === 'nightscout' && (
-                    <Badge variant="outline" className="text-xs">
-                      <Wifi className="h-2 w-2 mr-1" />
-                      Nightscout
-                    </Badge>
-                  )}
                 </div>
                 <div className="text-sm font-medium text-foreground">{h.display}</div>
                 <div className="text-xs text-muted-foreground mt-1">
