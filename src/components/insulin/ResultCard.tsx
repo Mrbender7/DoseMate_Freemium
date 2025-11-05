@@ -23,10 +23,11 @@ interface Calculation {
 interface ResultCardProps {
   calculation: Calculation;
   onScrollToMeal: () => void;
+  pulse?: boolean;
 }
 
 export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
-  ({ calculation, onScrollToMeal }, ref) => {
+  ({ calculation, onScrollToMeal, pulse = false }, ref) => {
     const r = calculation;
     const parts: string[] = [];
     if (r.base !== null && r.base !== undefined) parts.push(`${r.base}u base`);
@@ -39,7 +40,7 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
     const resultDisplay = parts.join(" + ");
 
     return (
-      <Card ref={ref} className="shadow-xl border-2 border-primary/20">
+      <Card ref={ref} className={`shadow-xl border-2 border-primary/20 transition-all duration-500 ${pulse ? 'animate-pulse ring-4 ring-primary/30 shadow-[0_0_30px_rgba(59,130,246,0.4)]' : ''}`}>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <span className="text-primary">Résultat du calcul</span>

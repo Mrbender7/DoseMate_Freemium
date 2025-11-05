@@ -46,6 +46,7 @@ export default function GlucoFlow() {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [alertHypo, setAlertHypo] = useState<boolean>(false);
   const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
+  const [resultPulse, setResultPulse] = useState<boolean>(false);
 
   const resultRef = useRef<HTMLDivElement>(null);
   const mealRef = useRef<HTMLDivElement>(null);
@@ -253,6 +254,8 @@ export default function GlucoFlow() {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
             setHistory(next);
             showToast("Calcul mis à jour (auto)");
+            setResultPulse(true);
+            setTimeout(() => setResultPulse(false), 2000);
             resultRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
             return;
           }
@@ -272,6 +275,8 @@ export default function GlucoFlow() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
         setHistory(next);
         showToast("Calcul enregistré (auto)");
+        setResultPulse(true);
+        setTimeout(() => setResultPulse(false), 2000);
         resultRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
       } catch (e) {
         console.warn("autosave fail", e);
@@ -428,6 +433,7 @@ export default function GlucoFlow() {
           ref={resultRef}
           calculation={calculation}
           onScrollToMeal={() => mealRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })}
+          pulse={resultPulse}
         />
 
         <HistoryCard
