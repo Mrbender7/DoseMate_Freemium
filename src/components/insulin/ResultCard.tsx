@@ -45,6 +45,18 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
     }
     const resultDisplay = display;
 
+    // Déterminer la couleur du glow en fonction de la dose
+    let glowEffect = "";
+    if (pulse) {
+      if (r.totalAdministered <= 15) {
+        glowEffect = "animate-pulse ring-4 ring-green-500/30 shadow-[0_0_30px_rgba(34,197,94,0.4)]";
+      } else if (r.totalAdministered <= 18) {
+        glowEffect = "animate-pulse ring-4 ring-yellow-500/30 shadow-[0_0_30px_rgba(234,179,8,0.4)]";
+      } else {
+        glowEffect = "animate-pulse ring-4 ring-red-500/30 shadow-[0_0_30px_rgba(239,68,68,0.4)]";
+      }
+    }
+
     return (
       <Card ref={ref} className="shadow-xl border-2 border-primary/20">
         <CardHeader>
@@ -76,7 +88,7 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
 
           <div className="text-center">
             <p className="text-sm text-muted-foreground mb-2 md:mb-3">Dose totale à administrer</p>
-            <div className={`p-4 md:p-6 rounded-2xl inline-block ${doseStyleClass(calculation.totalAdministered)} transition-all duration-500 ${pulse ? 'animate-pulse ring-4 ring-primary/30 shadow-[0_0_30px_rgba(59,130,246,0.4)]' : ''}`}>
+            <div className={`p-4 md:p-6 rounded-2xl inline-block ${doseStyleClass(calculation.totalAdministered)} transition-all duration-500 ${glowEffect}`}>
               <div className="font-bold text-5xl md:text-6xl text-foreground">{calculation.totalAdministered} U</div>
               <div className="text-xs opacity-70 mt-2">Arrondi à l'unité la plus proche</div>
             </div>
