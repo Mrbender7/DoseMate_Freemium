@@ -94,7 +94,7 @@ export function HistoryCard({ history, onClearHistory, showToast }: HistoryCardP
           <div className="text-sm">
             <div className="font-semibold text-foreground">Entrées sauvegardées : {history.length}</div>
             <div className="text-muted-foreground mt-1">
-              Moyenne 7 jours : {sevenDaySummary.count > 0 ? `${sevenDaySummary.avgGly} mg/dL — réelles ${sevenDaySummary.avgDoseReal} U / admin ${sevenDaySummary.avgDoseAdmin} U` : "Aucune donnée"}
+              Moyenne 7 jours : {sevenDaySummary.count > 0 ? `${sevenDaySummary.avgGly} mg/dL - réelles ${sevenDaySummary.avgDoseReal} U / admin ${sevenDaySummary.avgDoseAdmin} U` : "Aucune donnée"}
             </div>
           </div>
 
@@ -127,7 +127,7 @@ export function HistoryCard({ history, onClearHistory, showToast }: HistoryCardP
                 </div>
                 <div className="text-sm font-medium text-foreground">{h.display}</div>
                 <div className="text-xs text-muted-foreground mt-1">
-                  Admin : {h.totalAdministered} U — Calculée : {Number(h.totalCalculated.toFixed(1))} U
+                  Admin : {h.totalAdministered} U - Calculée : {Number(h.totalCalculated.toFixed(1))} U
                 </div>
               </div>
             ))

@@ -86,13 +86,12 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
                 <Alert className="border-destructive bg-destructive/10">
                   <AlertTriangle className="h-4 w-4 text-destructive" />
                   <AlertDescription className="text-destructive font-semibold">
-                    Dose élevée détectée — vérifiez avec votre endocrinologue.
+                    Dose élevée détectée - vérifiez avec votre endocrinologue.
+                    <div className="text-xs text-destructive/80 mt-1">
+                      💡 <strong>Dose calculée exacte :</strong> {Number(calculation.totalCalculated.toFixed(1))} U (historique enregistre la dose réelle).
+                    </div>
                   </AlertDescription>
                 </Alert>
-
-                <div className="text-xs text-muted-foreground mt-2">
-                  <span>💡 <strong>Dose calculée exacte :</strong> {Number(calculation.totalCalculated.toFixed(1))} U (historique enregistre la dose réelle).</span>
-                </div>
               </div>
             )}
 

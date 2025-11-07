@@ -32,7 +32,7 @@ export const STORAGE_KEY = "glucoflow_history";
 export const STORAGE_META_KEY = "glucoflow_meta";
 export const STORAGE_CUSTOM_TABLE_KEY = "glucoflow_customTable";
 
-export const DISPLAY_MAX = 20;
+export const DISPLAY_MAX = 22;
 export const MAX_CALCULATED = 25;
 export const DEFAULT_CARB_RATIO = 10;
 

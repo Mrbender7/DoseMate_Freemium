@@ -167,7 +167,7 @@ export default function GlucoFlow() {
 
     if (result.totalCalculated > DISPLAY_MAX) {
       result.alertMax = true;
-      result.note = `Dose calculée exacte : ${Number(result.totalCalculated.toFixed(1))} U — dose administrée plafonnée à ${DISPLAY_MAX} U.`;
+      result.note = `Dose calculée exacte : ${Number(result.totalCalculated.toFixed(1))} U - dose administrée plafonnée à ${DISPLAY_MAX} U.`;
     } else {
       result.alertMax = false;
       result.note = null;
@@ -451,7 +451,7 @@ export default function GlucoFlow() {
         <Card className="bg-muted/30">
           <CardContent className="py-4">
             <p className="text-xs text-muted-foreground text-center">
-              ⚠️ Usage personnel uniquement — ceci n'est pas un avis médical. Consultez toujours votre endocrinologue avant d'appliquer des modifications à votre traitement.
+              ⚠️ Usage personnel uniquement - ceci n'est pas un avis médical. Consultez toujours votre endocrinologue avant d'appliquer des modifications à votre traitement.
             </p>
           </CardContent>
         </Card>

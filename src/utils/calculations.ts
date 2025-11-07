@@ -45,7 +45,7 @@ export const momentLabel = (m: MomentKey) => {
 };
 
 export const doseStyleClass = (total: number) => {
-  if (total <= 9) return "dose-safe";
-  if (total <= 20) return "dose-caution";
+  if (total <= 15) return "dose-safe";
+  if (total <= 18) return "dose-caution";
   return "dose-danger";
 };
