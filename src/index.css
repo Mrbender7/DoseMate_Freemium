@@ -121,3 +121,10 @@ All colors MUST be HSL.
 .dose-danger {
   @apply bg-red-500/10 border border-red-500/30;
 }
+
+/* Card hover effects */
+@layer components {
+  .card {
+    @apply shadow-md hover:shadow-xl transition-shadow duration-300;
+  }
+}
