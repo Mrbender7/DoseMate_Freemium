@@ -2,13 +2,14 @@ import { useEffect, useMemo, useState, useRef } from "react";
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Alert, AlertDescription } from "../components/ui/alert";
-import { Calculator, Sun, Moon, ArrowUp, AlertTriangle } from "lucide-react";
+import { Sun, Moon, ArrowUp, AlertTriangle } from "lucide-react";
 import { GlycemiaCard } from "../components/insulin/GlycemiaCard";
 import { MealCard } from "../components/insulin/MealCard";
 import { ExpertSettings } from "../components/insulin/ExpertSettings";
 import { ResultCard } from "../components/insulin/ResultCard";
 import { HistoryCard } from "../components/insulin/HistoryCard";
 import { uid, parseNumberInput, nowISO, getMomentOfDay } from "../utils/calculations";
+import glucoflowLogo from "../assets/glucoflow-logo.png";
 import type { 
   FoodItem, 
   HistoryEntry, 
@@ -356,7 +357,7 @@ export default function GlucoFlow() {
         {/* Header */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Calculator className="h-8 w-8 text-primary" />
+            <img src={glucoflowLogo} alt="GlucoFlow Logo" className="h-10 w-10" />
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-foreground">GlucoFlow</h1>
               <p className="text-sm text-muted-foreground">
