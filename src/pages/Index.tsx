@@ -2,6 +2,15 @@ import { useEffect, useMemo, useState, useRef } from "react";
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Alert, AlertDescription } from "../components/ui/alert";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../components/ui/alert-dialog";
 import { Sun, Moon, ArrowUp, AlertTriangle } from "lucide-react";
 import { GlycemiaCard } from "../components/insulin/GlycemiaCard";
 import { MealCard } from "../components/insulin/MealCard";
@@ -49,6 +58,7 @@ export default function GlucoFlow() {
   const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
   const [resultPulse, setResultPulse] = useState<boolean>(false);
   const [isMealCardOpen, setIsMealCardOpen] = useState<boolean>(false);
+  const [showPrivacyModal, setShowPrivacyModal] = useState<boolean>(false);
 
   const resultRef = useRef<HTMLDivElement>(null);
   const mealRef = useRef<HTMLDivElement>(null);
@@ -473,8 +483,31 @@ export default function GlucoFlow() {
           <p className="text-xs text-muted-foreground/40">
             v1 pro
           </p>
+          <button
+            onClick={() => setShowPrivacyModal(true)}
+            className="text-xs text-muted-foreground/50 hover:text-muted-foreground/80 transition-colors underline"
+          >
+            Confidentialité
+          </button>
         </div>
       </div>
+
+      {/* Privacy Modal */}
+      <AlertDialog open={showPrivacyModal} onOpenChange={setShowPrivacyModal}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confidentialité</AlertDialogTitle>
+            <AlertDialogDescription className="text-base leading-relaxed pt-2">
+              Cette application ne collecte, ne stocke ni ne transmet aucune donnée personnelle ou médicale à des serveurs externes. Toutes les informations sont uniquement enregistrées localement sur votre appareil, garantissant la confidentialité totale de vos données.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setShowPrivacyModal(false)}>
+              Fermer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Scroll to top button */}
       {showScrollTop && (
