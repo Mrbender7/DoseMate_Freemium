@@ -369,7 +369,11 @@ export default function GlucoFlow() {
         {/* Header */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex flex-col items-center gap-3 flex-1 md:flex-initial">
-            <img src={glucoflowLogo} alt="GlucoFlow Logo" className="h-10 w-10" />
+            <img 
+              src={glucoflowLogo} 
+              alt="GlucoFlow Logo" 
+              className="h-10 w-10 animate-pulse hover:animate-none transition-all duration-300" 
+            />
             <div className="text-center">
               <h1 className="text-2xl md:text-3xl font-bold text-foreground">GlucoFlow</h1>
               <p className="text-sm text-muted-foreground">
