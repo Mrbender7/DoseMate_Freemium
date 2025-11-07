@@ -47,6 +47,7 @@ export default function GlucoFlow() {
   const [alertHypo, setAlertHypo] = useState<boolean>(false);
   const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
   const [resultPulse, setResultPulse] = useState<boolean>(false);
+  const [isMealCardOpen, setIsMealCardOpen] = useState<boolean>(false);
 
   const resultRef = useRef<HTMLDivElement>(null);
   const mealRef = useRef<HTMLDivElement>(null);
@@ -310,6 +311,12 @@ export default function GlucoFlow() {
     setGlycemia("");
     setFoodItems([{ id: "f-1", carbsPer100: "", weight: "" }]);
     setForceExtra(false);
+    
+    // Fermer la MealCard si elle contient des données
+    const hasData = foodItems.some(item => item.carbsPer100 || item.weight);
+    if (hasData) {
+      setIsMealCardOpen(false);
+    }
   }
 
   useEffect(() => {
@@ -419,6 +426,8 @@ export default function GlucoFlow() {
           onAddItem={addFoodItem}
           onRemoveItem={removeFoodItem}
           onUpdateItem={updateFoodItem}
+          isOpen={isMealCardOpen}
+          onOpenChange={setIsMealCardOpen}
         />
 
         {modeExpert && (

@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useState } from "react";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -11,12 +11,14 @@ interface MealCardProps {
   onAddItem: () => void;
   onRemoveItem: (id: string) => void;
   onUpdateItem: (id: string, field: keyof FoodItem, value: string) => void;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 export const MealCard = forwardRef<HTMLDivElement, MealCardProps>(
-  ({ foodItems, onAddItem, onRemoveItem, onUpdateItem }, ref) => {
+  ({ foodItems, onAddItem, onRemoveItem, onUpdateItem, isOpen, onOpenChange }, ref) => {
     return (
-      <Collapsible>
+      <Collapsible open={isOpen} onOpenChange={onOpenChange}>
         <CollapsibleTrigger asChild>
           <Card ref={ref} className="cursor-pointer hover:shadow-md transition-all duration-200">
             <CardContent className="pt-6">
