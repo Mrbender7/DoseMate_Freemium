@@ -18,6 +18,7 @@ import { ExpertSettings } from "../components/insulin/ExpertSettings";
 import { ResultCard } from "../components/insulin/ResultCard";
 import { HistoryCard } from "../components/insulin/HistoryCard";
 import { uid, parseNumberInput, nowISO, getMomentOfDay } from "../utils/calculations";
+import { getSecureItem, setSecureItem, removeSecureItem } from "../utils/secureStorage";
 import glucoflowLogo from "../assets/glucoflow-logo.png";
 import type { 
   FoodItem, 
@@ -69,9 +70,9 @@ export default function GlucoFlow() {
 
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = getSecureItem(STORAGE_KEY);
       if (raw) setHistory(JSON.parse(raw));
-      const meta = localStorage.getItem(STORAGE_META_KEY);
+      const meta = getSecureItem(STORAGE_META_KEY);
       if (meta) {
         const parsed = JSON.parse(meta);
         if (parsed.carbRatio) setCarbRatio(parsed.carbRatio);
@@ -80,7 +81,7 @@ export default function GlucoFlow() {
         if (parsed.darkMode !== undefined) setDarkMode(parsed.darkMode);
         if (parsed.modeExpert !== undefined) setModeExpert(parsed.modeExpert);
       }
-      const customTableRaw = localStorage.getItem(STORAGE_CUSTOM_TABLE_KEY);
+      const customTableRaw = getSecureItem(STORAGE_CUSTOM_TABLE_KEY);
       if (customTableRaw) {
         const customTableData = JSON.parse(customTableRaw);
         setCustomInsulinTable(customTableData.table);
@@ -94,14 +95,14 @@ export default function GlucoFlow() {
   useEffect(() => {
     const meta = { carbRatio, sensitivityFactor, targetByMoment, darkMode, modeExpert };
     try {
-      localStorage.setItem(STORAGE_META_KEY, JSON.stringify(meta));
+      setSecureItem(STORAGE_META_KEY, JSON.stringify(meta));
     } catch (e) {}
   }, [carbRatio, sensitivityFactor, targetByMoment, darkMode, modeExpert]);
 
   useEffect(() => {
     try {
       const customTableData = { table: customInsulinTable, useCustom: useCustomTable };
-      localStorage.setItem(STORAGE_CUSTOM_TABLE_KEY, JSON.stringify(customTableData));
+      setSecureItem(STORAGE_CUSTOM_TABLE_KEY, JSON.stringify(customTableData));
     } catch (e) {}
   }, [customInsulinTable, useCustomTable]);
 
@@ -233,7 +234,7 @@ export default function GlucoFlow() {
     setHistory((prev) => {
       const next = [entry, ...prev].slice(0, 25);
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+        setSecureItem(STORAGE_KEY, JSON.stringify(next));
       } catch (e) {}
       showToast("Calcul enregistré");
       return next;
@@ -242,7 +243,7 @@ export default function GlucoFlow() {
 
   function clearHistory() {
     setHistory([]);
-    localStorage.removeItem(STORAGE_KEY);
+    removeSecureItem(STORAGE_KEY);
     showToast("Historique effacé");
   }
 
@@ -250,7 +251,8 @@ export default function GlucoFlow() {
     if (!calculation || calculation.totalCalculated <= 0) return;
     const timeout = setTimeout(() => {
       try {
-        const prev = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]") as HistoryEntry[];
+        const prevRaw = getSecureItem(STORAGE_KEY);
+        const prev = prevRaw ? JSON.parse(prevRaw) as HistoryEntry[] : [];
         const now = new Date();
         if (prev.length > 0) {
           const last = prev[0];
@@ -269,7 +271,7 @@ export default function GlucoFlow() {
               moment: calculation.moment
             };
             const next = [newEntry, ...prev.slice(1)].slice(0, 25);
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+            setSecureItem(STORAGE_KEY, JSON.stringify(next));
             setHistory(next);
             showToast("Calcul mis à jour (auto)");
             setResultPulse(true);
@@ -290,7 +292,7 @@ export default function GlucoFlow() {
           moment: calculation.moment
         };
         const next = [newEntry, ...(prev || [])].slice(0, 25);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+        setSecureItem(STORAGE_KEY, JSON.stringify(next));
         setHistory(next);
         showToast("Calcul enregistré (auto)");
         setResultPulse(true);
