@@ -367,10 +367,10 @@ export default function GlucoFlow() {
     <div className="min-h-screen p-3 md:p-6 transition-colors duration-200">
       <div className="max-w-4xl mx-auto space-y-2 md:space-y-3">
         {/* Header */}
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex flex-col items-center gap-3 flex-1 md:flex-initial">
             <img src={glucoflowLogo} alt="GlucoFlow Logo" className="h-10 w-10" />
-            <div>
+            <div className="text-center">
               <h1 className="text-2xl md:text-3xl font-bold text-foreground">GlucoFlow</h1>
               <p className="text-sm text-muted-foreground">
                 Calculateur insuline lispro
