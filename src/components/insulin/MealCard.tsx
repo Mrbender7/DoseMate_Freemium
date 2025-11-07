@@ -20,7 +20,7 @@ export const MealCard = forwardRef<HTMLDivElement, MealCardProps>(
     return (
       <Collapsible open={isOpen} onOpenChange={onOpenChange}>
         <CollapsibleTrigger asChild>
-          <Card ref={ref} className="cursor-pointer hover:shadow-md transition-all duration-200">
+          <Card ref={ref} className="cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -34,7 +34,7 @@ export const MealCard = forwardRef<HTMLDivElement, MealCardProps>(
         </CollapsibleTrigger>
 
         <CollapsibleContent>
-          <Card className="shadow-lg">
+          <Card className="shadow-lg hover:shadow-2xl transition-all duration-300">
             <CardContent className="space-y-4 pt-6">
               {foodItems.map((it, idx) => (
                 <div key={it.id} className="p-4 rounded-xl bg-muted/30 border border-border/50">

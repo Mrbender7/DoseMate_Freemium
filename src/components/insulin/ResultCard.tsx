@@ -58,7 +58,7 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
     }
 
     return (
-      <Card ref={ref} className="shadow-xl border-2 border-primary/20">
+      <Card ref={ref} className="shadow-xl hover:shadow-2xl border-2 border-primary/20 transition-all duration-300 hover:-translate-y-1">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <span className="text-primary">Résultat du calcul</span>
