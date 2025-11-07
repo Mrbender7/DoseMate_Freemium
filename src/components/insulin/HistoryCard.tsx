@@ -30,7 +30,7 @@ export function HistoryCard({ history, onClearHistory, showToast }: HistoryCardP
   }, [history]);
 
   function exportCSV(): string {
-    let csv = "DateISO,Moment,Glycemia,Base,Meal,TotalAdministered,TotalCalculated,Display\n";
+    let csv = "DateISO,Moment,Glycémie,Base,Repas,DoseTotaleAdmin,DoseTotaleCalculée,Détail\n";
     history.forEach((h) => {
       csv += `${h.dateISO},${h.moment},${h.glycemia ?? "-"},${h.base ?? "-"},${h.meal ?? "-"},${h.totalAdministered},${h.totalCalculated},"${h.display.replace(/"/g, '""')}"\n`;
     });
@@ -49,7 +49,7 @@ export function HistoryCard({ history, onClearHistory, showToast }: HistoryCardP
   }
   
   function downloadXLSX() {
-    const ws_data = [["DateISO", "Moment", "Glycemia", "Base", "Meal", "TotalAdministered", "TotalCalculated", "Display"]];
+    const ws_data = [["DateISO", "Moment", "Glycémie", "Base", "Repas", "DoseTotaleAdmin", "DoseTotaleCalculée", "Détail"]];
     history.forEach((h) => ws_data.push([
       h.dateISO,
       h.moment,
