@@ -499,8 +499,13 @@ export default function GlucoFlow() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Confidentialité</AlertDialogTitle>
-            <AlertDialogDescription className="text-base leading-relaxed pt-2">
-              Cette application ne collecte, ne stocke ni ne transmet aucune donnée personnelle ou médicale à des serveurs externes. Toutes les informations sont uniquement enregistrées localement sur votre appareil, garantissant la confidentialité totale de vos données.
+            <AlertDialogDescription className="text-base leading-relaxed pt-2 space-y-3">
+              <p>
+                Cette application ne collecte, ne stocke ni ne transmet aucune donnée personnelle ou médicale à des serveurs externes. Toutes les informations sont uniquement enregistrées localement sur votre appareil, garantissant la confidentialité totale de vos données.
+              </p>
+              <p>
+                Pour renforcer votre sécurité, toutes vos données personnelles et médicales sont entièrement chiffrées localement sur votre appareil à l'aide d'un algorithme de chiffrement AES-256. Les opérations de chiffrement et de déchiffrement sont effectuées de manière transparente, sans intervention de votre part, assurant ainsi une protection complète de vos informations sensibles.
+              </p>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
