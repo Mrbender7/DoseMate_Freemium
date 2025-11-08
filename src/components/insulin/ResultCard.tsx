@@ -65,22 +65,22 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 md:space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
-            <div className="text-center p-2 md:p-3 bg-muted/30 rounded-lg">
-              <div className="text-xs text-muted-foreground mb-1">Moment</div>
-              <Badge variant="secondary" className="text-base">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-3">
+            <div className="text-center p-2 bg-muted/30 rounded-lg">
+              <div className="text-xs text-muted-foreground mb-0.5">Moment</div>
+              <Badge variant="secondary" className="text-sm">
                 {momentIcon(calculation.moment)} {momentLabel(calculation.moment)}
               </Badge>
             </div>
 
-            <div className="text-center p-2 md:p-3 bg-muted/30 rounded-lg">
-              <div className="text-xs text-muted-foreground mb-1">Dose protocole</div>
-              <div className="font-mono text-2xl font-bold text-foreground">{calculation.base ?? "-"} U</div>
+            <div className="text-center p-2 bg-muted/30 rounded-lg">
+              <div className="text-xs text-muted-foreground mb-0.5">Dose protocole</div>
+              <div className="font-mono text-xl font-bold text-foreground">{calculation.base ?? "-"} U</div>
             </div>
 
-            <div className="text-center p-2 md:p-3 bg-muted/30 rounded-lg">
-              <div className="text-xs text-muted-foreground mb-1">Dose repas</div>
-              <div className="font-mono text-2xl font-bold text-foreground">{calculation.meal ?? "-"} U</div>
+            <div className="text-center p-2 bg-muted/30 rounded-lg">
+              <div className="text-xs text-muted-foreground mb-0.5">Dose repas</div>
+              <div className="font-mono text-xl font-bold text-foreground">{calculation.meal ?? "-"} U</div>
             </div>
           </div>
 
