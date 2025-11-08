@@ -18,6 +18,7 @@ import { ExpertSettings } from "../components/insulin/ExpertSettings";
 import { ResultCard } from "../components/insulin/ResultCard";
 import { HistoryCard } from "../components/insulin/HistoryCard";
 import { uid, parseNumberInput, nowISO, getMomentOfDay } from "../utils/calculations";
+import { playNotificationSound } from "../utils/audioPlayer";
 import { getSecureItem, setSecureItem, removeSecureItem } from "../utils/secureStorage";
 import glucoflowLogo from "../assets/glucoflow-logo.png";
 import type { 
@@ -255,10 +256,8 @@ export default function GlucoFlow() {
         const prev = prevRaw ? JSON.parse(prevRaw) as HistoryEntry[] : [];
         const now = new Date();
         
-        // Play notification sound
-        const audio = new Audio('/notification.mp3');
-        audio.volume = 0.3;
-        audio.play().catch(e => console.log('Audio play prevented:', e));
+        // Play notification sound (5 seconds with 1 second fade-out)
+        playNotificationSound('/notification.mp3', 5, 1, 0.3);
         
         if (prev.length > 0) {
           const last = prev[0];
