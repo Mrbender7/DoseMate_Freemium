@@ -57,8 +57,8 @@ export function GlycemiaCard({
               </span>
             </div>
           </div>
-          <div className="px-3 py-1.5 rounded-lg border border-primary/30 bg-primary/5">
-            <span className="text-sm font-mono font-semibold text-primary">{formatTime(currentTime)}</span>
+          <div className="px-3 py-1.5 rounded-lg border border-primary/40 bg-primary/15">
+            <span className="text-sm font-mono font-bold text-primary">{formatTime(currentTime)}</span>
           </div>
         </div>
       </CardHeader>
