@@ -254,6 +254,12 @@ export default function GlucoFlow() {
         const prevRaw = getSecureItem(STORAGE_KEY);
         const prev = prevRaw ? JSON.parse(prevRaw) as HistoryEntry[] : [];
         const now = new Date();
+        
+        // Play notification sound
+        const audio = new Audio('/notification.mp3');
+        audio.volume = 0.3;
+        audio.play().catch(e => console.log('Audio play prevented:', e));
+        
         if (prev.length > 0) {
           const last = prev[0];
           const lastDate = new Date(last.dateISO);
