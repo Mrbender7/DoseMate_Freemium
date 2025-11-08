@@ -257,7 +257,8 @@ export default function GlucoFlow() {
         const now = new Date();
         
         // Play notification sound (5 seconds with 1 second fade-out)
-        playNotificationSound('/notification.mp3', 5, 1, 0.3);
+        // Add timestamp to bypass cache
+        playNotificationSound(`/notification.mp3?v=${Date.now()}`, 5, 1, 0.3);
         
         if (prev.length > 0) {
           const last = prev[0];
