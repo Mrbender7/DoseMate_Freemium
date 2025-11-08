@@ -107,7 +107,22 @@ All colors MUST be HSL.
 
 /* Medical app specific styles */
 .glass-button-sm {
-  @apply transition-all duration-200 hover:bg-accent/10 rounded-lg border border-border/50;
+  @apply transition-all duration-200 hover:bg-accent/10 rounded-lg border border-border/50 relative overflow-hidden;
+}
+
+.glass-button-sm::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+  transition: left 0.5s;
+}
+
+.glass-button-sm:hover::before {
+  left: 100%;
 }
 
 .dose-safe {
@@ -122,9 +137,3 @@ All colors MUST be HSL.
   @apply bg-red-500/10 border border-red-500/30;
 }
 
-/* Card hover effects */
-@layer components {
-  .card {
-    @apply shadow-md hover:shadow-xl transition-shadow duration-300;
-  }
-}
