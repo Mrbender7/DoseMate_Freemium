@@ -526,7 +526,11 @@ export default function GlucoFlow() {
       {showScrollTop && (
         <button
           onClick={scrollToTop}
-          className="fixed right-4 bottom-14 p-2.5 rounded-full bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/30 transition-all duration-300 z-40 animate-fade-in md:hidden"
+          className={`fixed p-2.5 rounded-full bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/30 transition-all duration-300 z-40 animate-fade-in md:hidden ${
+            calculation.totalAdministered > 0 
+              ? 'left-4 top-1/2 -translate-y-1/2' 
+              : 'right-4 bottom-14'
+          }`}
           aria-label="Remonter en haut"
         >
           <ArrowUp className="h-5 w-5 text-primary" />
