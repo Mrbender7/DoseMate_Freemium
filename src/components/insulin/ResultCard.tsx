@@ -64,7 +64,7 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
             <span className="text-primary">Résultat du calcul</span>
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4 md:space-y-6">
+        <CardContent className="space-y-3 md:space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
             <div className="text-center p-2 md:p-3 bg-muted/30 rounded-lg">
               <div className="text-xs text-muted-foreground mb-1">Moment</div>
@@ -87,10 +87,10 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
           <Separator />
 
           <div className="text-center">
-            <p className="text-sm text-muted-foreground mb-2 md:mb-3">Dose totale à administrer</p>
-            <div className={`p-4 md:p-6 rounded-2xl inline-block ${doseStyleClass(calculation.totalAdministered)} transition-all duration-500 ${glowEffect} relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-700`}>
-              <div className="font-bold text-5xl md:text-6xl text-foreground">{calculation.totalAdministered} U</div>
-              <div className="text-xs opacity-70 mt-2">Arrondi à l'unité la plus proche</div>
+            <p className="text-sm text-muted-foreground mb-2">Dose totale à administrer</p>
+            <div className={`p-3 md:p-4 rounded-xl inline-block ${doseStyleClass(calculation.totalAdministered)} transition-all duration-500 ${glowEffect} relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-700`}>
+              <div className="font-bold text-4xl md:text-5xl text-foreground">{calculation.totalAdministered} U</div>
+              <div className="text-xs opacity-70 mt-1">Arrondi à l'unité la plus proche</div>
             </div>
 
             {calculation.alertMax && (
@@ -112,7 +112,7 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
             )}
           </div>
 
-          <div className="flex justify-center pt-4">
+          <div className="flex justify-center pt-2">
             <Button
               onClick={onScrollToMeal}
               variant="outline"
