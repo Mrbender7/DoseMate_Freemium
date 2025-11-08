@@ -58,7 +58,7 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
     }
 
     return (
-      <Card ref={ref} className="border-2 border-primary/20 transition-all duration-300 relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/5 before:to-transparent before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-1000">
+      <Card ref={ref} className="border-2 border-primary/20 transition-all duration-300">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <span className="text-primary">Résultat du calcul</span>
@@ -88,7 +88,7 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
 
           <div className="text-center">
             <p className="text-sm text-muted-foreground mb-2 md:mb-3">Dose totale à administrer</p>
-            <div className={`p-4 md:p-6 rounded-2xl inline-block ${doseStyleClass(calculation.totalAdministered)} transition-all duration-500 ${glowEffect}`}>
+            <div className={`p-4 md:p-6 rounded-2xl inline-block ${doseStyleClass(calculation.totalAdministered)} transition-all duration-500 ${glowEffect} relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-700`}>
               <div className="font-bold text-5xl md:text-6xl text-foreground">{calculation.totalAdministered} U</div>
               <div className="text-xs opacity-70 mt-2">Arrondi à l'unité la plus proche</div>
             </div>
