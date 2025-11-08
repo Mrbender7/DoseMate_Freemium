@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -28,16 +29,37 @@ export function GlycemiaCard({
   onSave,
   onToggleExtra,
 }: GlycemiaCardProps) {
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000); // Update every minute
+    
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', hour12: false });
+  };
+
   return (
     <Card className="transition-all duration-300">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-primary">
-          <Clock className="h-5 w-5" /> Glycémie
-        </CardTitle>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-          <span className="flex items-center gap-1.5">
-            {momentIcon(moment)} {momentLabel(moment)}
-          </span>
+        <div className="flex items-start justify-between">
+          <div>
+            <CardTitle className="flex items-center gap-2 text-primary">
+              <Clock className="h-5 w-5" /> Glycémie
+            </CardTitle>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+              <span className="flex items-center gap-1.5">
+                {momentIcon(moment)} {momentLabel(moment)}
+              </span>
+            </div>
+          </div>
+          <div className="px-3 py-1.5 rounded-lg border border-primary/30 bg-primary/5">
+            <span className="text-sm font-mono font-semibold text-primary">{formatTime(currentTime)}</span>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
