@@ -79,7 +79,7 @@ export function HistoryCard({ history, onClearHistory, showToast }: HistoryCardP
   }
 
   return (
-    <Card className="shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+    <Card className="transition-all duration-300">
       <CardHeader>
         <CardTitle>Historique & statistiques</CardTitle>
         <div className="flex items-center gap-3 text-xs text-muted-foreground mt-2 flex-wrap">

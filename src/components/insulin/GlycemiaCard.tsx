@@ -29,7 +29,7 @@ export function GlycemiaCard({
   onToggleExtra,
 }: GlycemiaCardProps) {
   return (
-    <Card className="shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+    <Card className="transition-all duration-300">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-primary">
           <Clock className="h-5 w-5" /> Glycémie

@@ -41,7 +41,7 @@ export function ExpertSettings({
   };
 
   return (
-    <Card className="shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+    <Card className="transition-all duration-300">
       <CardHeader>
         <CardTitle className="text-accent">Paramètres avancés (Expert)</CardTitle>
       </CardHeader>
