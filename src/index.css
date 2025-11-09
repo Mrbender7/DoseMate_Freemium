@@ -37,6 +37,8 @@ All colors MUST be HSL.
     --ring: 217.2 91.2% 59.8%;
 
     --radius: 0.75rem;
+    
+    --card-shadow: 0 4px 20px -2px hsl(217.2 91.2% 59.8% / 0.15);
 
     --sidebar-background: 0 0% 98%;
 
@@ -83,6 +85,8 @@ All colors MUST be HSL.
     --border: 217.2 32.6% 27.5%;
     --input: 217.2 32.6% 27.5%;
     --ring: 217.2 91.2% 59.8%;
+    
+    --card-shadow: 0 4px 20px -2px hsl(217.2 91.2% 59.8% / 0.25);
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
