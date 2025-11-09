@@ -49,11 +49,11 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
     let glowEffect = "";
     if (pulse) {
       if (r.totalAdministered <= 15) {
-        glowEffect = "animate-pulse ring-4 ring-green-500/30 shadow-[0_0_30px_rgba(34,197,94,0.4)]";
+        glowEffect = "animate-pulse shadow-[0_0_30px_rgba(34,197,94,0.5)]";
       } else if (r.totalAdministered <= 18) {
-        glowEffect = "animate-pulse ring-4 ring-yellow-500/30 shadow-[0_0_30px_rgba(234,179,8,0.4)]";
+        glowEffect = "animate-pulse shadow-[0_0_30px_rgba(234,179,8,0.5)]";
       } else {
-        glowEffect = "animate-pulse ring-4 ring-red-500/30 shadow-[0_0_30px_rgba(239,68,68,0.4)]";
+        glowEffect = "animate-pulse shadow-[0_0_30px_rgba(239,68,68,0.5)]";
       }
     }
 
