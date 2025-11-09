@@ -71,8 +71,11 @@ export default function GlucoFlow() {
 
   useEffect(() => {
     try {
+      // Charge uniquement l'historique (pas les valeurs de calcul en cours)
       const raw = getSecureItem(STORAGE_KEY);
       if (raw) setHistory(JSON.parse(raw));
+      
+      // Charge les paramètres utilisateur
       const meta = getSecureItem(STORAGE_META_KEY);
       if (meta) {
         const parsed = JSON.parse(meta);
