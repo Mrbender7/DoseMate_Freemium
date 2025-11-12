@@ -66,6 +66,11 @@ export default function GlucoFlow() {
   const [showPrivacyModal, setShowPrivacyModal] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("glycemia");
 
+  // Reset to glycemia tab on mount
+  useEffect(() => {
+    setActiveTab("glycemia");
+  }, []);
+
   const resultRef = useRef<HTMLDivElement>(null);
   const mealRef = useRef<HTMLDivElement>(null);
 
