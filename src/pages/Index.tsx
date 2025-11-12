@@ -436,8 +436,8 @@ export default function GlucoFlow() {
           </Alert>
         )}
 
-        {/* Desktop: Cards layout */}
-        <div className="hidden md:block space-y-2 md:space-y-3">
+        {/* Desktop & Tablet: Cards layout */}
+        <div className="hidden sm:block space-y-2 md:space-y-3">
           <GlycemiaCard
             glycemia={glycemia}
             carbRatio={carbRatio}
@@ -497,7 +497,7 @@ export default function GlucoFlow() {
         </div>
 
         {/* Mobile: Tabs layout */}
-        <div className="md:hidden">
+        <div className="sm:hidden">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className={`grid w-full mb-3 ${modeExpert ? 'grid-cols-5' : 'grid-cols-4'}`}>
               <TabsTrigger value="glycemia" className="text-xs">Glycémie</TabsTrigger>
@@ -643,7 +643,7 @@ export default function GlucoFlow() {
       {showScrollTop && (
         <button
           onClick={scrollToTop}
-          className="fixed right-4 bottom-14 p-2.5 rounded-full bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/30 transition-all duration-300 z-40 animate-fade-in md:hidden"
+          className="fixed right-4 bottom-14 p-2.5 rounded-full bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/30 transition-all duration-300 z-40 animate-fade-in sm:hidden"
           aria-label="Remonter en haut"
         >
           <ArrowUp className="h-5 w-5 text-primary" />
