@@ -10,9 +10,10 @@ interface HistoryCardProps {
   history: HistoryEntry[];
   onClearHistory: () => void;
   showToast: (message: string) => void;
+  compact?: boolean;
 }
 
-export function HistoryCard({ history, onClearHistory, showToast }: HistoryCardProps) {
+export function HistoryCard({ history, onClearHistory, showToast, compact = false }: HistoryCardProps) {
   const sevenDaySummary = useMemo(() => {
     const now = new Date();
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 3600 * 1000);
@@ -85,54 +86,63 @@ export function HistoryCard({ history, onClearHistory, showToast }: HistoryCardP
 
   return (
     <Card className="transition-all duration-300">
-      <CardHeader>
-        <CardTitle>Historique & statistiques</CardTitle>
-        <div className="flex items-center gap-3 text-xs text-muted-foreground mt-2 flex-wrap">
+      <CardHeader className={compact ? "py-2 px-3" : ""}>
+        <CardTitle className={compact ? "text-sm" : ""}>Historique & statistiques</CardTitle>
+        <div className={`flex items-center gap-2 text-muted-foreground mt-1 flex-wrap ${compact ? "text-[10px]" : "text-xs"}`}>
           <span className="flex items-center gap-1">☀️ Matin</span>
           <span className="flex items-center gap-1">🌤️ Midi</span>
           <span className="flex items-center gap-1">🌙 Soir</span>
           <span className="flex items-center gap-1"><span className="text-destructive font-bold">+</span> Supplément</span>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 bg-muted/20 p-4 rounded-lg">
-          <div className="text-sm">
-            <div className="font-semibold text-foreground">Entrées sauvegardées : {history.length}</div>
-            <div className="text-muted-foreground mt-1">
-              Moyenne 7 jours : {sevenDaySummary.count > 0 ? `${sevenDaySummary.avgGly} mg/dL - réelles ${sevenDaySummary.avgDoseReal} U / admin ${sevenDaySummary.avgDoseAdmin} U` : "Aucune donnée"}
+      <CardContent className={compact ? "space-y-2 py-2 px-3" : "space-y-4"}>
+        <div className={`flex flex-col items-start gap-2 bg-muted/20 rounded-lg ${compact ? "p-2" : "p-4 md:flex-row md:items-center md:justify-between md:gap-3"}`}>
+          <div className={compact ? "text-[11px]" : "text-sm"}>
+            <div className="font-semibold text-foreground">Entrées : {history.length}</div>
+            <div className="text-muted-foreground mt-0.5">
+              {sevenDaySummary.count > 0 
+                ? compact 
+                  ? `7j: ${sevenDaySummary.avgGly} mg/dL - ${sevenDaySummary.avgDoseAdmin} U` 
+                  : `Moyenne 7j: ${sevenDaySummary.avgGly} mg/dL - réelles ${sevenDaySummary.avgDoseReal} U / admin ${sevenDaySummary.avgDoseAdmin} U`
+                : "Aucune donnée"}
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            <Button onClick={downloadCSV} variant="outline" size="sm" className="gap-2">
-              <Download className="h-3 w-3" /> CSV
+          <div className={`flex flex-wrap ${compact ? "gap-1" : "gap-2"}`}>
+            <Button onClick={downloadCSV} variant="outline" size={compact ? "sm" : "sm"} className={compact ? "gap-1 h-7 px-2 text-[10px]" : "gap-2"}>
+              <Download className={compact ? "h-2.5 w-2.5" : "h-3 w-3"} /> CSV
             </Button>
-            <Button onClick={downloadXLSX} variant="outline" size="sm" className="gap-2">
-              <Download className="h-3 w-3" /> XLSX
+            <Button onClick={downloadXLSX} variant="outline" size={compact ? "sm" : "sm"} className={compact ? "gap-1 h-7 px-2 text-[10px]" : "gap-2"}>
+              <Download className={compact ? "h-2.5 w-2.5" : "h-3 w-3"} /> XLSX
             </Button>
-            <Button onClick={downloadJSON} variant="outline" size="sm" className="gap-2">
-              <Download className="h-3 w-3" /> JSON
+            <Button onClick={downloadJSON} variant="outline" size={compact ? "sm" : "sm"} className={compact ? "gap-1 h-7 px-2 text-[10px]" : "gap-2"}>
+              <Download className={compact ? "h-2.5 w-2.5" : "h-3 w-3"} /> JSON
             </Button>
-            <Button onClick={onClearHistory} variant="outline" size="sm" className="gap-2">
-              <RotateCcw className="h-3 w-3" /> Vider
+            <Button onClick={onClearHistory} variant="outline" size={compact ? "sm" : "sm"} className={compact ? "gap-1 h-7 px-2 text-[10px]" : "gap-2"}>
+              <RotateCcw className={compact ? "h-2.5 w-2.5" : "h-3 w-3"} /> Vider
             </Button>
           </div>
         </div>
 
-        <div className="space-y-2 max-h-64 overflow-auto">
+        <div className={`space-y-1.5 overflow-auto ${compact ? "max-h-[45vh]" : "max-h-64"}`}>
           {history.length === 0 ? (
-            <div className="text-muted-foreground text-center py-8 text-sm">Aucun calcul enregistré pour le moment</div>
+            <div className={`text-muted-foreground text-center ${compact ? "py-4 text-xs" : "py-8 text-sm"}`}>Aucun calcul enregistré</div>
           ) : (
             history.map((h) => (
-              <div key={h.id} className="p-3 rounded-lg bg-card/50 border border-border/50 hover:bg-card/80 transition-colors">
-                <div className="flex items-center justify-between mb-1">
-                  <div className="text-xs text-muted-foreground">
-                    {momentIcon(h.moment)} {new Date(h.dateISO).toLocaleString("fr-FR")}
+              <div key={h.id} className={`rounded-lg bg-card/50 border border-border/50 hover:bg-card/80 transition-colors ${compact ? "p-2" : "p-3"}`}>
+                <div className="flex items-center justify-between mb-0.5">
+                  <div className={`text-muted-foreground ${compact ? "text-[10px]" : "text-xs"}`}>
+                    {momentIcon(h.moment)} {new Date(h.dateISO).toLocaleString("fr-FR", compact ? { 
+                      day: "2-digit", 
+                      month: "2-digit", 
+                      hour: "2-digit", 
+                      minute: "2-digit" 
+                    } : undefined)}
                   </div>
                 </div>
-                <div className="text-sm font-medium text-foreground">{h.display}</div>
-                <div className="text-xs text-muted-foreground mt-1">
-                  Admin : {h.totalAdministered} U - Calculée : {Number(h.totalCalculated.toFixed(1))} U
+                <div className={`font-medium text-foreground ${compact ? "text-xs" : "text-sm"}`}>{h.display}</div>
+                <div className={`text-muted-foreground mt-0.5 ${compact ? "text-[10px]" : "text-xs"}`}>
+                  Admin: {h.totalAdministered} U - Calc: {Number(h.totalCalculated.toFixed(1))} U
                 </div>
               </div>
             ))
