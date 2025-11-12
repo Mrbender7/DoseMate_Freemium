@@ -16,6 +16,8 @@ import { Sun, Moon, ArrowUp, AlertTriangle } from "lucide-react";
 import { GlycemiaCard } from "../components/insulin/GlycemiaCard";
 import { MealCard } from "../components/insulin/MealCard";
 import { ExpertSettings } from "../components/insulin/ExpertSettings";
+import { ExpertSettingsAdvanced } from "../components/insulin/ExpertSettingsAdvanced";
+import { ExpertSettingsTable } from "../components/insulin/ExpertSettingsTable";
 import { ResultCard } from "../components/insulin/ResultCard";
 import { HistoryCard } from "../components/insulin/HistoryCard";
 import { uid, parseNumberInput, nowISO, getMomentOfDay } from "../utils/calculations";
@@ -535,18 +537,34 @@ export default function GlucoFlow() {
             </TabsContent>
 
             {modeExpert && (
-              <TabsContent value="expert" className="mt-0">
-                <ExpertSettings
-                  sensitivityFactor={sensitivityFactor}
-                  targetByMoment={targetByMoment}
-                  customInsulinTable={customInsulinTable}
-                  useCustomTable={useCustomTable}
-                  onSensitivityChange={setSensitivityFactor}
-                  onTargetChange={(moment, value) => setTargetByMoment((s) => ({ ...s, [moment]: value }))}
-                  onCustomTableChange={setCustomInsulinTable}
-                  onToggleCustomTable={() => setUseCustomTable(!useCustomTable)}
-                  showToast={showToast}
-                />
+              <TabsContent value="expert" className="mt-0 space-y-2">
+                <Tabs defaultValue="advanced" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2 mb-2">
+                    <TabsTrigger value="advanced" className="text-[11px]">Paramètres</TabsTrigger>
+                    <TabsTrigger value="table" className="text-[11px]">Tableau</TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="advanced" className="mt-0">
+                    <ExpertSettingsAdvanced
+                      sensitivityFactor={sensitivityFactor}
+                      targetByMoment={targetByMoment}
+                      onSensitivityChange={setSensitivityFactor}
+                      onTargetChange={(moment, value) => setTargetByMoment((s) => ({ ...s, [moment]: value }))}
+                      compact={true}
+                    />
+                  </TabsContent>
+                  
+                  <TabsContent value="table" className="mt-0">
+                    <ExpertSettingsTable
+                      customInsulinTable={customInsulinTable}
+                      useCustomTable={useCustomTable}
+                      onCustomTableChange={setCustomInsulinTable}
+                      onToggleCustomTable={() => setUseCustomTable(!useCustomTable)}
+                      showToast={showToast}
+                      compact={true}
+                    />
+                  </TabsContent>
+                </Tabs>
               </TabsContent>
             )}
 
@@ -564,6 +582,7 @@ export default function GlucoFlow() {
                 history={history}
                 onClearHistory={clearHistory}
                 showToast={showToast}
+                compact={true}
               />
             </TabsContent>
           </Tabs>
