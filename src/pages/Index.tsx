@@ -391,7 +391,7 @@ export default function GlucoFlow() {
     <div className="min-h-screen safe-area-container transition-colors duration-200">
       <div className="max-w-4xl mx-auto space-y-2 md:space-y-3">
         {/* Header */}
-        <div className="flex items-center justify-between gap-4">
+        <div className="space-y-3">
           <div className="flex items-center gap-3">
             <img src={glucoflowLogo} alt="GlucoFlow Logo" className="h-10 w-10" />
             <div>
@@ -402,31 +402,31 @@ export default function GlucoFlow() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => {
-                setDarkMode((d) => !d);
-                showToast(darkMode ? "Mode clair activé" : "Mode sombre activé");
-              }}
-              className="glass-button-sm p-2 flex items-center gap-2"
-              title="Basculer thème"
-            >
-              {darkMode ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-            </button>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  setDarkMode((d) => !d);
+                  showToast(darkMode ? "Mode clair activé" : "Mode sombre activé");
+                }}
+                className="glass-button-sm p-2 flex items-center gap-2"
+                title="Basculer thème"
+              >
+                {darkMode ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+              </button>
 
-            <button
-              onClick={() => {
-                setModeExpert((m) => !m);
-                showToast(!modeExpert ? "Mode expert activé" : "Mode simplifié activé");
-              }}
-              className="glass-button-sm p-2"
-              title="Basculer mode"
-            >
-              <span className="text-xs md:text-sm">{modeExpert ? "Simple" : "Expert"}</span>
-            </button>
-          </div>
+              <button
+                onClick={() => {
+                  setModeExpert((m) => !m);
+                  showToast(!modeExpert ? "Mode expert activé" : "Mode simplifié activé");
+                }}
+                className="glass-button-sm p-2"
+                title="Basculer mode"
+              >
+                <span className="text-xs md:text-sm">{modeExpert ? "Simple" : "Expert"}</span>
+              </button>
+            </div>
 
-          <div className="ml-auto">
             <SteampunkClock />
           </div>
         </div>
