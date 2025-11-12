@@ -59,11 +59,11 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
 
     return (
       <Card ref={ref} className="border-2 border-primary/20 transition-all duration-300">
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <span className="text-primary">Résultat du calcul</span>
-          </CardTitle>
-        </CardHeader>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-primary">
+          Résultat du calcul
+        </CardTitle>
+      </CardHeader>
         <CardContent className="space-y-3 md:space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-3">
             <div className="text-center p-2 bg-muted/30 rounded-lg">

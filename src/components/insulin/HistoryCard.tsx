@@ -87,7 +87,9 @@ export function HistoryCard({ history, onClearHistory, showToast, compact = fals
   return (
     <Card className="transition-all duration-300">
       <CardHeader className={compact ? "py-2 px-3" : ""}>
-        <CardTitle className={compact ? "text-sm" : ""}>Historique & statistiques</CardTitle>
+        <CardTitle className={`flex items-center gap-2 text-primary ${compact ? "text-sm" : ""}`}>
+          Historique & statistiques
+        </CardTitle>
         <div className={`flex items-center gap-2 text-muted-foreground mt-1 flex-wrap ${compact ? "text-[10px]" : "text-xs"}`}>
           <span className="flex items-center gap-1">☀️ Matin</span>
           <span className="flex items-center gap-1">🌤️ Midi</span>

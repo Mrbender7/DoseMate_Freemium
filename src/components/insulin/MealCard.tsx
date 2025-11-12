@@ -1,5 +1,5 @@
 import { forwardRef, useState } from "react";
-import { Card, CardContent } from "../ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
@@ -17,21 +17,17 @@ interface MealCardProps {
 
 export const MealCard = forwardRef<HTMLDivElement, MealCardProps>(
   ({ foodItems, onAddItem, onRemoveItem, onUpdateItem, isOpen, onOpenChange }, ref) => {
-    return (
-      <Collapsible open={isOpen} onOpenChange={onOpenChange}>
-        <CollapsibleTrigger asChild>
-          <Card ref={ref} className="cursor-pointer transition-all duration-300">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Utensils className="h-5 w-5 text-accent" />
-                  <span className="font-medium">Calcul de repas ({foodItems.length})</span>
-                </div>
-                <div className="text-sm text-muted-foreground">Cliquez pour modifier</div>
-              </div>
-            </CardContent>
-          </Card>
-        </CollapsibleTrigger>
+  return (
+    <Collapsible open={isOpen} onOpenChange={onOpenChange}>
+      <CollapsibleTrigger asChild>
+        <Card ref={ref} className="cursor-pointer transition-all duration-300">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-primary">
+              <Utensils className="h-5 w-5" /> Repas
+            </CardTitle>
+          </CardHeader>
+        </Card>
+      </CollapsibleTrigger>
 
         <CollapsibleContent>
           <Card className="transition-all duration-300">

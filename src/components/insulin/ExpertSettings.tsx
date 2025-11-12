@@ -43,7 +43,7 @@ export function ExpertSettings({
   return (
     <Card className="transition-all duration-300">
       <CardHeader>
-        <CardTitle className="text-accent">Paramètres avancés (Expert)</CardTitle>
+        <CardTitle className="flex items-center gap-2 text-primary">Paramètres avancés (Expert)</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
