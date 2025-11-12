@@ -48,23 +48,28 @@ export function HistoryCard({ history, onClearHistory, showToast }: HistoryCardP
     showToast("CSV téléchargé");
   }
   
-  function downloadXLSX() {
-    const ws_data = [["DateISO", "Moment", "Glycémie", "Base", "Repas", "DoseTotaleAdmin", "DoseTotaleCalculée", "Détail"]];
-    history.forEach((h) => ws_data.push([
-      h.dateISO,
-      h.moment,
-      h.glycemia !== undefined ? String(h.glycemia) : "-",
-      h.base !== undefined ? String(h.base) : "-",
-      h.meal !== undefined ? String(h.meal) : "-",
-      String(h.totalAdministered),
-      String(h.totalCalculated),
-      h.display
-    ]));
-    const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.aoa_to_sheet(ws_data);
-    XLSX.utils.book_append_sheet(wb, ws, "Historique");
-    XLSX.writeFile(wb, "glucoflow_history.xlsx");
-    showToast("XLSX téléchargé");
+  async function downloadXLSX() {
+    try {
+      const ws_data = [["DateISO", "Moment", "Glycémie", "Base", "Repas", "DoseTotaleAdmin", "DoseTotaleCalculée", "Détail"]];
+      history.forEach((h) => ws_data.push([
+        h.dateISO,
+        h.moment,
+        h.glycemia !== undefined ? String(h.glycemia) : "-",
+        h.base !== undefined ? String(h.base) : "-",
+        h.meal !== undefined ? String(h.meal) : "-",
+        String(h.totalAdministered),
+        String(h.totalCalculated),
+        h.display
+      ]));
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet(ws_data);
+      XLSX.utils.book_append_sheet(wb, ws, "Historique");
+      XLSX.writeFile(wb, "glucoflow_history.xlsx");
+      showToast("XLSX téléchargé");
+    } catch (error) {
+      console.error("Erreur téléchargement XLSX:", error);
+      showToast("Erreur lors du téléchargement XLSX");
+    }
   }
   
   function downloadJSON() {

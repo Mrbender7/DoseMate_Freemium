@@ -13,7 +13,13 @@ export const playNotificationSound = async (
 ): Promise<void> => {
   try {
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-    const response = await fetch(audioPath);
+    
+    // Use native fetch for compatibility with Capacitor
+    const response = await fetch(audioPath, {
+      headers: {
+        'Access-Control-Allow-Origin': '*'
+      }
+    });
     const arrayBuffer = await response.arrayBuffer();
     const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
 
