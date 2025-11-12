@@ -54,7 +54,7 @@ export default function GlucoFlow() {
   const [modeExpert, setModeExpert] = useState<boolean>(false);
   const [darkMode, setDarkMode] = useState<boolean>(true);
   const [forceExtra, setForceExtra] = useState<boolean>(false);
-  const [toast, setToast] = useState<{ id: string; text: string } | null>(null);
+  const [toast, setToast] = useState<{ id: string; text: string; fading?: boolean } | null>(null);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [alertHypo, setAlertHypo] = useState<boolean>(false);
   const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
@@ -112,7 +112,10 @@ export default function GlucoFlow() {
 
   function showToast(text: string, ms = 2800) {
     const id = uid("toast");
-    setToast({ id, text });
+    setToast({ id, text, fading: false });
+    setTimeout(() => {
+      setToast((t) => (t && t.id === id ? { ...t, fading: true } : t));
+    }, ms - 300);
     setTimeout(() => {
       setToast((t) => (t && t.id === id ? null : t));
     }, ms);
@@ -538,7 +541,9 @@ export default function GlucoFlow() {
 
       {/* Toast */}
       {toast && (
-        <div className="fixed left-1/2 -translate-x-1/2 bottom-16 bg-primary text-primary-foreground px-4 py-3 rounded-lg shadow-xl z-50 animate-in slide-in-from-bottom-5">
+        <div className={`fixed left-1/2 -translate-x-1/2 bottom-16 bg-primary text-primary-foreground px-4 py-3 rounded-lg shadow-xl z-50 transition-all duration-300 ${
+          toast.fading ? "animate-fade-out" : "animate-fade-in"
+        }`}>
           <div className="text-sm font-medium">{toast.text}</div>
         </div>
       )}
