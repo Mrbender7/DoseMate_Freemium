@@ -2,7 +2,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Clock, Download, RotateCcw } from "lucide-react";
-import { SteampunkClock } from "../ui/clock";
 import { momentIcon, momentLabel } from "../../utils/calculations";
 import type { MomentKey } from "../../types/insulin";
 
@@ -43,7 +42,6 @@ export function GlycemiaCard({
               </span>
             </div>
           </div>
-          <SteampunkClock />
         </div>
       </CardHeader>
       <CardContent className="space-y-3">

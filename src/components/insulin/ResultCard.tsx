@@ -5,7 +5,6 @@ import { Badge } from "../ui/badge";
 import { Alert, AlertDescription } from "../ui/alert";
 import { Separator } from "../ui/separator";
 import { Utensils, AlertTriangle, Calculator } from "lucide-react";
-import { SteampunkClock } from "../ui/clock";
 import { momentIcon, momentLabel, doseStyleClass } from "../../utils/calculations";
 import type { MomentKey } from "../../types/insulin";
 
@@ -61,13 +60,10 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
     return (
       <Card ref={ref} className="border-2 border-primary/20 transition-all duration-300">
       <CardHeader>
-        <div className="flex items-start justify-between">
-          <CardTitle className="flex items-center gap-2 text-primary">
-            <Calculator className="h-5 w-5" />
-            Résultat du calcul
-          </CardTitle>
-          <SteampunkClock />
-        </div>
+        <CardTitle className="flex items-center gap-2 text-primary">
+          <Calculator className="h-5 w-5" />
+          Résultat du calcul
+        </CardTitle>
       </CardHeader>
         <CardContent className="space-y-3 md:space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-3">

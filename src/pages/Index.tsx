@@ -13,6 +13,7 @@ import {
   AlertDialogTitle,
 } from "../components/ui/alert-dialog";
 import { Sun, Moon, ArrowUp, AlertTriangle } from "lucide-react";
+import { SteampunkClock } from "../components/ui/clock";
 import { GlycemiaCard } from "../components/insulin/GlycemiaCard";
 import { MealCard } from "../components/insulin/MealCard";
 import { ExpertSettings } from "../components/insulin/ExpertSettings";
@@ -401,28 +402,32 @@ export default function GlucoFlow() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => {
-                setDarkMode((d) => !d);
-                showToast(darkMode ? "Mode clair activé" : "Mode sombre activé");
-              }}
-              className="glass-button-sm p-2 flex items-center gap-2"
-              title="Basculer thème"
-            >
-              {darkMode ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-            </button>
+          <div className="flex items-center gap-3 md:gap-4">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  setDarkMode((d) => !d);
+                  showToast(darkMode ? "Mode clair activé" : "Mode sombre activé");
+                }}
+                className="glass-button-sm p-2 flex items-center gap-2"
+                title="Basculer thème"
+              >
+                {darkMode ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+              </button>
 
-            <button
-              onClick={() => {
-                setModeExpert((m) => !m);
-                showToast(!modeExpert ? "Mode expert activé" : "Mode simplifié activé");
-              }}
-              className="glass-button-sm p-2"
-              title="Basculer mode"
-            >
-              <span className="text-xs md:text-sm">{modeExpert ? "Simple" : "Expert"}</span>
-            </button>
+              <button
+                onClick={() => {
+                  setModeExpert((m) => !m);
+                  showToast(!modeExpert ? "Mode expert activé" : "Mode simplifié activé");
+                }}
+                className="glass-button-sm p-2"
+                title="Basculer mode"
+              >
+                <span className="text-xs md:text-sm">{modeExpert ? "Simple" : "Expert"}</span>
+              </button>
+            </div>
+            
+            <SteampunkClock />
           </div>
         </div>
 
