@@ -373,7 +373,7 @@ export default function GlucoFlow() {
      ============================ */
 
   return (
-    <div className="min-h-screen p-3 md:p-6 transition-colors duration-200">
+    <div className="min-h-screen safe-area-container transition-colors duration-200">
       <div className="max-w-4xl mx-auto space-y-2 md:space-y-3">
         {/* Header */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
