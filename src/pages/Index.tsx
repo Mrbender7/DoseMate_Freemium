@@ -538,7 +538,7 @@ export default function GlucoFlow() {
 
       {/* Toast */}
       {toast && (
-        <div className="fixed right-4 bottom-16 bg-primary text-primary-foreground px-4 py-3 rounded-lg shadow-xl z-50 animate-in slide-in-from-bottom-5">
+        <div className="fixed left-1/2 -translate-x-1/2 bottom-16 bg-primary text-primary-foreground px-4 py-3 rounded-lg shadow-xl z-50 animate-in slide-in-from-bottom-5">
           <div className="text-sm font-medium">{toast.text}</div>
         </div>
       )}
