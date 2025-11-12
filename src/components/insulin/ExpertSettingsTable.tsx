@@ -144,12 +144,12 @@ export function ExpertSettingsTable({
                     <select
                       value={selectedMoment}
                       onChange={(e) => setSelectedMoment(e.target.value as MomentKey)}
-                      className={`w-full rounded border border-border bg-background text-foreground font-semibold shadow-sm focus:ring-2 focus:ring-primary ${compact ? "p-0.5 text-[10px]" : "p-1 text-sm"}`}
+                      className={`w-full rounded border border-border bg-background text-foreground font-semibold shadow-sm focus:ring-2 focus:ring-primary focus:border-primary z-50 ${compact ? "p-0.5 text-[10px]" : "p-1 text-sm"}`}
                     >
-                      <option value="morning">☀️</option>
-                      <option value="noon">🌤️</option>
-                      <option value="evening">🌙</option>
-                      <option value="extra">+</option>
+                      <option value="morning" className="bg-background text-foreground">☀️ Matin</option>
+                      <option value="noon" className="bg-background text-foreground">🌤️ Midi</option>
+                      <option value="evening" className="bg-background text-foreground">🌙 Soir</option>
+                      <option value="extra" className="bg-background text-foreground">+ Extra</option>
                     </select>
                   </th>
                 </tr>
