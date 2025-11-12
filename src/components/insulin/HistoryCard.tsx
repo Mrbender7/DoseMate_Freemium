@@ -124,7 +124,7 @@ export function HistoryCard({ history, onClearHistory, showToast, compact = fals
           </div>
         </div>
 
-        <div className={`space-y-1.5 overflow-auto ${compact ? "max-h-[45vh]" : "max-h-64"}`}>
+        <div className={`space-y-1.5 overflow-auto hide-scrollbar ${compact ? "max-h-[45vh]" : "max-h-64"}`}>
           {history.length === 0 ? (
             <div className={`text-muted-foreground text-center ${compact ? "py-4 text-xs" : "py-8 text-sm"}`}>Aucun calcul enregistré</div>
           ) : (
