@@ -560,8 +560,8 @@ export default function GlucoFlow() {
       <AlertDialog open={showPrivacyModal} onOpenChange={setShowPrivacyModal}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confidentialité</AlertDialogTitle>
-            <AlertDialogDescription className="text-base leading-relaxed pt-2 space-y-3">
+            <AlertDialogTitle className="text-sm">Confidentialité</AlertDialogTitle>
+            <AlertDialogDescription className="text-xs leading-relaxed pt-2 space-y-2">
               <p>
                 Cette application ne collecte, ne stocke ni ne transmet aucune donnée personnelle ou médicale à des serveurs externes. Toutes les informations sont uniquement enregistrées localement sur votre appareil, garantissant la confidentialité totale de vos données.
               </p>
@@ -571,7 +571,7 @@ export default function GlucoFlow() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction onClick={() => setShowPrivacyModal(false)}>
+            <AlertDialogAction className="text-xs" onClick={() => setShowPrivacyModal(false)}>
               Fermer
             </AlertDialogAction>
           </AlertDialogFooter>
