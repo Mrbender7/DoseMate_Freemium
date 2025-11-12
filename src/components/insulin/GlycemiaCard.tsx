@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Clock, Download, RotateCcw } from "lucide-react";
+import { SteampunkClock } from "../ui/clock";
 import { momentIcon, momentLabel } from "../../utils/calculations";
 import type { MomentKey } from "../../types/insulin";
 
@@ -29,20 +29,6 @@ export function GlycemiaCard({
   onSave,
   onToggleExtra,
 }: GlycemiaCardProps) {
-  const [currentTime, setCurrentTime] = useState(new Date());
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 60000); // Update every minute
-    
-    return () => clearInterval(timer);
-  }, []);
-
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', hour12: false });
-  };
-
   return (
     <Card className="transition-all duration-300">
       <CardHeader>
@@ -57,9 +43,7 @@ export function GlycemiaCard({
               </span>
             </div>
           </div>
-          <div className="px-3 py-1.5 rounded-lg border border-primary/40 bg-primary/15">
-            <span className="text-sm font-mono font-bold text-primary">{formatTime(currentTime)}</span>
-          </div>
+          <SteampunkClock />
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
