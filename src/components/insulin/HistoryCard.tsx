@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
-import { Download, RotateCcw } from "lucide-react";
+import { Download, RotateCcw, BarChart3 } from "lucide-react";
 import { momentIcon } from "../../utils/calculations";
 import type { HistoryEntry } from "../../types/insulin";
 import * as XLSX from "xlsx";
@@ -88,6 +88,7 @@ export function HistoryCard({ history, onClearHistory, showToast, compact = fals
     <Card className="transition-all duration-300">
       <CardHeader className={compact ? "py-2 px-3" : ""}>
         <CardTitle className={`flex items-center gap-2 text-primary ${compact ? "text-sm" : ""}`}>
+          <BarChart3 className={compact ? "h-4 w-4" : "h-5 w-5"} />
           Historique & statistiques
         </CardTitle>
         <div className={`flex items-center gap-2 text-muted-foreground mt-1 flex-wrap ${compact ? "text-[10px]" : "text-xs"}`}>

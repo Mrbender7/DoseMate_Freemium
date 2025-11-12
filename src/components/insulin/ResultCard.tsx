@@ -4,7 +4,7 @@ import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { Alert, AlertDescription } from "../ui/alert";
 import { Separator } from "../ui/separator";
-import { Utensils, AlertTriangle } from "lucide-react";
+import { Utensils, AlertTriangle, Calculator } from "lucide-react";
 import { momentIcon, momentLabel, doseStyleClass } from "../../utils/calculations";
 import type { MomentKey } from "../../types/insulin";
 
@@ -61,6 +61,7 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
       <Card ref={ref} className="border-2 border-primary/20 transition-all duration-300">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-primary">
+          <Calculator className="h-5 w-5" />
           Résultat du calcul
         </CardTitle>
       </CardHeader>
