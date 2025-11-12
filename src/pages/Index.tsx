@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, useRef } from "react";
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Alert, AlertDescription } from "../components/ui/alert";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -61,6 +62,7 @@ export default function GlucoFlow() {
   const [resultPulse, setResultPulse] = useState<boolean>(false);
   const [isMealCardOpen, setIsMealCardOpen] = useState<boolean>(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<string>("glycemia");
 
   const resultRef = useRef<HTMLDivElement>(null);
   const mealRef = useRef<HTMLDivElement>(null);
@@ -288,6 +290,7 @@ export default function GlucoFlow() {
             showToast("Calcul mis à jour (auto)");
             setResultPulse(true);
             setTimeout(() => setResultPulse(false), 2000);
+            setActiveTab("result"); // Switch to result tab on mobile
             resultRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
             return;
           }
@@ -309,6 +312,7 @@ export default function GlucoFlow() {
         showToast("Calcul enregistré (auto)");
         setResultPulse(true);
         setTimeout(() => setResultPulse(false), 2000);
+        setActiveTab("result"); // Switch to result tab on mobile
         resultRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
       } catch (e) {
         console.warn("autosave fail", e);
@@ -425,62 +429,145 @@ export default function GlucoFlow() {
           </Alert>
         )}
 
-        <GlycemiaCard
-          glycemia={glycemia}
-          carbRatio={carbRatio}
-          moment={calculation.moment}
-          forceExtra={forceExtra}
-          onGlycemiaChange={setGlycemia}
-          onCarbRatioChange={setCarbRatio}
-          onReset={resetInputs}
-          onSave={() => {
-            if (document.activeElement instanceof HTMLElement) {
-              document.activeElement.blur();
-            }
-            pushToHistory();
-          }}
-          onToggleExtra={() => {
-            setForceExtra((f) => !f);
-            showToast(forceExtra ? "Mode auto activé" : "Mode supplément forcé");
-          }}
-        />
+        {/* Desktop: Cards layout */}
+        <div className="hidden md:block space-y-2 md:space-y-3">
+          <GlycemiaCard
+            glycemia={glycemia}
+            carbRatio={carbRatio}
+            moment={calculation.moment}
+            forceExtra={forceExtra}
+            onGlycemiaChange={setGlycemia}
+            onCarbRatioChange={setCarbRatio}
+            onReset={resetInputs}
+            onSave={() => {
+              if (document.activeElement instanceof HTMLElement) {
+                document.activeElement.blur();
+              }
+              pushToHistory();
+            }}
+            onToggleExtra={() => {
+              setForceExtra((f) => !f);
+              showToast(forceExtra ? "Mode auto activé" : "Mode supplément forcé");
+            }}
+          />
 
-        <MealCard
-          ref={mealRef}
-          foodItems={foodItems}
-          onAddItem={addFoodItem}
-          onRemoveItem={removeFoodItem}
-          onUpdateItem={updateFoodItem}
-          isOpen={isMealCardOpen}
-          onOpenChange={setIsMealCardOpen}
-        />
+          <MealCard
+            ref={mealRef}
+            foodItems={foodItems}
+            onAddItem={addFoodItem}
+            onRemoveItem={removeFoodItem}
+            onUpdateItem={updateFoodItem}
+            isOpen={isMealCardOpen}
+            onOpenChange={setIsMealCardOpen}
+          />
 
-        {modeExpert && (
-          <ExpertSettings
-            sensitivityFactor={sensitivityFactor}
-            targetByMoment={targetByMoment}
-            customInsulinTable={customInsulinTable}
-            useCustomTable={useCustomTable}
-            onSensitivityChange={setSensitivityFactor}
-            onTargetChange={(moment, value) => setTargetByMoment((s) => ({ ...s, [moment]: value }))}
-            onCustomTableChange={setCustomInsulinTable}
-            onToggleCustomTable={() => setUseCustomTable(!useCustomTable)}
+          {modeExpert && (
+            <ExpertSettings
+              sensitivityFactor={sensitivityFactor}
+              targetByMoment={targetByMoment}
+              customInsulinTable={customInsulinTable}
+              useCustomTable={useCustomTable}
+              onSensitivityChange={setSensitivityFactor}
+              onTargetChange={(moment, value) => setTargetByMoment((s) => ({ ...s, [moment]: value }))}
+              onCustomTableChange={setCustomInsulinTable}
+              onToggleCustomTable={() => setUseCustomTable(!useCustomTable)}
+              showToast={showToast}
+            />
+          )}
+
+          <ResultCard
+            ref={resultRef}
+            calculation={calculation}
+            onScrollToMeal={() => mealRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })}
+            pulse={resultPulse}
+          />
+
+          <HistoryCard
+            history={history}
+            onClearHistory={clearHistory}
             showToast={showToast}
           />
-        )}
+        </div>
 
-        <ResultCard
-          ref={resultRef}
-          calculation={calculation}
-          onScrollToMeal={() => mealRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })}
-          pulse={resultPulse}
-        />
+        {/* Mobile: Tabs layout */}
+        <div className="md:hidden">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className={`grid w-full mb-3 ${modeExpert ? 'grid-cols-5' : 'grid-cols-4'}`}>
+              <TabsTrigger value="glycemia" className="text-xs">Glycémie</TabsTrigger>
+              <TabsTrigger value="meal" className="text-xs">Repas</TabsTrigger>
+              {modeExpert && <TabsTrigger value="expert" className="text-xs">Expert</TabsTrigger>}
+              <TabsTrigger value="result" className="text-xs">Résultat</TabsTrigger>
+              <TabsTrigger value="history" className="text-xs">Historique</TabsTrigger>
+            </TabsList>
 
-        <HistoryCard
-          history={history}
-          onClearHistory={clearHistory}
-          showToast={showToast}
-        />
+            <TabsContent value="glycemia" className="mt-0">
+              <GlycemiaCard
+                glycemia={glycemia}
+                carbRatio={carbRatio}
+                moment={calculation.moment}
+                forceExtra={forceExtra}
+                onGlycemiaChange={setGlycemia}
+                onCarbRatioChange={setCarbRatio}
+                onReset={resetInputs}
+                onSave={() => {
+                  if (document.activeElement instanceof HTMLElement) {
+                    document.activeElement.blur();
+                  }
+                  pushToHistory();
+                }}
+                onToggleExtra={() => {
+                  setForceExtra((f) => !f);
+                  showToast(forceExtra ? "Mode auto activé" : "Mode supplément forcé");
+                }}
+              />
+            </TabsContent>
+
+            <TabsContent value="meal" className="mt-0">
+              <MealCard
+                ref={mealRef}
+                foodItems={foodItems}
+                onAddItem={addFoodItem}
+                onRemoveItem={removeFoodItem}
+                onUpdateItem={updateFoodItem}
+                isOpen={true}
+                onOpenChange={setIsMealCardOpen}
+              />
+            </TabsContent>
+
+            {modeExpert && (
+              <TabsContent value="expert" className="mt-0">
+                <ExpertSettings
+                  sensitivityFactor={sensitivityFactor}
+                  targetByMoment={targetByMoment}
+                  customInsulinTable={customInsulinTable}
+                  useCustomTable={useCustomTable}
+                  onSensitivityChange={setSensitivityFactor}
+                  onTargetChange={(moment, value) => setTargetByMoment((s) => ({ ...s, [moment]: value }))}
+                  onCustomTableChange={setCustomInsulinTable}
+                  onToggleCustomTable={() => setUseCustomTable(!useCustomTable)}
+                  showToast={showToast}
+                />
+              </TabsContent>
+            )}
+
+            <TabsContent value="result" className="mt-0">
+              <ResultCard
+                ref={resultRef}
+                calculation={calculation}
+                onScrollToMeal={() => setActiveTab("meal")}
+                pulse={resultPulse}
+              />
+            </TabsContent>
+
+            <TabsContent value="history" className="mt-0">
+              <HistoryCard
+                history={history}
+                onClearHistory={clearHistory}
+                showToast={showToast}
+              />
+            </TabsContent>
+          </Tabs>
+        </div>
 
         <Card className="bg-muted/30">
           <CardContent className="py-4">
