@@ -436,75 +436,15 @@ export default function GlucoFlow() {
           </Alert>
         )}
 
-        {/* Desktop & Tablet: Cards layout */}
-        <div className="hidden sm:block space-y-2 md:space-y-3">
-          <GlycemiaCard
-            glycemia={glycemia}
-            carbRatio={carbRatio}
-            moment={calculation.moment}
-            forceExtra={forceExtra}
-            onGlycemiaChange={setGlycemia}
-            onCarbRatioChange={setCarbRatio}
-            onReset={resetInputs}
-            onSave={() => {
-              if (document.activeElement instanceof HTMLElement) {
-                document.activeElement.blur();
-              }
-              pushToHistory();
-            }}
-            onToggleExtra={() => {
-              setForceExtra((f) => !f);
-              showToast(forceExtra ? "Mode auto activé" : "Mode supplément forcé");
-            }}
-          />
-
-          <MealCard
-            ref={mealRef}
-            foodItems={foodItems}
-            onAddItem={addFoodItem}
-            onRemoveItem={removeFoodItem}
-            onUpdateItem={updateFoodItem}
-            isOpen={isMealCardOpen}
-            onOpenChange={setIsMealCardOpen}
-          />
-
-          {modeExpert && (
-            <ExpertSettings
-              sensitivityFactor={sensitivityFactor}
-              targetByMoment={targetByMoment}
-              customInsulinTable={customInsulinTable}
-              useCustomTable={useCustomTable}
-              onSensitivityChange={setSensitivityFactor}
-              onTargetChange={(moment, value) => setTargetByMoment((s) => ({ ...s, [moment]: value }))}
-              onCustomTableChange={setCustomInsulinTable}
-              onToggleCustomTable={() => setUseCustomTable(!useCustomTable)}
-              showToast={showToast}
-            />
-          )}
-
-          <ResultCard
-            ref={resultRef}
-            calculation={calculation}
-            onScrollToMeal={() => mealRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })}
-            pulse={resultPulse}
-          />
-
-          <HistoryCard
-            history={history}
-            onClearHistory={clearHistory}
-            showToast={showToast}
-          />
-        </div>
-
-        {/* Mobile: Tabs layout */}
-        <div className="sm:hidden">
+        {/* All devices: Tabs layout */}
+        <div>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className={`grid w-full mb-3 ${modeExpert ? 'grid-cols-5' : 'grid-cols-4'}`}>
-              <TabsTrigger value="glycemia" className="text-xs">Glycémie</TabsTrigger>
-              <TabsTrigger value="meal" className="text-xs">Repas</TabsTrigger>
-              {modeExpert && <TabsTrigger value="expert" className="text-xs">Expert</TabsTrigger>}
-              <TabsTrigger value="result" className="text-xs">Résultat</TabsTrigger>
-              <TabsTrigger value="history" className="text-xs">Historique</TabsTrigger>
+              <TabsTrigger value="glycemia" className="text-xs md:text-sm">Glycémie</TabsTrigger>
+              <TabsTrigger value="meal" className="text-xs md:text-sm">Repas</TabsTrigger>
+              {modeExpert && <TabsTrigger value="expert" className="text-xs md:text-sm">Expert</TabsTrigger>}
+              <TabsTrigger value="result" className="text-xs md:text-sm">Résultat</TabsTrigger>
+              <TabsTrigger value="history" className="text-xs md:text-sm">Historique</TabsTrigger>
             </TabsList>
 
             <TabsContent value="glycemia" className="mt-0">
@@ -587,7 +527,6 @@ export default function GlucoFlow() {
                 history={history}
                 onClearHistory={clearHistory}
                 showToast={showToast}
-                compact={true}
               />
             </TabsContent>
           </Tabs>
@@ -643,7 +582,7 @@ export default function GlucoFlow() {
       {showScrollTop && (
         <button
           onClick={scrollToTop}
-          className="fixed right-4 bottom-14 p-2.5 rounded-full bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/30 transition-all duration-300 z-40 animate-fade-in sm:hidden"
+          className="fixed right-4 bottom-14 p-2.5 rounded-full bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/30 transition-all duration-300 z-40 animate-fade-in"
           aria-label="Remonter en haut"
         >
           <ArrowUp className="h-5 w-5 text-primary" />
