@@ -5,6 +5,9 @@ import { Download, RotateCcw, BarChart3 } from "lucide-react";
 import { momentIcon } from "../../utils/calculations";
 import type { HistoryEntry } from "../../types/insulin";
 import * as XLSX from "xlsx";
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
+import { Capacitor } from '@capacitor/core';
 
 interface HistoryCardProps {
   history: HistoryEntry[];
@@ -38,19 +41,49 @@ export function HistoryCard({ history, onClearHistory, showToast, compact = fals
     return csv;
   }
   
-  function downloadCSV() {
-    const blob = new Blob([exportCSV()], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "glucoflow_history.csv";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    showToast("CSV téléchargé");
+  async function downloadCSV() {
+    const csvContent = exportCSV();
+    const isNative = Capacitor.isNativePlatform();
+    
+    if (isNative) {
+      try {
+        // Sur mobile, on enregistre et partage le fichier
+        const fileName = `glucoflow_history_${new Date().toISOString().split('T')[0]}.csv`;
+        const result = await Filesystem.writeFile({
+          path: fileName,
+          data: csvContent,
+          directory: Directory.Cache,
+          encoding: Encoding.UTF8
+        });
+        
+        await Share.share({
+          title: 'Historique GlucoFlow',
+          text: 'Voici votre historique GlucoFlow',
+          url: result.uri,
+          dialogTitle: 'Partager l\'historique'
+        });
+        
+        showToast("CSV prêt à partager");
+      } catch (error) {
+        console.error("Erreur téléchargement CSV mobile:", error);
+        showToast("Erreur lors du téléchargement CSV");
+      }
+    } else {
+      // Sur web, téléchargement classique
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `glucoflow_history_${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast("CSV téléchargé");
+    }
   }
   
   async function downloadXLSX() {
     try {
+      const isNative = Capacitor.isNativePlatform();
       const ws_data = [["DateISO", "Moment", "Glycémie", "Base", "Repas", "DoseTotaleAdmin", "DoseTotaleCalculée", "Détail"]];
       history.forEach((h) => ws_data.push([
         h.dateISO,
@@ -65,23 +98,75 @@ export function HistoryCard({ history, onClearHistory, showToast, compact = fals
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.aoa_to_sheet(ws_data);
       XLSX.utils.book_append_sheet(wb, ws, "Historique");
-      XLSX.writeFile(wb, "glucoflow_history.xlsx");
-      showToast("XLSX téléchargé");
+      
+      if (isNative) {
+        // Sur mobile, on convertit en base64 et partage
+        const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'base64' });
+        const fileName = `glucoflow_history_${new Date().toISOString().split('T')[0]}.xlsx`;
+        
+        const result = await Filesystem.writeFile({
+          path: fileName,
+          data: wbout,
+          directory: Directory.Cache
+        });
+        
+        await Share.share({
+          title: 'Historique GlucoFlow',
+          text: 'Voici votre historique GlucoFlow',
+          url: result.uri,
+          dialogTitle: 'Partager l\'historique'
+        });
+        
+        showToast("XLSX prêt à partager");
+      } else {
+        // Sur web, téléchargement classique
+        XLSX.writeFile(wb, `glucoflow_history_${new Date().toISOString().split('T')[0]}.xlsx`);
+        showToast("XLSX téléchargé");
+      }
     } catch (error) {
       console.error("Erreur téléchargement XLSX:", error);
       showToast("Erreur lors du téléchargement XLSX");
     }
   }
   
-  function downloadJSON() {
-    const blob = new Blob([JSON.stringify(history, null, 2)], { type: "application/json" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "glucoflow_history.json";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    showToast("JSON téléchargé");
+  async function downloadJSON() {
+    const jsonContent = JSON.stringify(history, null, 2);
+    const isNative = Capacitor.isNativePlatform();
+    
+    if (isNative) {
+      try {
+        // Sur mobile, on enregistre et partage le fichier
+        const fileName = `glucoflow_history_${new Date().toISOString().split('T')[0]}.json`;
+        const result = await Filesystem.writeFile({
+          path: fileName,
+          data: jsonContent,
+          directory: Directory.Cache,
+          encoding: Encoding.UTF8
+        });
+        
+        await Share.share({
+          title: 'Historique GlucoFlow',
+          text: 'Voici votre historique GlucoFlow',
+          url: result.uri,
+          dialogTitle: 'Partager l\'historique'
+        });
+        
+        showToast("JSON prêt à partager");
+      } catch (error) {
+        console.error("Erreur téléchargement JSON mobile:", error);
+        showToast("Erreur lors du téléchargement JSON");
+      }
+    } else {
+      // Sur web, téléchargement classique
+      const blob = new Blob([jsonContent], { type: "application/json" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `glucoflow_history_${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast("JSON téléchargé");
+    }
   }
 
   return (
