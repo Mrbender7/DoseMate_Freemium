@@ -65,27 +65,6 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
         </CardTitle>
       </CardHeader>
         <CardContent className="space-y-2">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-1.5">
-            <div className="text-center p-1.5 bg-muted/30 rounded-lg">
-              <div className="text-xs text-muted-foreground mb-0.5">Moment</div>
-              <Badge variant="secondary" className="text-base">
-                {momentIcon(calculation.moment)} {momentLabel(calculation.moment)}
-              </Badge>
-            </div>
-
-            <div className="text-center p-1.5 bg-muted/30 rounded-lg">
-              <div className="text-xs text-muted-foreground mb-0.5">Dose protocole</div>
-              <div className="font-mono text-2xl font-bold text-foreground">{calculation.base ?? "-"} U</div>
-            </div>
-
-            <div className="text-center p-1.5 bg-muted/30 rounded-lg">
-              <div className="text-xs text-muted-foreground mb-0.5">Dose repas</div>
-              <div className="font-mono text-2xl font-bold text-foreground">{calculation.meal ?? "-"} U</div>
-            </div>
-          </div>
-
-          <Separator />
-
           <div className="text-center">
             <p className="text-sm text-muted-foreground mb-2">Dose totale à administrer</p>
             <div className={`p-3 md:p-4 rounded-xl inline-block ${doseStyleClass(calculation.totalAdministered)} transition-all duration-500 ${glowEffect} relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-700`}>
@@ -110,6 +89,27 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
             {!calculation.alertMax && calculation.note && (
               <div className="text-xs text-muted-foreground mt-2">{calculation.note}</div>
             )}
+          </div>
+
+          <Separator />
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-1.5">
+            <div className="text-center p-1.5 bg-muted/30 rounded-lg">
+              <div className="text-xs text-muted-foreground mb-0.5">Moment</div>
+              <Badge variant="secondary" className="text-base">
+                {momentIcon(calculation.moment)} {momentLabel(calculation.moment)}
+              </Badge>
+            </div>
+
+            <div className="text-center p-1.5 bg-muted/30 rounded-lg">
+              <div className="text-xs text-muted-foreground mb-0.5">Dose protocole</div>
+              <div className="font-mono text-2xl font-bold text-foreground">{calculation.base ?? "-"} U</div>
+            </div>
+
+            <div className="text-center p-1.5 bg-muted/30 rounded-lg">
+              <div className="text-xs text-muted-foreground mb-0.5">Dose repas</div>
+              <div className="font-mono text-2xl font-bold text-foreground">{calculation.meal ?? "-"} U</div>
+            </div>
           </div>
         </CardContent>
       </Card>
