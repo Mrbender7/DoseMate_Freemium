@@ -217,6 +217,16 @@ export default function GlucoFlow() {
     }
   }, [calculation.hypo]);
 
+  // Auto-switch to result tab when glycemia is entered
+  useEffect(() => {
+    if (glycemia && parseNumberInput(glycemia) > 0) {
+      const timer = setTimeout(() => {
+        setActiveTab("result");
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [glycemia]);
+
   const resultDisplay = useMemo(() => {
     const r = calculation;
     const parts: string[] = [];
