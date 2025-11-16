@@ -298,7 +298,6 @@ export default function GlucoFlow() {
             showToast("Calcul mis à jour (auto)");
             setResultPulse(true);
             setTimeout(() => setResultPulse(false), 2000);
-            setActiveTab("result"); // Switch to result tab
             return;
           }
         }
@@ -319,7 +318,6 @@ export default function GlucoFlow() {
         showToast("Calcul enregistré (auto)");
         setResultPulse(true);
         setTimeout(() => setResultPulse(false), 2000);
-        setActiveTab("result"); // Switch to result tab
       } catch (e) {
         console.warn("autosave fail", e);
       }
@@ -430,7 +428,7 @@ export default function GlucoFlow() {
             <TabsList className={`grid w-full mb-3 ${modeExpert ? 'grid-cols-5' : 'grid-cols-4'}`}>
               <TabsTrigger value="glycemia" className="text-xs md:text-sm">Glycémie</TabsTrigger>
               <TabsTrigger value="meal" className="text-xs md:text-sm">Repas</TabsTrigger>
-              {modeExpert && <TabsTrigger value="expert" className="text-xs md:text-sm">Expert</TabsTrigger>}
+              {modeExpert && <TabsTrigger value="expert" className="text-xs md:text-sm">Exp.</TabsTrigger>}
               <TabsTrigger value="result" className="text-xs md:text-sm">Résultat</TabsTrigger>
               <TabsTrigger value="history" className="text-xs md:text-sm">Historique</TabsTrigger>
             </TabsList>
