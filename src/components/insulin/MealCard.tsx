@@ -13,10 +13,11 @@ interface MealCardProps {
   onUpdateItem: (id: string, field: keyof FoodItem, value: string) => void;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  onSaveToResult: () => void;
 }
 
 export const MealCard = forwardRef<HTMLDivElement, MealCardProps>(
-  ({ foodItems, onAddItem, onRemoveItem, onUpdateItem, isOpen, onOpenChange }, ref) => {
+  ({ foodItems, onAddItem, onRemoveItem, onUpdateItem, isOpen, onOpenChange, onSaveToResult }, ref) => {
   return (
     <Collapsible open={isOpen} onOpenChange={onOpenChange}>
       <CollapsibleTrigger asChild>
@@ -72,6 +73,14 @@ export const MealCard = forwardRef<HTMLDivElement, MealCardProps>(
                   </div>
                 </div>
               ))}
+              
+              <Button 
+                onClick={onSaveToResult} 
+                className="w-full mt-4"
+                variant="default"
+              >
+                Enregistrer
+              </Button>
             </CardContent>
           </Card>
         </CollapsibleContent>

@@ -298,8 +298,7 @@ export default function GlucoFlow() {
             showToast("Calcul mis à jour (auto)");
             setResultPulse(true);
             setTimeout(() => setResultPulse(false), 2000);
-            setActiveTab("result"); // Switch to result tab on mobile
-            resultRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+            setActiveTab("result"); // Switch to result tab
             return;
           }
         }
@@ -320,29 +319,13 @@ export default function GlucoFlow() {
         showToast("Calcul enregistré (auto)");
         setResultPulse(true);
         setTimeout(() => setResultPulse(false), 2000);
-        setActiveTab("result"); // Switch to result tab on mobile
-        resultRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+        setActiveTab("result"); // Switch to result tab
       } catch (e) {
         console.warn("autosave fail", e);
       }
     }, 1200);
     return () => clearTimeout(timeout);
   }, [resultDisplay, glycemia, calculation]);
-
-  useEffect(() => {
-    const hasWeight = foodItems.some(item => {
-      const weight = parseNumberInput(item.weight);
-      return weight && weight > 0;
-    });
-    
-    if (!hasWeight) return;
-    
-    const timeout = setTimeout(() => {
-      resultRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-    }, 1200);
-    
-    return () => clearTimeout(timeout);
-  }, [foodItems]);
 
   function resetInputs() {
     setGlycemia("");
@@ -483,6 +466,7 @@ export default function GlucoFlow() {
                 onUpdateItem={updateFoodItem}
                 isOpen={true}
                 onOpenChange={setIsMealCardOpen}
+                onSaveToResult={() => setActiveTab("result")}
               />
             </TabsContent>
 
@@ -522,7 +506,6 @@ export default function GlucoFlow() {
               <ResultCard
                 ref={resultRef}
                 calculation={calculation}
-                onScrollToMeal={() => setActiveTab("meal")}
                 pulse={resultPulse}
               />
             </TabsContent>

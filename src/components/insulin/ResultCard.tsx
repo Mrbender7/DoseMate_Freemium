@@ -22,12 +22,11 @@ interface Calculation {
 
 interface ResultCardProps {
   calculation: Calculation;
-  onScrollToMeal: () => void;
   pulse?: boolean;
 }
 
 export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
-  ({ calculation, onScrollToMeal, pulse = false }, ref) => {
+  ({ calculation, pulse = false }, ref) => {
     const r = calculation;
     const parts: string[] = [];
     if (r.base !== null && r.base !== undefined) parts.push(`${r.base}u base`);
@@ -65,21 +64,21 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
           Résultat du calcul
         </CardTitle>
       </CardHeader>
-        <CardContent className="space-y-3 md:space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-3">
-            <div className="text-center p-2 bg-muted/30 rounded-lg">
+        <CardContent className="space-y-2">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-1.5">
+            <div className="text-center p-1.5 bg-muted/30 rounded-lg">
               <div className="text-xs text-muted-foreground mb-0.5">Moment</div>
               <Badge variant="secondary" className="text-base">
                 {momentIcon(calculation.moment)} {momentLabel(calculation.moment)}
               </Badge>
             </div>
 
-            <div className="text-center p-2 bg-muted/30 rounded-lg">
+            <div className="text-center p-1.5 bg-muted/30 rounded-lg">
               <div className="text-xs text-muted-foreground mb-0.5">Dose protocole</div>
               <div className="font-mono text-2xl font-bold text-foreground">{calculation.base ?? "-"} U</div>
             </div>
 
-            <div className="text-center p-2 bg-muted/30 rounded-lg">
+            <div className="text-center p-1.5 bg-muted/30 rounded-lg">
               <div className="text-xs text-muted-foreground mb-0.5">Dose repas</div>
               <div className="font-mono text-2xl font-bold text-foreground">{calculation.meal ?? "-"} U</div>
             </div>
@@ -111,18 +110,6 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
             {!calculation.alertMax && calculation.note && (
               <div className="text-xs text-muted-foreground mt-2">{calculation.note}</div>
             )}
-          </div>
-
-          <div className="flex justify-center pt-2">
-            <Button
-              onClick={onScrollToMeal}
-              variant="outline"
-              size="sm"
-              className="gap-2"
-            >
-              <Utensils className="h-4 w-4" />
-              Ajout d'aliment(s)
-            </Button>
           </div>
         </CardContent>
       </Card>
