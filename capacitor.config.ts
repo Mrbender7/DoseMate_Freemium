@@ -5,17 +5,16 @@ const config: CapacitorConfig = {
   appName: 'GlucoFlow',
   webDir: 'dist',
   server: {
-    androidScheme: 'https',
-    cleartext: true
+    androidScheme: 'https'
   },
   android: {
-    allowMixedContent: true,
-    permissions: [
-      'INTERNET',
-      'ACCESS_NETWORK_STATE',
-      'READ_EXTERNAL_STORAGE',
-      'WRITE_EXTERNAL_STORAGE'
-    ]
+    buildOptions: {
+      keystorePath: undefined,
+      keystorePassword: undefined,
+      keystoreAlias: undefined,
+      keystoreAliasPassword: undefined,
+      releaseType: 'APK'
+    }
   }
 };
 
