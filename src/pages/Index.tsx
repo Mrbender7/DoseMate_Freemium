@@ -541,7 +541,7 @@ export default function GlucoFlow() {
             All rights reserved © F. Malherbe
           </p>
           <p className="text-xs text-muted-foreground/40">
-            v1 pro
+            v.1.1.
           </p>
           <button
             onClick={() => setShowPrivacyModal(true)}
