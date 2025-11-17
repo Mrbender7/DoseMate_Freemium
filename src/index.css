@@ -112,14 +112,19 @@ All colors MUST be HSL.
   
   /* Safe area support for mobile apps */
   .safe-area-container {
-    padding-top: max(0.75rem, env(safe-area-inset-top));
-    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+    min-height: 100dvh;
+    max-height: 100dvh;
+    overflow-y: auto;
+    padding-top: max(0.5rem, env(safe-area-inset-top));
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
     padding-left: max(0.75rem, env(safe-area-inset-left));
     padding-right: max(0.75rem, env(safe-area-inset-right));
   }
   
   @media (min-width: 768px) {
     .safe-area-container {
+      min-height: 100vh;
+      max-height: none;
       padding-top: max(1.5rem, env(safe-area-inset-top));
       padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
       padding-left: max(1.5rem, env(safe-area-inset-left));

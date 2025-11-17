@@ -379,15 +379,15 @@ export default function GlucoFlow() {
      ============================ */
 
   return (
-    <div className="min-h-screen safe-area-container transition-colors duration-200">
-      <div className="max-w-4xl mx-auto space-y-2 md:space-y-3">
+    <div className="safe-area-container transition-colors duration-200">
+      <div className="max-w-4xl mx-auto space-y-1.5 md:space-y-2">
         {/* Header */}
-        <div className="space-y-3">
-          <div className="flex items-center gap-3">
-            <img src={glucoflowLogo} alt="GlucoFlow Logo" className="h-10 w-10" />
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <img src={glucoflowLogo} alt="GlucoFlow Logo" className="h-8 w-8" />
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-foreground">GlucoFlow</h1>
-              <p className="text-sm text-muted-foreground">
+              <h1 className="text-xl md:text-2xl font-bold text-foreground">GlucoFlow</h1>
+              <p className="text-xs text-muted-foreground">
                 Calculateur insuline lispro
               </p>
             </div>
@@ -435,7 +435,7 @@ export default function GlucoFlow() {
         {/* All devices: Tabs layout */}
         <div>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className={`grid w-full mb-3 ${modeExpert ? 'grid-cols-5' : 'grid-cols-4'}`}>
+            <TabsList className={`grid w-full mb-2 ${modeExpert ? 'grid-cols-5' : 'grid-cols-4'}`}>
               <TabsTrigger value="glycemia" className="text-xs md:text-sm">Glycémie</TabsTrigger>
               <TabsTrigger value="meal" className="text-xs md:text-sm">Repas</TabsTrigger>
               {modeExpert && <TabsTrigger value="expert" className="text-xs md:text-sm">Exp.</TabsTrigger>}
