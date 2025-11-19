@@ -20,10 +20,10 @@ export function ExpertSettingsAdvanced({
 }: ExpertSettingsAdvancedProps) {
   return (
     <Card className="transition-all duration-300">
-      <CardContent className={compact ? "space-y-2 py-3 px-3" : "space-y-4 pt-6"}>
-        <div className={`grid grid-cols-2 ${compact ? "gap-2" : "gap-3 md:grid-cols-3"}`}>
+      <CardContent className="space-y-2 py-2 px-3">
+        <div className="grid grid-cols-2 gap-1.5">
           <div>
-            <label className={`font-medium text-muted-foreground block ${compact ? "text-[11px] mb-1" : "text-sm"}`}>
+            <label className="font-medium text-muted-foreground block text-[11px] mb-0.5">
               Sensibilité (mg/dL/U)
             </label>
             <Input
@@ -34,62 +34,62 @@ export function ExpertSettingsAdvanced({
                 onSensitivityChange(Number.isNaN(v) ? "" : v);
               }}
               placeholder="ex: 50"
-              className={compact ? "h-8 text-xs" : ""}
+              className="h-8 text-xs"
             />
           </div>
 
           <div>
-            <label className={`font-medium text-muted-foreground block ${compact ? "text-[11px] mb-1" : "text-sm"}`}>
+            <label className="font-medium text-muted-foreground block text-[11px] mb-0.5">
               Cible Matin
             </label>
             <Input 
               type="number" 
               value={String(targetByMoment.morning)} 
               onChange={(e) => onTargetChange("morning", Number(e.target.value))} 
-              className={compact ? "h-8 text-xs" : ""}
+              className="h-8 text-xs"
             />
           </div>
 
           <div>
-            <label className={`font-medium text-muted-foreground block ${compact ? "text-[11px] mb-1" : "text-sm"}`}>
+            <label className="font-medium text-muted-foreground block text-[11px] mb-0.5">
               Cible Midi
             </label>
             <Input 
               type="number" 
               value={String(targetByMoment.noon)} 
               onChange={(e) => onTargetChange("noon", Number(e.target.value))} 
-              className={compact ? "h-8 text-xs" : ""}
+              className="h-8 text-xs"
             />
           </div>
 
           <div>
-            <label className={`font-medium text-muted-foreground block ${compact ? "text-[11px] mb-1" : "text-sm"}`}>
+            <label className="font-medium text-muted-foreground block text-[11px] mb-0.5">
               Cible Soir
             </label>
             <Input 
               type="number" 
               value={String(targetByMoment.evening)} 
               onChange={(e) => onTargetChange("evening", Number(e.target.value))} 
-              className={compact ? "h-8 text-xs" : ""}
+              className="h-8 text-xs"
             />
           </div>
 
           <div>
-            <label className={`font-medium text-muted-foreground block ${compact ? "text-[11px] mb-1" : "text-sm"}`}>
+            <label className="font-medium text-muted-foreground block text-[11px] mb-0.5">
               Cible Extra
             </label>
             <Input 
               type="number" 
               value={String(targetByMoment.extra)} 
               onChange={(e) => onTargetChange("extra", Number(e.target.value))} 
-              className={compact ? "h-8 text-xs" : ""}
+              className="h-8 text-xs"
             />
           </div>
         </div>
 
-        <div className={`text-muted-foreground bg-muted/30 rounded-lg ${compact ? "text-[10px] p-2" : "text-xs p-3"}`}>
+        <div className="text-muted-foreground bg-muted/30 rounded-lg text-[10px] p-2">
           <p>⚠️ Paramètres personnels. Consultez votre endocrinologue avant modification.</p>
-          <p className={compact ? "mt-1" : "mt-2"}>La correction ne s'applique qu'en mode Expert.</p>
+          <p className="mt-1">La correction ne s'applique qu'en mode Expert.</p>
         </div>
       </CardContent>
     </Card>

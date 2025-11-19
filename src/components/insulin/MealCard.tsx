@@ -22,9 +22,9 @@ export const MealCard = forwardRef<HTMLDivElement, MealCardProps>(
     <Collapsible open={isOpen} onOpenChange={onOpenChange}>
       <CollapsibleTrigger asChild>
         <Card ref={ref} className="cursor-pointer transition-all duration-300">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-primary">
-              <Utensils className="h-5 w-5" /> Repas
+          <CardHeader className="pb-2 pt-3 px-3">
+            <CardTitle className="flex items-center gap-1.5 text-primary text-base">
+              <Utensils className="h-4 w-4" /> Repas
             </CardTitle>
           </CardHeader>
         </Card>
@@ -32,33 +32,33 @@ export const MealCard = forwardRef<HTMLDivElement, MealCardProps>(
 
         <CollapsibleContent>
           <Card className="transition-all duration-300">
-            <CardContent className="space-y-4 pt-6">
+            <CardContent className="space-y-2 pt-3 px-3 pb-3">
               {foodItems.map((it, idx) => (
-                <div key={it.id} className="p-4 rounded-xl bg-muted/30 border border-border/50">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="text-sm font-semibold text-foreground">Aliment {idx + 1}</div>
-                    <div className="flex gap-2">
+                <div key={it.id} className="p-2.5 rounded-lg bg-muted/30 border border-border/50">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-xs font-semibold text-foreground">Aliment {idx + 1}</div>
+                    <div className="flex gap-1.5">
                       {idx === foodItems.length - 1 && (
-                        <Button onClick={onAddItem} size="sm" variant="outline" className="h-8 w-8 p-0">
-                          <Plus className="h-4 w-4" />
+                        <Button onClick={onAddItem} size="sm" variant="outline" className="h-7 w-7 p-0">
+                          <Plus className="h-3.5 w-3.5" />
                         </Button>
                       )}
                       {foodItems.length > 1 && (
-                        <Button onClick={() => onRemoveItem(it.id)} size="sm" variant="outline" className="h-8 w-8 p-0 hover:bg-destructive/10">
-                          <Minus className="h-4 w-4" />
+                        <Button onClick={() => onRemoveItem(it.id)} size="sm" variant="outline" className="h-7 w-7 p-0 hover:bg-destructive/10">
+                          <Minus className="h-3.5 w-3.5" />
                         </Button>
                       )}
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
                     <div>
                       <label className="text-xs font-medium text-muted-foreground">Glucides / 100g</label>
                       <Input 
                         value={it.carbsPer100} 
                         onChange={(e) => onUpdateItem(it.id, "carbsPer100", e.target.value)} 
                         placeholder="ex : 36" 
-                        className="mt-1" 
+                        className="mt-0.5 h-9 text-sm" 
                       />
                     </div>
                     <div>
@@ -67,7 +67,7 @@ export const MealCard = forwardRef<HTMLDivElement, MealCardProps>(
                         value={it.weight} 
                         onChange={(e) => onUpdateItem(it.id, "weight", e.target.value)} 
                         placeholder="ex : 250" 
-                        className="mt-1" 
+                        className="mt-0.5 h-9 text-sm" 
                       />
                     </div>
                   </div>
@@ -76,7 +76,7 @@ export const MealCard = forwardRef<HTMLDivElement, MealCardProps>(
               
               <Button 
                 onClick={onSaveToResult} 
-                className="w-full mt-4"
+                className="w-full mt-2 h-8 text-xs"
                 variant="default"
               >
                 Enregistrer
