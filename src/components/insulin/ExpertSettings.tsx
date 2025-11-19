@@ -42,13 +42,13 @@ export function ExpertSettings({
 
   return (
     <Card className="transition-all duration-300">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-primary">Paramètres avancés (Expert)</CardTitle>
+      <CardHeader className="pb-2 pt-3 px-3">
+        <CardTitle className="flex items-center gap-1.5 text-primary text-base">Paramètres avancés (Expert)</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <CardContent className="space-y-2 px-3 pb-3">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-1.5">
           <div>
-            <label className="text-sm font-medium text-muted-foreground">Sensibilité (mg/dL / U)</label>
+            <label className="text-xs font-medium text-muted-foreground">Sensibilité (mg/dL / U)</label>
             <Input
               type="number"
               value={String(sensitivityFactor)}
@@ -57,67 +57,68 @@ export function ExpertSettings({
                 onSensitivityChange(Number.isNaN(v) ? "" : v);
               }}
               placeholder="ex : 50"
-              className="mt-1"
+              className="mt-0.5 h-9 text-sm"
             />
           </div>
 
           <div>
-            <label className="text-sm font-medium text-muted-foreground">Cible Matin (mg/dL)</label>
+            <label className="text-xs font-medium text-muted-foreground">Cible Matin (mg/dL)</label>
             <Input 
               type="number" 
               value={String(targetByMoment.morning)} 
               onChange={(e) => onTargetChange("morning", Number(e.target.value))} 
-              className="mt-1" 
+              className="mt-0.5 h-9 text-sm" 
             />
           </div>
 
           <div>
-            <label className="text-sm font-medium text-muted-foreground">Cible Midi (mg/dL)</label>
+            <label className="text-xs font-medium text-muted-foreground">Cible Midi (mg/dL)</label>
             <Input 
               type="number" 
               value={String(targetByMoment.noon)} 
               onChange={(e) => onTargetChange("noon", Number(e.target.value))} 
-              className="mt-1" 
+              className="mt-0.5 h-9 text-sm" 
             />
           </div>
 
           <div>
-            <label className="text-sm font-medium text-muted-foreground">Cible Soir (mg/dL)</label>
+            <label className="text-xs font-medium text-muted-foreground">Cible Soir (mg/dL)</label>
             <Input 
               type="number" 
               value={String(targetByMoment.evening)} 
               onChange={(e) => onTargetChange("evening", Number(e.target.value))} 
-              className="mt-1" 
+              className="mt-0.5 h-9 text-sm" 
             />
           </div>
 
           <div>
-            <label className="text-sm font-medium text-muted-foreground">Cible Extra (mg/dL)</label>
+            <label className="text-xs font-medium text-muted-foreground">Cible Extra (mg/dL)</label>
             <Input 
               type="number" 
               value={String(targetByMoment.extra)} 
               onChange={(e) => onTargetChange("extra", Number(e.target.value))} 
-              className="mt-1" 
+              className="mt-0.5 h-9 text-sm" 
             />
           </div>
         </div>
 
-        <div className="text-xs text-muted-foreground bg-muted/30 p-3 rounded-lg">
+        <div className="text-[10px] text-muted-foreground bg-muted/30 p-2 rounded-lg">
           <p>⚠️ Ces paramètres sont personnels. Consultez votre endocrinologue avant toute modification.</p>
-          <p className="mt-2">La correction glycémique ne s'applique que lorsque le mode Expert est activé.</p>
+          <p className="mt-1">La correction glycémique ne s'applique que lorsque le mode Expert est activé.</p>
         </div>
 
-        <Separator className="my-6" />
+        <Separator className="my-3" />
 
         {/* Custom Protocol Table */}
-        <div className="space-y-4">
-          <div className="flex flex-col gap-3">
-            <h3 className="text-lg font-semibold text-foreground">Tableau de protocole personnalisé</h3>
-            <div className="flex flex-wrap gap-2">
+        <div className="space-y-2">
+          <div className="flex flex-col gap-2">
+            <h3 className="text-base font-semibold text-foreground">Tableau de protocole personnalisé</h3>
+            <div className="flex flex-wrap gap-1.5">
               <Button
                 onClick={onToggleCustomTable}
                 variant={useCustomTable ? "default" : "outline"}
                 size="sm"
+                className="h-7 text-xs"
               >
                 {useCustomTable ? "✓ Tableau personnalisé" : "Tableau par défaut"}
               </Button>
@@ -128,8 +129,9 @@ export function ExpertSettings({
                 }}
                 variant="outline"
                 size="sm"
+                className="h-7 text-xs"
               >
-                <RotateCcw className="h-4 w-4 mr-1" />
+                <RotateCcw className="h-3 w-3 mr-1" />
                 Reset
               </Button>
             </div>
@@ -140,20 +142,20 @@ export function ExpertSettings({
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-muted/50">
-                  <th className="border border-border p-2 text-left text-sm font-semibold">Plage glycémie</th>
-                  <th className="border border-border p-2 text-center text-sm font-semibold">☀️ Matin</th>
-                  <th className="border border-border p-2 text-center text-sm font-semibold">🌤️ Midi</th>
-                  <th className="border border-border p-2 text-center text-sm font-semibold">🌙 Soir</th>
-                  <th className="border border-border p-2 text-center text-sm font-semibold">+ Extra</th>
+                  <th className="border border-border p-1.5 text-left text-xs font-semibold">Plage glycémie</th>
+                  <th className="border border-border p-1.5 text-center text-xs font-semibold">☀️ Matin</th>
+                  <th className="border border-border p-1.5 text-center text-xs font-semibold">🌤️ Midi</th>
+                  <th className="border border-border p-1.5 text-center text-xs font-semibold">🌙 Soir</th>
+                  <th className="border border-border p-1.5 text-center text-xs font-semibold">+ Extra</th>
                 </tr>
               </thead>
               <tbody>
                 {customInsulinTable.map((range, idx) => (
                   <tr key={idx} className="hover:bg-muted/20">
-                    <td className="border border-border p-2 text-sm">
+                    <td className="border border-border p-1.5 text-xs">
                       {range.min === -Infinity ? "≤" : range.min} - {range.max === Infinity ? "∞" : range.max} mg/dL
                     </td>
-                    <td className="border border-border p-2">
+                    <td className="border border-border p-1.5">
                       <Input
                         type="number"
                         min="0"
@@ -163,11 +165,11 @@ export function ExpertSettings({
                           newTable[idx].doses.morning = Number(e.target.value) || 0;
                           onCustomTableChange(newTable);
                         }}
-                        className="w-20 mx-auto text-center"
+                        className="w-16 mx-auto text-center h-8 text-xs"
                         disabled={!useCustomTable}
                       />
                     </td>
-                    <td className="border border-border p-2">
+                    <td className="border border-border p-1.5">
                       <Input
                         type="number"
                         min="0"
@@ -177,11 +179,11 @@ export function ExpertSettings({
                           newTable[idx].doses.noon = Number(e.target.value) || 0;
                           onCustomTableChange(newTable);
                         }}
-                        className="w-20 mx-auto text-center"
+                        className="w-16 mx-auto text-center h-8 text-xs"
                         disabled={!useCustomTable}
                       />
                     </td>
-                    <td className="border border-border p-2">
+                    <td className="border border-border p-1.5">
                       <Input
                         type="number"
                         min="0"
@@ -191,11 +193,11 @@ export function ExpertSettings({
                           newTable[idx].doses.evening = Number(e.target.value) || 0;
                           onCustomTableChange(newTable);
                         }}
-                        className="w-20 mx-auto text-center"
+                        className="w-16 mx-auto text-center h-8 text-xs"
                         disabled={!useCustomTable}
                       />
                     </td>
-                    <td className="border border-border p-2">
+                    <td className="border border-border p-1.5">
                       <Input
                         type="number"
                         min="0"
@@ -205,7 +207,7 @@ export function ExpertSettings({
                           newTable[idx].doses.extra = Number(e.target.value) || 0;
                           onCustomTableChange(newTable);
                         }}
-                        className="w-20 mx-auto text-center"
+                        className="w-16 mx-auto text-center h-8 text-xs"
                         disabled={!useCustomTable}
                       />
                     </td>
@@ -221,12 +223,12 @@ export function ExpertSettings({
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="bg-muted/50">
-                    <th className="border border-border p-2 text-left text-sm font-semibold">Plage glycémie</th>
-                    <th className="border border-border p-2 text-center text-sm font-semibold">
+                    <th className="border border-border p-1.5 text-left text-xs font-semibold">Plage glycémie</th>
+                    <th className="border border-border p-1.5 text-center text-xs font-semibold">
                       <select
                         value={selectedMoment}
                         onChange={(e) => setSelectedMoment(e.target.value as MomentKey)}
-                        className="w-full p-1 rounded border border-border bg-background text-foreground text-sm font-semibold shadow-sm focus:ring-2 focus:ring-primary focus:border-primary z-50"
+                        className="w-full p-1 rounded border border-border bg-background text-foreground text-xs font-semibold shadow-sm focus:ring-2 focus:ring-primary focus:border-primary"
                       >
                         <option value="morning">☀️ Matin</option>
                         <option value="noon">🌤️ Midi</option>
@@ -239,10 +241,10 @@ export function ExpertSettings({
                 <tbody>
                   {customInsulinTable.map((range, idx) => (
                     <tr key={idx} className="hover:bg-muted/20">
-                      <td className="border border-border p-2 text-sm whitespace-nowrap">
+                      <td className="border border-border p-1.5 text-xs whitespace-nowrap">
                         {range.min === -Infinity ? "≤" : range.min} - {range.max === Infinity ? "∞" : range.max} mg/dL
                       </td>
-                      <td className="border border-border p-2">
+                      <td className="border border-border p-1.5">
                         <Input
                           type="number"
                           min="0"
@@ -252,7 +254,7 @@ export function ExpertSettings({
                             newTable[idx].doses[selectedMoment] = Number(e.target.value) || 0;
                             onCustomTableChange(newTable);
                           }}
-                          className="w-full max-w-[100px] mx-auto text-center"
+                          className="w-full max-w-[80px] mx-auto text-center h-8 text-xs"
                           disabled={!useCustomTable}
                         />
                       </td>
@@ -263,7 +265,7 @@ export function ExpertSettings({
             </div>
           </div>
 
-          <div className="text-xs text-muted-foreground bg-muted/30 p-3 rounded-lg">
+          <div className="text-[10px] text-muted-foreground bg-muted/30 p-2 rounded-lg">
             <p>💡 Active le tableau personnalisé pour modifier les doses du protocole insuline lispro.</p>
             <p className="mt-1">Les modifications sont sauvegardées automatiquement dans votre navigateur.</p>
           </div>

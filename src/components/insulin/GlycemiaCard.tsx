@@ -30,24 +30,24 @@ export function GlycemiaCard({
 }: GlycemiaCardProps) {
   return (
     <Card className="transition-all duration-300">
-      <CardHeader>
+      <CardHeader className="pb-2 pt-3 px-3">
         <div className="flex items-start justify-between">
           <div>
-            <CardTitle className="flex items-center gap-2 text-primary">
-              <Clock className="h-5 w-5" /> Glycémie
+            <CardTitle className="flex items-center gap-1.5 text-primary text-base">
+              <Clock className="h-4 w-4" /> Glycémie
             </CardTitle>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-              <span className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
+              <span className="flex items-center gap-1">
                 {momentIcon(moment)} {momentLabel(moment)}
               </span>
             </div>
           </div>
         </div>
       </CardHeader>
-      <CardContent className="space-y-3">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
+      <CardContent className="space-y-2 px-3 pb-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5 md:gap-2">
           <div>
-            <label className="text-sm font-medium text-muted-foreground">
+            <label className="text-xs font-medium text-muted-foreground">
               Glycémie (mg/dL)
             </label>
             <Input
@@ -60,35 +60,35 @@ export function GlycemiaCard({
                 if (value.length === 3) (e.target as HTMLInputElement).blur();
               }}
               placeholder="ex : 145"
-              className="mt-1"
+              className="mt-0.5 h-9 text-sm"
             />
           </div>
           <div>
-            <label className="text-sm font-medium text-muted-foreground">Ratio glucides → U</label>
+            <label className="text-xs font-medium text-muted-foreground">Ratio glucides → U</label>
             <Input
               type="number"
               value={String(carbRatio)}
               onChange={(e) => onCarbRatioChange(Math.max(1, Number(e.target.value) || 10))}
-              className="mt-1"
+              className="mt-0.5 h-9 text-sm"
             />
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <Button onClick={onReset} variant="outline" className="gap-2">
-            <RotateCcw className="h-4 w-4" />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <Button onClick={onReset} variant="outline" className="gap-1.5 h-8 text-xs">
+            <RotateCcw className="h-3.5 w-3.5" />
             Réinitialiser
           </Button>
-          <Button onClick={onSave} className="gap-2">
-            <Download className="h-4 w-4" />
-            Enregistrer (manuel)
+          <Button onClick={onSave} className="gap-1.5 h-8 text-xs">
+            <Download className="h-3.5 w-3.5" />
+            Enregistrer
           </Button>
           <Button 
             onClick={onToggleExtra}
             variant={forceExtra ? "default" : "outline"}
-            className="gap-2"
+            className="gap-1.5 h-8"
           >
-            <span className="text-destructive font-bold">+</span>
+            <span className="text-destructive font-bold text-xs">+</span>
             <span className="text-xs">Suppl.</span>
           </Button>
         </div>

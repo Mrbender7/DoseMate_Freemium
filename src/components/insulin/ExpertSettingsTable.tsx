@@ -27,13 +27,13 @@ export function ExpertSettingsTable({
 
   return (
     <Card className="transition-all duration-300">
-      <CardContent className={compact ? "space-y-2 py-3 px-3" : "space-y-4 pt-6"}>
-        <div className={`flex flex-wrap ${compact ? "gap-1" : "gap-2"}`}>
+      <CardContent className="space-y-2 py-2 px-3">
+        <div className="flex flex-wrap gap-1">
           <Button
             onClick={onToggleCustomTable}
             variant={useCustomTable ? "default" : "outline"}
             size="sm"
-            className={compact ? "h-7 text-[11px] px-2" : ""}
+            className="h-7 text-[11px] px-2"
           >
             {useCustomTable ? "✓ Personnalisé" : "Par défaut"}
           </Button>
@@ -44,9 +44,9 @@ export function ExpertSettingsTable({
             }}
             variant="outline"
             size="sm"
-            className={compact ? "h-7 text-[11px] px-2 gap-1" : ""}
+            className="h-7 text-[11px] px-2 gap-1"
           >
-            <RotateCcw className={compact ? "h-2.5 w-2.5" : "h-4 w-4"} />
+            <RotateCcw className="h-2.5 w-2.5" />
             Reset
           </Button>
         </div>
@@ -56,20 +56,20 @@ export function ExpertSettingsTable({
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-muted/50">
-                <th className="border border-border p-2 text-left text-sm font-semibold">Plage glycémie</th>
-                <th className="border border-border p-2 text-center text-sm font-semibold">☀️ Matin</th>
-                <th className="border border-border p-2 text-center text-sm font-semibold">🌤️ Midi</th>
-                <th className="border border-border p-2 text-center text-sm font-semibold">🌙 Soir</th>
-                <th className="border border-border p-2 text-center text-sm font-semibold">+ Extra</th>
+                <th className="border border-border p-1.5 text-left text-xs font-semibold">Plage glycémie</th>
+                <th className="border border-border p-1.5 text-center text-xs font-semibold">☀️ Matin</th>
+                <th className="border border-border p-1.5 text-center text-xs font-semibold">🌤️ Midi</th>
+                <th className="border border-border p-1.5 text-center text-xs font-semibold">🌙 Soir</th>
+                <th className="border border-border p-1.5 text-center text-xs font-semibold">+ Extra</th>
               </tr>
             </thead>
             <tbody>
               {customInsulinTable.map((range, idx) => (
                 <tr key={idx} className="hover:bg-muted/20">
-                  <td className="border border-border p-2 text-sm">
+                  <td className="border border-border p-1.5 text-xs">
                     {range.min === -Infinity ? "≤" : range.min} - {range.max === Infinity ? "∞" : range.max} mg/dL
                   </td>
-                  <td className="border border-border p-2">
+                  <td className="border border-border p-1.5">
                     <Input
                       type="number"
                       min="0"
@@ -79,11 +79,11 @@ export function ExpertSettingsTable({
                         newTable[idx].doses.morning = Number(e.target.value) || 0;
                         onCustomTableChange(newTable);
                       }}
-                      className="w-20 mx-auto text-center"
+                      className="w-16 mx-auto text-center h-8 text-xs"
                       disabled={!useCustomTable}
                     />
                   </td>
-                  <td className="border border-border p-2">
+                  <td className="border border-border p-1.5">
                     <Input
                       type="number"
                       min="0"
@@ -93,11 +93,11 @@ export function ExpertSettingsTable({
                         newTable[idx].doses.noon = Number(e.target.value) || 0;
                         onCustomTableChange(newTable);
                       }}
-                      className="w-20 mx-auto text-center"
+                      className="w-16 mx-auto text-center h-8 text-xs"
                       disabled={!useCustomTable}
                     />
                   </td>
-                  <td className="border border-border p-2">
+                  <td className="border border-border p-1.5">
                     <Input
                       type="number"
                       min="0"
@@ -107,11 +107,11 @@ export function ExpertSettingsTable({
                         newTable[idx].doses.evening = Number(e.target.value) || 0;
                         onCustomTableChange(newTable);
                       }}
-                      className="w-20 mx-auto text-center"
+                      className="w-16 mx-auto text-center h-8 text-xs"
                       disabled={!useCustomTable}
                     />
                   </td>
-                  <td className="border border-border p-2">
+                  <td className="border border-border p-1.5">
                     <Input
                       type="number"
                       min="0"
@@ -121,7 +121,7 @@ export function ExpertSettingsTable({
                         newTable[idx].doses.extra = Number(e.target.value) || 0;
                         onCustomTableChange(newTable);
                       }}
-                      className="w-20 mx-auto text-center"
+                      className="w-16 mx-auto text-center h-8 text-xs"
                       disabled={!useCustomTable}
                     />
                   </td>
@@ -137,14 +137,14 @@ export function ExpertSettingsTable({
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-muted/50">
-                  <th className={`border border-border text-left font-semibold ${compact ? "p-1.5 text-[11px]" : "p-2 text-sm"}`}>
+                  <th className="border border-border text-left font-semibold p-1.5 text-[11px]">
                     Plage
                   </th>
-                  <th className={`border border-border text-center font-semibold ${compact ? "p-1.5" : "p-2"}`}>
+                  <th className="border border-border text-center font-semibold p-1.5">
                     <select
                       value={selectedMoment}
                       onChange={(e) => setSelectedMoment(e.target.value as MomentKey)}
-                      className={`w-full rounded border border-border bg-background text-foreground font-semibold shadow-sm focus:ring-2 focus:ring-primary focus:border-primary z-50 ${compact ? "p-0.5 text-[10px]" : "p-1 text-sm"}`}
+                      className="w-full rounded border border-border bg-background text-foreground font-semibold shadow-sm focus:ring-2 focus:ring-primary focus:border-primary p-0.5 text-[10px]"
                     >
                       <option value="morning" className="bg-background text-foreground">☀️ Matin</option>
                       <option value="noon" className="bg-background text-foreground">🌤️ Midi</option>
@@ -157,10 +157,10 @@ export function ExpertSettingsTable({
               <tbody>
                 {customInsulinTable.map((range, idx) => (
                   <tr key={idx} className="hover:bg-muted/20">
-                    <td className={`border border-border whitespace-nowrap ${compact ? "p-1.5 text-[10px]" : "p-2 text-sm"}`}>
+                    <td className="border border-border whitespace-nowrap p-1.5 text-[10px]">
                       {range.min === -Infinity ? "≤" : range.min}-{range.max === Infinity ? "∞" : range.max}
                     </td>
-                    <td className={`border border-border ${compact ? "p-1" : "p-2"}`}>
+                    <td className="border border-border p-1">
                       <Input
                         type="number"
                         min="0"
@@ -170,7 +170,7 @@ export function ExpertSettingsTable({
                           newTable[idx].doses[selectedMoment] = Number(e.target.value) || 0;
                           onCustomTableChange(newTable);
                         }}
-                        className={`w-full mx-auto text-center ${compact ? "h-7 text-xs max-w-[70px]" : "max-w-[100px]"}`}
+                        className="w-full mx-auto text-center h-7 text-xs max-w-[70px]"
                         disabled={!useCustomTable}
                       />
                     </td>
@@ -181,9 +181,9 @@ export function ExpertSettingsTable({
           </div>
         </div>
 
-        <div className={`text-muted-foreground bg-muted/30 rounded-lg ${compact ? "text-[10px] p-2" : "text-xs p-3"}`}>
+        <div className="text-[10px] text-muted-foreground bg-muted/30 p-2 rounded-lg">
           <p>💡 Active le tableau personnalisé pour modifier les doses.</p>
-          <p className={compact ? "mt-0.5" : "mt-1"}>Sauvegarde automatique.</p>
+          <p className="mt-1">Modifications sauvegardées automatiquement.</p>
         </div>
       </CardContent>
     </Card>

@@ -58,27 +58,27 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
 
     return (
       <Card ref={ref} className="border-2 border-primary/20 transition-all duration-300">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-primary">
-          <Calculator className="h-5 w-5" />
+      <CardHeader className="pb-2 pt-3 px-3">
+        <CardTitle className="flex items-center gap-1.5 text-primary text-base">
+          <Calculator className="h-4 w-4" />
           Résultat du calcul
         </CardTitle>
       </CardHeader>
-        <CardContent className="space-y-2">
+        <CardContent className="space-y-1.5 px-3 pb-3">
           <div className="text-center">
-            <p className="text-sm text-muted-foreground mb-2">Dose totale à administrer</p>
-            <div className={`p-3 md:p-4 rounded-xl inline-block ${doseStyleClass(calculation.totalAdministered)} transition-all duration-500 ${glowEffect} relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-700`}>
-              <div className="font-bold text-4xl md:text-5xl text-foreground">{calculation.totalAdministered} U</div>
-              <div className="text-xs opacity-70 mt-1">Arrondi à l'unité la plus proche</div>
+            <p className="text-xs text-muted-foreground mb-1.5">Dose totale à administrer</p>
+            <div className={`p-2 md:p-3 rounded-lg inline-block ${doseStyleClass(calculation.totalAdministered)} transition-all duration-500 ${glowEffect} relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-700`}>
+              <div className="font-bold text-3xl md:text-4xl text-foreground">{calculation.totalAdministered} U</div>
+              <div className="text-[10px] opacity-70 mt-0.5">Arrondi à l'unité la plus proche</div>
             </div>
 
             {calculation.alertMax && (
-              <div className="mt-4">
-                <Alert className="border-destructive bg-destructive/10">
-                  <AlertTriangle className="h-4 w-4 text-destructive" />
-                  <AlertDescription className="text-destructive font-semibold">
+              <div className="mt-2">
+                <Alert className="border-destructive bg-destructive/10 py-2">
+                  <AlertTriangle className="h-3.5 w-3.5 text-destructive" />
+                  <AlertDescription className="text-destructive font-semibold text-xs">
                     Dose élevée détectée - vérifiez avec votre endocrinologue.
-                    <div className="text-xs text-destructive/80 mt-1">
+                    <div className="text-[10px] text-destructive/80 mt-0.5">
                       💡 <strong>Dose calculée exacte :</strong> {Number(calculation.totalCalculated.toFixed(1))} U (historique enregistre la dose réelle).
                     </div>
                   </AlertDescription>
@@ -87,7 +87,7 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
             )}
 
             {!calculation.alertMax && calculation.note && (
-              <div className="text-xs text-muted-foreground mt-2">{calculation.note}</div>
+              <div className="text-[10px] text-muted-foreground mt-1.5">{calculation.note}</div>
             )}
           </div>
 
@@ -95,20 +95,20 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-1.5">
             <div className="text-center p-1.5 bg-muted/30 rounded-lg">
-              <div className="text-xs text-muted-foreground mb-0.5">Moment</div>
-              <Badge variant="secondary" className="text-base">
+              <div className="text-[10px] text-muted-foreground mb-0.5">Moment</div>
+              <Badge variant="secondary" className="text-xs h-6">
                 {momentIcon(calculation.moment)} {momentLabel(calculation.moment)}
               </Badge>
             </div>
 
             <div className="text-center p-1.5 bg-muted/30 rounded-lg">
-              <div className="text-xs text-muted-foreground mb-0.5">Dose protocole</div>
-              <div className="font-mono text-2xl font-bold text-foreground">{calculation.base ?? "-"} U</div>
+              <div className="text-[10px] text-muted-foreground mb-0.5">Dose protocole</div>
+              <div className="font-mono text-xl font-bold text-foreground">{calculation.base ?? "-"} U</div>
             </div>
 
             <div className="text-center p-1.5 bg-muted/30 rounded-lg">
-              <div className="text-xs text-muted-foreground mb-0.5">Dose repas</div>
-              <div className="font-mono text-2xl font-bold text-foreground">{calculation.meal ?? "-"} U</div>
+              <div className="text-[10px] text-muted-foreground mb-0.5">Dose repas</div>
+              <div className="font-mono text-xl font-bold text-foreground">{calculation.meal ?? "-"} U</div>
             </div>
           </div>
         </CardContent>
