@@ -532,7 +532,7 @@ export default function GlucoFlow() {
         </div>
 
         <Card className="bg-muted/30">
-          <CardContent className="py-4">
+          <CardContent className="py-2">
             <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
               ⚠️ Usage personnel uniquement - ceci n'est pas un avis médical. Consultez toujours votre endocrinologue avant d'appliquer des modifications à votre traitement.
             </p>
