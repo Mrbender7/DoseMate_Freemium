@@ -77,7 +77,7 @@ export const MealCard = forwardRef<HTMLDivElement, MealCardProps>(
               <Button 
                 onClick={onSaveToResult} 
                 className="w-full mt-2 h-8 text-xs"
-                variant="default"
+                variant="elevated"
               >
                 Enregistrer
               </Button>
