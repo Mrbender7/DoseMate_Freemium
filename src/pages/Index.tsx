@@ -387,7 +387,7 @@ export default function GlucoFlow() {
           <div className="flex items-center gap-2">
             <img src={glucoflowLogo} alt="GlucoFlow Logo" className="h-8 w-8" />
             <div>
-              <h1 className="text-xl md:text-2xl font-bold text-foreground">GlucoFlow</h1>
+              <h1 className="text-xl md:text-2xl font-bold text-foreground font-medhurst">GlucoFlow</h1>
               <p className="text-xs text-muted-foreground">
                 Calculateur insuline lispro
               </p>

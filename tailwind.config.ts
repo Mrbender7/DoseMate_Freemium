@@ -15,7 +15,6 @@ export default {
     extend: {
       fontFamily: {
         medhurst: ['Medhurst', 'sans-serif'],
-        sans: ['Medhurst', 'system-ui', '-apple-system', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",

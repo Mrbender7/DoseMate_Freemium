@@ -354,8 +354,6 @@ All colors MUST be HSL.
     font-feature-settings: "tnum";
     padding: 0;
     margin: 0;
-    letter-spacing: -0.01em;
-    line-height: 1.4;
   }
   
   /* Safe area support for mobile apps */
