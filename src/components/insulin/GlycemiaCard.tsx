@@ -79,7 +79,7 @@ export function GlycemiaCard({
             <RotateCcw className="h-3.5 w-3.5" />
             Réinitialiser
           </Button>
-          <Button onClick={onSave} className="gap-1.5 h-8 text-xs">
+          <Button onClick={onSave} variant="elevated" className="gap-1.5 h-8 text-xs">
             <Download className="h-3.5 w-3.5" />
             Enregistrer
           </Button>
