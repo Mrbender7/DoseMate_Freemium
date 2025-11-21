@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
-import { Download, RotateCcw, BarChart3 } from "lucide-react";
+import { Download, RotateCcw, BarChart3, X } from "lucide-react";
 import { momentIcon } from "../../utils/calculations";
 import type { HistoryEntry } from "../../types/insulin";
 import * as XLSX from "xlsx";
@@ -12,11 +12,12 @@ import { Capacitor } from '@capacitor/core';
 interface HistoryCardProps {
   history: HistoryEntry[];
   onClearHistory: () => void;
+  onDeleteEntry: (id: string) => void;
   showToast: (message: string) => void;
   compact?: boolean;
 }
 
-export function HistoryCard({ history, onClearHistory, showToast, compact = false }: HistoryCardProps) {
+export function HistoryCard({ history, onClearHistory, onDeleteEntry, showToast, compact = false }: HistoryCardProps) {
   const sevenDaySummary = useMemo(() => {
     const now = new Date();
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 3600 * 1000);
@@ -215,8 +216,15 @@ export function HistoryCard({ history, onClearHistory, showToast, compact = fals
             <div className="text-muted-foreground text-center py-3 text-xs">Aucun calcul enregistré</div>
           ) : (
             history.map((h) => (
-              <div key={h.id} className="rounded-lg bg-card/50 border border-border/50 hover:bg-card/80 transition-colors p-2">
-                <div className="flex items-center justify-between mb-0.5">
+              <div key={h.id} className="rounded-lg bg-card/50 border border-border/50 hover:bg-card/80 transition-colors p-2 relative">
+                <button
+                  onClick={() => onDeleteEntry(h.id)}
+                  className="absolute top-1 right-1 p-0.5 rounded hover:bg-destructive/20 text-muted-foreground hover:text-destructive transition-colors"
+                  aria-label="Supprimer cette entrée"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+                <div className="flex items-center justify-between mb-0.5 pr-5">
                   <div className="text-muted-foreground text-[10px]">
                     {momentIcon(h.moment)} {new Date(h.dateISO).toLocaleString("fr-FR", { 
                       day: "2-digit", 
