@@ -13,6 +13,7 @@ import {
   AlertDialogTitle,
 } from "../components/ui/alert-dialog";
 import { Sun, Moon, ArrowUp, AlertTriangle } from "lucide-react";
+import { PaletteSelector } from "../components/PaletteSelector";
 import { SteampunkClock } from "../components/ui/clock";
 import { GlycemiaCard } from "../components/insulin/GlycemiaCard";
 import { MealCard } from "../components/insulin/MealCard";
@@ -395,6 +396,8 @@ export default function GlucoFlow() {
 
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
+              <PaletteSelector />
+              
               <button
                 onClick={() => {
                   setDarkMode((d) => !d);
