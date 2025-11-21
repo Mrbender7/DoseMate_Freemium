@@ -275,6 +275,17 @@ export default function GlucoFlow() {
     showToast("Historique effacé");
   }
 
+  function deleteHistoryEntry(id: string) {
+    setHistory((prev) => {
+      const next = prev.filter((entry) => entry.id !== id);
+      try {
+        setSecureItem(STORAGE_KEY, JSON.stringify(next));
+      } catch (e) {}
+      showToast("Entrée supprimée");
+      return next;
+    });
+  }
+
   useEffect(() => {
     if (!calculation || calculation.totalCalculated <= 0) return;
     const timeout = setTimeout(() => {
@@ -525,6 +536,7 @@ export default function GlucoFlow() {
               <HistoryCard
                 history={history}
                 onClearHistory={clearHistory}
+                onDeleteEntry={deleteHistoryEntry}
                 showToast={showToast}
               />
             </TabsContent>
