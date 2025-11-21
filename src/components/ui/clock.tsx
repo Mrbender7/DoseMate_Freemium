@@ -45,7 +45,7 @@ export function SteampunkClock() {
             {minutes}
           </span>
         </div>
-        <div className="text-[9px] font-medhurst text-emerald-400/70 mt-0.5 drop-shadow-[0_0_4px_rgba(16,185,129,0.5)]">
+        <div className="text-[9px] text-emerald-400/70 mt-0.5 drop-shadow-[0_0_4px_rgba(16,185,129,0.5)]">
           {day}/{month}/{year}
         </div>
       </div>
