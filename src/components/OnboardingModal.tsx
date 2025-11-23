@@ -23,18 +23,18 @@ export function OnboardingModal({ open, onAccept }: OnboardingModalProps) {
 
   return (
     <AlertDialog open={open}>
-      <AlertDialogContent className="backdrop-blur-md max-w-3xl max-h-[90vh] overflow-y-auto">
+      <AlertDialogContent className="backdrop-blur-md max-w-2xl max-h-[90vh] overflow-y-auto">
         <AlertDialogHeader>
-          <div className="flex items-center justify-between mb-6">
-            <AlertDialogTitle className="text-xl font-bold">
+          <div className="flex items-center justify-between mb-3">
+            <AlertDialogTitle className="text-base font-bold">
               {t.onboarding.title}
             </AlertDialogTitle>
-            <div className="flex gap-2">
+            <div className="flex gap-1.5">
               <Button
                 variant={language === "fr" ? "default" : "outline"}
                 size="sm"
                 onClick={() => handleLanguageChange("fr")}
-                className="h-8 px-3 text-xs"
+                className="h-7 px-2.5 text-[10px]"
               >
                 🇫🇷 FR
               </Button>
@@ -42,13 +42,13 @@ export function OnboardingModal({ open, onAccept }: OnboardingModalProps) {
                 variant={language === "en" ? "default" : "outline"}
                 size="sm"
                 onClick={() => handleLanguageChange("en")}
-                className="h-8 px-3 text-xs"
+                className="h-7 px-2.5 text-[10px]"
               >
                 🇬🇧 EN
               </Button>
             </div>
           </div>
-          <AlertDialogDescription className="text-sm leading-relaxed space-y-4">
+          <AlertDialogDescription className="text-xs leading-tight space-y-2">
             {t.onboarding.disclaimer.split('\n\n').map((paragraph, index) => {
               const isTitle = paragraph.startsWith('LEGAL DISCLAIMER') || 
                              paragraph.startsWith('AVERTISSEMENT LÉGAL');
@@ -56,7 +56,7 @@ export function OnboardingModal({ open, onAccept }: OnboardingModalProps) {
               
               if (isTitle) {
                 return (
-                  <div key={index} className="font-semibold text-base text-center text-foreground pb-2 border-b">
+                  <div key={index} className="font-semibold text-[11px] text-center text-foreground pb-1.5 border-b">
                     {paragraph}
                   </div>
                 );
@@ -65,23 +65,23 @@ export function OnboardingModal({ open, onAccept }: OnboardingModalProps) {
               if (isNumberedSection) {
                 const [title, ...content] = paragraph.split('\n');
                 return (
-                  <div key={index} className="bg-muted/30 p-4 rounded-lg border border-border/50">
-                    <h3 className="font-semibold text-foreground mb-2">{title}</h3>
-                    <p className="text-muted-foreground">{content.join(' ')}</p>
+                  <div key={index} className="bg-muted/30 p-2.5 rounded border border-border/50">
+                    <h3 className="font-semibold text-foreground mb-1 text-[11px]">{title}</h3>
+                    <p className="text-muted-foreground text-[10px] leading-snug">{content.join(' ')}</p>
                   </div>
                 );
               }
               
               return (
-                <p key={index} className="text-muted-foreground">
+                <p key={index} className="text-muted-foreground text-[10px]">
                   {paragraph}
                 </p>
               );
             })}
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter className="mt-6">
-          <Button onClick={onAccept} className="w-full h-11 text-base font-medium">
+        <AlertDialogFooter className="mt-3">
+          <Button onClick={onAccept} className="w-full h-9 text-sm font-medium">
             {t.onboarding.accept}
           </Button>
         </AlertDialogFooter>
