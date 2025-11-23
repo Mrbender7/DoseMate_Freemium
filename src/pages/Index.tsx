@@ -30,7 +30,7 @@ import { playNotificationSound } from "../utils/audioPlayer";
 import { getSecureItem, setSecureItem, removeSecureItem } from "../utils/secureStorage";
 import { useLanguage } from "../contexts/LanguageContext";
 import { useOnboarding } from "../hooks/use-onboarding";
-import glucoflowLogo from "../assets/glucoflow-logo.png";
+import dosemateLogo from "../assets/dosemate-logo.png";
 import type { 
   FoodItem, 
   HistoryEntry, 
@@ -47,7 +47,7 @@ import {
   DEFAULT_INSULIN_TABLE,
 } from "../types/insulin";
 
-export default function GlucoFlow() {
+export default function DoseMate() {
   const { t, language } = useLanguage();
   const { hasAccepted, acceptOnboarding } = useOnboarding();
   
@@ -415,7 +415,7 @@ export default function GlucoFlow() {
           {/* Header */}
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <img src={glucoflowLogo} alt="GlucoFlow Logo" className="h-8 w-8" />
+              <img src={dosemateLogo} alt="DoseMate Logo" className="h-8 w-8" />
               <div>
                 <h1 className="text-xl md:text-2xl font-bold text-foreground font-medhurst">{t.header.title}</h1>
                 <p className="text-xs text-muted-foreground">

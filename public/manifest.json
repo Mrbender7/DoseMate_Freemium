@@ -1,6 +1,6 @@
 {
-  "name": "GlucoFlow - Calculateur Insuline",
-  "short_name": "GlucoFlow",
+  "name": "DoseMate - Calculateur Insuline",
+  "short_name": "DoseMate",
   "description": "Calculateur d'insuline pour la gestion du diabète",
   "start_url": "/",
   "display": "standalone",
