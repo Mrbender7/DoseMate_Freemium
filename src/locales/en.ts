@@ -1,9 +1,9 @@
 export const en = {
   // Onboarding
   onboarding: {
-    title: "Important Disclaimer",
-    disclaimer: "GlucoFlow is strictly a mathematical calculation aid tool. This application is not a medical device and does not replace the advice of a doctor or healthcare professional. Insulin/carb ratios and glycemic targets are configured under your sole and entire responsibility. By clicking 'I Accept', you acknowledge using this tool at your own risk and release the developers from any liability regarding therapeutic decisions.",
-    accept: "I read and accept",
+    title: "Legal Disclaimer",
+    disclaimer: "LEGAL DISCLAIMER AND TERMS OF USE (Version 1.0.0)\n\n1. Nature of the Application\nGlucoFlow is exclusively a mathematical calculation aid tool based on formulas and ratios supplied by the user.\n\n2. Medical Limitation\nThis application is not a medical device and does not in any way replace the advice, clinical judgment, or supervision of a doctor, endocrinologist, or any qualified healthcare professional. The application is provided \"as is,\" without warranty of any kind, including warranty of accuracy or performance.\n\n3. User Responsibility\nInsulin/carb ratios, sensitivity factors, and glycemic targets are personal data configured under your sole and entire responsibility.\nBy clicking 'I Accept', you explicitly acknowledge that the use of GlucoFlow is at your own risk and you formally release the developers from any liability concerning the results, calculation errors, or therapeutic decisions made following the use of the application.",
+    accept: "I Accept",
   },
   
   // Header
