@@ -1,4 +1,4 @@
-import { forwardRef, useEffect } from "react";
+import { forwardRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
@@ -6,8 +6,6 @@ import { Alert, AlertDescription } from "../ui/alert";
 import { Separator } from "../ui/separator";
 import { Utensils, AlertTriangle, Calculator } from "lucide-react";
 import { momentIcon, momentLabel, doseStyleClass } from "../../utils/calculations";
-import { playNotificationSound } from "../../utils/audioPlayer";
-import { useSpecialTheme } from "../../hooks/use-special-theme";
 import type { MomentKey } from "../../types/insulin";
 
 interface Calculation {
@@ -29,20 +27,8 @@ interface ResultCardProps {
 
 export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
   ({ calculation, pulse = false }, ref) => {
-    const { theme: specialTheme } = useSpecialTheme();
     const r = calculation;
     const parts: string[] = [];
-    
-    // Jouer le son approprié selon le thème quand pulse devient true
-    useEffect(() => {
-      if (pulse && r.totalAdministered > 0) {
-        if (specialTheme === 'christmas') {
-          playNotificationSound(`/christmas-bells.mp3?v=${Date.now()}`, 3, 0.5, 0.4);
-        } else if (specialTheme === 'halloween') {
-          playNotificationSound(`/cat-hiss.mp3?v=${Date.now()}`, 2, 0.3, 0.3);
-        }
-      }
-    }, [pulse, specialTheme, r.totalAdministered]);
     if (r.base !== null && r.base !== undefined) parts.push(`${r.base}u base`);
     if (r.correction !== null && r.correction !== undefined) parts.push(`${r.correction}u corr`);
     if (r.meal !== null && r.meal !== undefined) parts.push(`${r.meal}u repas`);

@@ -367,16 +367,6 @@ All colors MUST be HSL.
     margin: 0;
   }
   
-  /* Thème Noël - Police festive */
-  [data-special-theme="christmas"] body {
-    font-family: 'Mountains of Christmas', cursive, sans-serif;
-  }
-  
-  /* Thème Halloween - Police horrifique */
-  [data-special-theme="halloween"] body {
-    font-family: Nosifer, cursive, sans-serif;
-  }
-  
   /* Safe area support for mobile apps */
   .safe-area-container {
     min-height: 100dvh;
