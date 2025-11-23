@@ -5,6 +5,7 @@ import { Input } from "../ui/input";
 import { RotateCcw, Lock, Unlock } from "lucide-react";
 import type { MomentKey, DoseRange } from "../../types/insulin";
 import { DEFAULT_INSULIN_TABLE } from "../../types/insulin";
+import { hapticFeedback } from "../../utils/hapticFeedback";
 
 interface ExpertSettingsTableProps {
   customInsulinTable: DoseRange[];
@@ -31,7 +32,10 @@ export function ExpertSettingsTable({
       <CardContent className="space-y-2 py-2 px-3">
         <div className="flex flex-wrap gap-1">
           <Button
-            onClick={() => setIsLocked(!isLocked)}
+            onClick={() => {
+              hapticFeedback();
+              setIsLocked(!isLocked);
+            }}
             variant={isLocked ? "outline" : "default"}
             size="sm"
             className="h-7 text-[11px] px-2 gap-1"
