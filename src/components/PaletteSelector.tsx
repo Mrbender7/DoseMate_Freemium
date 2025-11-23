@@ -17,7 +17,7 @@ export function PaletteSelector() {
           className="glass-button-sm p-2 flex items-center gap-2"
           title="Changer la palette de couleurs"
         >
-          <Palette className="h-4 w-4" />
+          <Palette className="h-4 w-4 text-primary" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-48">
