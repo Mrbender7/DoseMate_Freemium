@@ -17,6 +17,7 @@ export const en = {
     darkMode: "Dark mode enabled",
     expertModeOn: "Expert mode enabled",
     expertModeOff: "Simple mode enabled",
+    close: "Close",
   },
   
   // Tabs

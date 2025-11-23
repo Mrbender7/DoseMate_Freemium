@@ -75,6 +75,7 @@ export default function GlucoFlow() {
   const [isMealCardOpen, setIsMealCardOpen] = useState<boolean>(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("glycemia");
+  const [showExpertCard, setShowExpertCard] = useState<boolean>(false);
 
   // Reset to glycemia tab on mount
   useEffect(() => {
@@ -440,13 +441,16 @@ export default function GlucoFlow() {
 
                 <button
                   onClick={() => {
-                    setModeExpert((m) => !m);
-                    showToast(!modeExpert ? t.header.expertModeOn : t.header.expertModeOff);
+                    setShowExpertCard((s) => !s);
+                    if (!showExpertCard) {
+                      setModeExpert(true);
+                      showToast(t.header.expertModeOn);
+                    }
                   }}
                   className="glass-button-sm p-2"
                   title="Toggle mode"
                 >
-                  <span className="text-xs md:text-sm">{modeExpert ? `⚙️ ${t.header.modeSimple}` : `⚙️ ${t.header.modeExpert}`}</span>
+                  <span className="text-xl">⚙️</span>
                 </button>
               </div>
 
@@ -467,104 +471,118 @@ export default function GlucoFlow() {
           </Alert>
         )}
 
-        {/* All devices: Tabs layout */}
-        <div>
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className={`grid w-full mb-2 ${modeExpert ? 'grid-cols-5' : 'grid-cols-4'}`}>
-              <TabsTrigger value="glycemia" className="text-xs md:text-sm">{t.tabs.glycemia}</TabsTrigger>
-              <TabsTrigger value="meal" className="text-xs md:text-sm">{t.tabs.meal}</TabsTrigger>
-              {modeExpert && <TabsTrigger value="expert" className="text-xs md:text-sm">{t.tabs.expert}</TabsTrigger>}
-              <TabsTrigger value="result" className="text-xs md:text-sm">{t.tabs.result}</TabsTrigger>
-              <TabsTrigger value="history" className="text-xs md:text-sm">{t.tabs.history}</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="glycemia" className="mt-0">
-              <GlycemiaCard
-                glycemia={glycemia}
-                carbRatio={carbRatio}
-                moment={calculation.moment}
-                forceExtra={forceExtra}
-                onGlycemiaChange={setGlycemia}
-                onCarbRatioChange={setCarbRatio}
-                onReset={resetInputs}
-                onSave={() => {
-                  if (document.activeElement instanceof HTMLElement) {
-                    document.activeElement.blur();
-                  }
-                  pushToHistory();
-                }}
-                onToggleExtra={() => {
-                  setForceExtra((f) => !f);
-                  showToast(forceExtra ? t.toasts.supplementOff : t.toasts.supplementOn);
-                }}
-              />
-            </TabsContent>
-
-            <TabsContent value="meal" className="mt-0">
-              <MealCard
-                ref={mealRef}
-                foodItems={foodItems}
-                onAddItem={addFoodItem}
-                onRemoveItem={removeFoodItem}
-                onUpdateItem={updateFoodItem}
-                isOpen={true}
-                onOpenChange={setIsMealCardOpen}
-                onSaveToResult={() => setActiveTab("result")}
-              />
-            </TabsContent>
-
-            {modeExpert && (
-              <TabsContent value="expert" className="mt-0 space-y-2">
-                <SettingsFooter />
+        {/* Expert Card - Full Screen */}
+        {showExpertCard ? (
+          <Card className="min-h-[60vh]">
+            <CardContent className="p-4 space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-bold text-foreground">{t.tabs.expert}</h2>
+                <Button
+                  onClick={() => setShowExpertCard(false)}
+                  variant="outline"
+                  size="sm"
+                  className="text-xs"
+                >
+                  {t.header.close || "Fermer"}
+                </Button>
+              </div>
+              
+              <SettingsFooter />
+              
+              <Tabs defaultValue="advanced" className="w-full">
+                <TabsList className="grid w-full grid-cols-2 mb-2">
+                  <TabsTrigger value="advanced" className="text-xs">{t.expert.parametersTab}</TabsTrigger>
+                  <TabsTrigger value="table" className="text-xs">{t.expert.tableTab}</TabsTrigger>
+                </TabsList>
                 
-                <Tabs defaultValue="advanced" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2 mb-2">
-                    <TabsTrigger value="advanced" className="text-[11px]">{t.expert.parametersTab}</TabsTrigger>
-                    <TabsTrigger value="table" className="text-[11px]">{t.expert.tableTab}</TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="advanced" className="mt-0">
-                    <ExpertSettingsAdvanced
-                      sensitivityFactor={sensitivityFactor}
-                      targetByMoment={targetByMoment}
-                      onSensitivityChange={setSensitivityFactor}
-                      onTargetChange={(moment, value) => setTargetByMoment((s) => ({ ...s, [moment]: value }))}
-                      compact={true}
-                    />
-                  </TabsContent>
-                  
-                  <TabsContent value="table" className="mt-0">
-                    <ExpertSettingsTable
-                      customInsulinTable={customInsulinTable}
-                      useCustomTable={useCustomTable}
-                      onCustomTableChange={setCustomInsulinTable}
-                      onToggleCustomTable={() => setUseCustomTable(!useCustomTable)}
-                      showToast={showToast}
-                      compact={true}
-                    />
-                  </TabsContent>
-                </Tabs>
+                <TabsContent value="advanced" className="mt-2">
+                  <ExpertSettingsAdvanced
+                    sensitivityFactor={sensitivityFactor}
+                    targetByMoment={targetByMoment}
+                    onSensitivityChange={setSensitivityFactor}
+                    onTargetChange={(moment, value) => setTargetByMoment((s) => ({ ...s, [moment]: value }))}
+                    compact={false}
+                  />
+                </TabsContent>
+                
+                <TabsContent value="table" className="mt-2">
+                  <ExpertSettingsTable
+                    customInsulinTable={customInsulinTable}
+                    useCustomTable={useCustomTable}
+                    onCustomTableChange={setCustomInsulinTable}
+                    onToggleCustomTable={() => setUseCustomTable(!useCustomTable)}
+                    showToast={showToast}
+                    compact={false}
+                  />
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
+        ) : (
+          /* All devices: Tabs layout */
+          <div>
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-4 mb-2">
+                <TabsTrigger value="glycemia" className="text-xs md:text-sm">{t.tabs.glycemia}</TabsTrigger>
+                <TabsTrigger value="meal" className="text-xs md:text-sm">{t.tabs.meal}</TabsTrigger>
+                <TabsTrigger value="result" className="text-xs md:text-sm">{t.tabs.result}</TabsTrigger>
+                <TabsTrigger value="history" className="text-xs md:text-sm">{t.tabs.history}</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="glycemia" className="mt-0">
+                <GlycemiaCard
+                  glycemia={glycemia}
+                  carbRatio={carbRatio}
+                  moment={calculation.moment}
+                  forceExtra={forceExtra}
+                  onGlycemiaChange={setGlycemia}
+                  onCarbRatioChange={setCarbRatio}
+                  onReset={resetInputs}
+                  onSave={() => {
+                    if (document.activeElement instanceof HTMLElement) {
+                      document.activeElement.blur();
+                    }
+                    pushToHistory();
+                  }}
+                  onToggleExtra={() => {
+                    setForceExtra((f) => !f);
+                    showToast(forceExtra ? t.toasts.supplementOff : t.toasts.supplementOn);
+                  }}
+                />
               </TabsContent>
-            )}
 
-            <TabsContent value="result" className="mt-0">
-              <ResultCard
-                ref={resultRef}
-                calculation={calculation}
-                pulse={resultPulse}
-              />
-            </TabsContent>
+              <TabsContent value="meal" className="mt-0">
+                <MealCard
+                  ref={mealRef}
+                  foodItems={foodItems}
+                  onAddItem={addFoodItem}
+                  onRemoveItem={removeFoodItem}
+                  onUpdateItem={updateFoodItem}
+                  isOpen={true}
+                  onOpenChange={setIsMealCardOpen}
+                  onSaveToResult={() => setActiveTab("result")}
+                />
+              </TabsContent>
 
-            <TabsContent value="history" className="mt-0">
-              <HistoryCard
-                history={history}
-                onClearHistory={clearHistory}
-                onDeleteEntry={deleteHistoryEntry}
-                showToast={showToast}
-              />
-            </TabsContent>
-          </Tabs>
-        </div>
+              <TabsContent value="result" className="mt-0">
+                <ResultCard
+                  ref={resultRef}
+                  calculation={calculation}
+                  pulse={resultPulse}
+                />
+              </TabsContent>
+
+              <TabsContent value="history" className="mt-0">
+                <HistoryCard
+                  history={history}
+                  onClearHistory={clearHistory}
+                  onDeleteEntry={deleteHistoryEntry}
+                  showToast={showToast}
+                />
+              </TabsContent>
+            </Tabs>
+          </div>
+        )}
 
         <Card className="bg-muted/30">
           <CardContent className="py-2">
