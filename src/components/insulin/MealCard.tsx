@@ -53,7 +53,7 @@ export const MealCard = forwardRef<HTMLDivElement, MealCardProps>(
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
                     <div>
-                      <label className="text-xs font-medium text-muted-foreground">Glucides / 100g</label>
+                      <label className="text-xs font-medium text-muted-foreground">🥐 Glucides / 100g</label>
                       <Input 
                         value={it.carbsPer100} 
                         onChange={(e) => onUpdateItem(it.id, "carbsPer100", e.target.value)} 

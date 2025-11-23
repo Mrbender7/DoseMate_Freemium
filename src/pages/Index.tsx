@@ -428,7 +428,7 @@ export default function GlucoFlow() {
                 className="glass-button-sm p-2"
                 title="Basculer mode"
               >
-                <span className="text-xs md:text-sm">{modeExpert ? "Simple" : "Expert"}</span>
+                <span className="text-xs md:text-sm">{modeExpert ? "⚙️ Simple" : "⚙️ Expert"}</span>
               </button>
             </div>
 

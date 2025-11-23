@@ -48,7 +48,7 @@ export function GlycemiaCard({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5 md:gap-2">
           <div>
             <label className="text-xs font-medium text-muted-foreground">
-              Glycémie (mg/dL)
+              🩸 Glycémie (mg/dL)
             </label>
             <Input
               type="number"
@@ -64,7 +64,7 @@ export function GlycemiaCard({
             />
           </div>
           <div>
-            <label className="text-xs font-medium text-muted-foreground">Ratio glucides → U</label>
+            <label className="text-xs font-medium text-muted-foreground">🥐 Ratio glucides → U</label>
             <Input
               type="number"
               value={String(carbRatio)}
