@@ -39,6 +39,7 @@ All colors MUST be HSL.
     --ring: 217.2 91.2% 59.8%;
     --radius: 0.75rem;
     --card-shadow: 0 4px 20px -2px hsl(217.2 91.2% 59.8% / 0.15);
+    --button-shadow: 0 2px 8px -1px hsl(217.2 91.2% 59.8% / 0.2), 0 4px 12px -2px hsl(0 0% 0% / 0.1);
     --sidebar-background: 210 35% 96%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -71,6 +72,7 @@ All colors MUST be HSL.
     --input: 160 28% 88%;
     --ring: 160 70% 45%;
     --card-shadow: 0 4px 20px -2px hsl(160 70% 45% / 0.15);
+    --button-shadow: 0 2px 8px -1px hsl(160 70% 45% / 0.2), 0 4px 12px -2px hsl(0 0% 0% / 0.1);
     --sidebar-background: 160 35% 96%;
     --sidebar-foreground: 160 30% 26%;
     --sidebar-primary: 160 30% 10%;
@@ -103,6 +105,7 @@ All colors MUST be HSL.
     --input: 340 30% 88%;
     --ring: 340 65% 60%;
     --card-shadow: 0 4px 20px -2px hsl(340 65% 60% / 0.15);
+    --button-shadow: 0 2px 8px -1px hsl(340 65% 60% / 0.2), 0 4px 12px -2px hsl(0 0% 0% / 0.1);
     --sidebar-background: 340 40% 96%;
     --sidebar-foreground: 340 30% 26%;
     --sidebar-primary: 340 30% 10%;
@@ -135,6 +138,7 @@ All colors MUST be HSL.
     --input: 270 30% 88%;
     --ring: 270 60% 60%;
     --card-shadow: 0 4px 20px -2px hsl(270 60% 60% / 0.15);
+    --button-shadow: 0 2px 8px -1px hsl(270 60% 60% / 0.2), 0 4px 12px -2px hsl(0 0% 0% / 0.1);
     --sidebar-background: 270 40% 96%;
     --sidebar-foreground: 270 30% 26%;
     --sidebar-primary: 270 30% 10%;
@@ -167,6 +171,7 @@ All colors MUST be HSL.
     --input: 25 32% 88%;
     --ring: 25 80% 65%;
     --card-shadow: 0 4px 20px -2px hsl(25 80% 65% / 0.15);
+    --button-shadow: 0 2px 8px -1px hsl(25 80% 65% / 0.2), 0 4px 12px -2px hsl(0 0% 0% / 0.1);
     --sidebar-background: 25 45% 96%;
     --sidebar-foreground: 25 30% 26%;
     --sidebar-primary: 25 30% 10%;
@@ -201,6 +206,7 @@ All colors MUST be HSL.
     --ring: 217.2 91.2% 59.8%;
     --radius: 0.75rem;
     --card-shadow: 0 4px 20px -2px hsl(217.2 91.2% 59.8% / 0.25);
+    --button-shadow: 0 3px 12px -1px hsl(217.2 91.2% 59.8% / 0.4), 0 6px 20px -2px hsl(217.2 91.2% 59.8% / 0.3), 0 2px 8px hsl(0 0% 0% / 0.2);
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -234,6 +240,7 @@ All colors MUST be HSL.
     --ring: 160 70% 50%;
     --radius: 0.75rem;
     --card-shadow: 0 4px 20px -2px hsl(160 70% 50% / 0.25);
+    --button-shadow: 0 3px 12px -1px hsl(160 70% 50% / 0.4), 0 6px 20px -2px hsl(160 70% 50% / 0.3), 0 2px 8px hsl(0 0% 0% / 0.2);
     --sidebar-background: 160 30% 8%;
     --sidebar-foreground: 160 30% 95%;
     --sidebar-primary: 160 70% 48%;
@@ -267,6 +274,7 @@ All colors MUST be HSL.
     --ring: 340 65% 65%;
     --radius: 0.75rem;
     --card-shadow: 0 4px 20px -2px hsl(340 65% 65% / 0.25);
+    --button-shadow: 0 3px 12px -1px hsl(340 65% 65% / 0.4), 0 6px 20px -2px hsl(340 65% 65% / 0.3), 0 2px 8px hsl(0 0% 0% / 0.2);
     --sidebar-background: 340 30% 8%;
     --sidebar-foreground: 340 30% 95%;
     --sidebar-primary: 340 65% 60%;
@@ -300,6 +308,7 @@ All colors MUST be HSL.
     --ring: 270 60% 65%;
     --radius: 0.75rem;
     --card-shadow: 0 4px 20px -2px hsl(270 60% 65% / 0.25);
+    --button-shadow: 0 3px 12px -1px hsl(270 60% 65% / 0.4), 0 6px 20px -2px hsl(270 60% 65% / 0.3), 0 2px 8px hsl(0 0% 0% / 0.2);
     --sidebar-background: 270 30% 8%;
     --sidebar-foreground: 270 30% 95%;
     --sidebar-primary: 270 60% 60%;
@@ -333,6 +342,7 @@ All colors MUST be HSL.
     --ring: 25 80% 70%;
     --radius: 0.75rem;
     --card-shadow: 0 4px 20px -2px hsl(25 80% 70% / 0.25);
+    --button-shadow: 0 3px 12px -1px hsl(25 80% 70% / 0.4), 0 6px 20px -2px hsl(25 80% 70% / 0.3), 0 2px 8px hsl(0 0% 0% / 0.2);
     --sidebar-background: 25 30% 8%;
     --sidebar-foreground: 25 30% 95%;
     --sidebar-primary: 25 80% 65%;

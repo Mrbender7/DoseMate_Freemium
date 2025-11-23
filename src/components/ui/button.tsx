@@ -9,10 +9,10 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-button",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-button",
         outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-button",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
         elevated: "bg-gradient-to-b from-primary via-primary/95 to-primary/85 text-primary-foreground shadow-[inset_0_2px_0_rgba(255,255,255,0.3),inset_0_-1px_0_rgba(0,0,0,0.2),0_6px_12px_rgba(0,0,0,0.2),0_3px_6px_rgba(0,0,0,0.15),0_1px_3px_rgba(0,0,0,0.1)] border border-primary/20 hover:shadow-[inset_0_2px_0_rgba(255,255,255,0.3),inset_0_-1px_0_rgba(0,0,0,0.2),0_8px_16px_rgba(0,0,0,0.25),0_4px_8px_rgba(0,0,0,0.2)] hover:-translate-y-1 hover:scale-105 active:translate-y-0 active:scale-100 active:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),inset_0_2px_4px_rgba(0,0,0,0.3),0_2px_4px_rgba(0,0,0,0.1)]",

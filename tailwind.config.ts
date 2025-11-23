@@ -68,6 +68,7 @@ export default {
       },
       boxShadow: {
         'card': 'var(--card-shadow)',
+        'button': 'var(--button-shadow)',
       },
       keyframes: {
         "accordion-down": {
