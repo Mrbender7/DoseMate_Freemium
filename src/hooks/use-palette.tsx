@@ -26,8 +26,8 @@ export const PALETTES = {
     emoji: "🍑",
   },
   red: {
-    name: "Rouge",
-    emoji: "❤️",
+    name: "Framboise",
+    emoji: "🍓",
   },
 } as const;
 
