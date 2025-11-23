@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { getSecureItem, setSecureItem } from "../utils/secureStorage";
 
 export type PaletteType = "blue" | "mint" | "rose" | "lavender" | "peach" | "red" | "cyan";
 
@@ -38,7 +39,7 @@ export const PALETTES = {
 export function usePalette() {
   const [palette, setPaletteState] = useState<PaletteType>(() => {
     try {
-      const stored = localStorage.getItem(PALETTE_STORAGE_KEY);
+      const stored = getSecureItem(PALETTE_STORAGE_KEY);
       return (stored as PaletteType) || "blue";
     } catch {
       return "blue";
@@ -47,7 +48,7 @@ export function usePalette() {
 
   useEffect(() => {
     try {
-      localStorage.setItem(PALETTE_STORAGE_KEY, palette);
+      setSecureItem(PALETTE_STORAGE_KEY, palette);
       document.documentElement.setAttribute("data-palette", palette);
     } catch (e) {
       console.warn("Failed to save palette preference", e);
