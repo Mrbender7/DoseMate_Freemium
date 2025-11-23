@@ -18,6 +18,19 @@ export function ExpertSettingsAdvanced({
   onTargetChange,
   compact = false,
 }: ExpertSettingsAdvancedProps) {
+  const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    const value = parseFloat(e.target.value);
+    if (value === 0) {
+      e.target.value = '';
+    }
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>, callback: () => void) => {
+    if (e.target.value === '' || e.target.value === null) {
+      callback();
+    }
+  };
+
   return (
     <Card className="transition-all duration-300">
       <CardContent className="space-y-2 py-2 px-3">
@@ -33,6 +46,8 @@ export function ExpertSettingsAdvanced({
                 const v = parseNumberInput(e.target.value);
                 onSensitivityChange(Number.isNaN(v) ? "" : v);
               }}
+              onFocus={handleFocus}
+              onBlur={(e) => handleBlur(e, () => onSensitivityChange(0))}
               placeholder="ex: 50"
               className="h-8 text-xs"
             />
@@ -46,6 +61,8 @@ export function ExpertSettingsAdvanced({
               type="number" 
               value={String(targetByMoment.morning)} 
               onChange={(e) => onTargetChange("morning", Number(e.target.value))} 
+              onFocus={handleFocus}
+              onBlur={(e) => handleBlur(e, () => onTargetChange("morning", 0))}
               className="h-8 text-xs"
             />
           </div>
@@ -58,6 +75,8 @@ export function ExpertSettingsAdvanced({
               type="number" 
               value={String(targetByMoment.noon)} 
               onChange={(e) => onTargetChange("noon", Number(e.target.value))} 
+              onFocus={handleFocus}
+              onBlur={(e) => handleBlur(e, () => onTargetChange("noon", 0))}
               className="h-8 text-xs"
             />
           </div>
@@ -70,6 +89,8 @@ export function ExpertSettingsAdvanced({
               type="number" 
               value={String(targetByMoment.evening)} 
               onChange={(e) => onTargetChange("evening", Number(e.target.value))} 
+              onFocus={handleFocus}
+              onBlur={(e) => handleBlur(e, () => onTargetChange("evening", 0))}
               className="h-8 text-xs"
             />
           </div>
@@ -82,6 +103,8 @@ export function ExpertSettingsAdvanced({
               type="number" 
               value={String(targetByMoment.extra)} 
               onChange={(e) => onTargetChange("extra", Number(e.target.value))} 
+              onFocus={handleFocus}
+              onBlur={(e) => handleBlur(e, () => onTargetChange("extra", 0))}
               className="h-8 text-xs"
             />
           </div>
