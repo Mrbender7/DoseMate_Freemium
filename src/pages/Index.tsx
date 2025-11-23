@@ -14,6 +14,7 @@ import {
 } from "../components/ui/alert-dialog";
 import { Sun, Moon, ArrowUp, AlertTriangle } from "lucide-react";
 import { PaletteSelector } from "../components/PaletteSelector";
+import { LanguageToggle } from "../components/LanguageToggle";
 import { SteampunkClock } from "../components/ui/clock";
 import { GlycemiaCard } from "../components/insulin/GlycemiaCard";
 import { MealCard } from "../components/insulin/MealCard";
@@ -448,7 +449,10 @@ export default function GlucoFlow() {
                 </button>
               </div>
 
-              <SteampunkClock />
+              <div className="flex flex-col items-end gap-1.5">
+                <LanguageToggle />
+                <SteampunkClock />
+              </div>
             </div>
           </div>
 
