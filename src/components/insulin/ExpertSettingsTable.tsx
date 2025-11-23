@@ -27,6 +27,19 @@ export function ExpertSettingsTable({
   const [selectedMoment, setSelectedMoment] = useState<MomentKey>("morning");
   const [isLocked, setIsLocked] = useState<boolean>(true);
 
+  const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    const value = parseFloat(e.target.value);
+    if (value === 0) {
+      e.target.value = '';
+    }
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>, callback: () => void) => {
+    if (e.target.value === '' || e.target.value === null) {
+      callback();
+    }
+  };
+
   return (
     <Card className="transition-all duration-300">
       <CardContent className="space-y-2 py-2 px-3">
@@ -103,6 +116,12 @@ export function ExpertSettingsTable({
                         newTable[idx].doses.morning = Number(e.target.value) || 0;
                         onCustomTableChange(newTable);
                       }}
+                      onFocus={handleFocus}
+                      onBlur={(e) => handleBlur(e, () => {
+                        const newTable = [...customInsulinTable];
+                        newTable[idx].doses.morning = 0;
+                        onCustomTableChange(newTable);
+                      })}
                       className="w-16 mx-auto text-center h-8 text-xs"
                       disabled={!useCustomTable || isLocked}
                       readOnly={isLocked}
@@ -118,6 +137,12 @@ export function ExpertSettingsTable({
                         newTable[idx].doses.noon = Number(e.target.value) || 0;
                         onCustomTableChange(newTable);
                       }}
+                      onFocus={handleFocus}
+                      onBlur={(e) => handleBlur(e, () => {
+                        const newTable = [...customInsulinTable];
+                        newTable[idx].doses.noon = 0;
+                        onCustomTableChange(newTable);
+                      })}
                       className="w-16 mx-auto text-center h-8 text-xs"
                       disabled={!useCustomTable || isLocked}
                       readOnly={isLocked}
@@ -133,6 +158,12 @@ export function ExpertSettingsTable({
                         newTable[idx].doses.evening = Number(e.target.value) || 0;
                         onCustomTableChange(newTable);
                       }}
+                      onFocus={handleFocus}
+                      onBlur={(e) => handleBlur(e, () => {
+                        const newTable = [...customInsulinTable];
+                        newTable[idx].doses.evening = 0;
+                        onCustomTableChange(newTable);
+                      })}
                       className="w-16 mx-auto text-center h-8 text-xs"
                       disabled={!useCustomTable || isLocked}
                       readOnly={isLocked}
@@ -148,6 +179,12 @@ export function ExpertSettingsTable({
                         newTable[idx].doses.extra = Number(e.target.value) || 0;
                         onCustomTableChange(newTable);
                       }}
+                      onFocus={handleFocus}
+                      onBlur={(e) => handleBlur(e, () => {
+                        const newTable = [...customInsulinTable];
+                        newTable[idx].doses.extra = 0;
+                        onCustomTableChange(newTable);
+                      })}
                       className="w-16 mx-auto text-center h-8 text-xs"
                       disabled={!useCustomTable || isLocked}
                       readOnly={isLocked}
@@ -198,6 +235,12 @@ export function ExpertSettingsTable({
                           newTable[idx].doses[selectedMoment] = Number(e.target.value) || 0;
                           onCustomTableChange(newTable);
                         }}
+                        onFocus={handleFocus}
+                        onBlur={(e) => handleBlur(e, () => {
+                          const newTable = [...customInsulinTable];
+                          newTable[idx].doses[selectedMoment] = 0;
+                          onCustomTableChange(newTable);
+                        })}
                         className="w-full mx-auto text-center h-7 text-xs max-w-[70px]"
                         disabled={!useCustomTable || isLocked}
                         readOnly={isLocked}
