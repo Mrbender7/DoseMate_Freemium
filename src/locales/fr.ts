@@ -1,9 +1,9 @@
 export const fr = {
   // Onboarding
   onboarding: {
-    title: "Avertissement Important",
-    disclaimer: "GlucoFlow est exclusivement un outil d'aide au calcul mathématique. Cette application ne constitue pas un dispositif médical et ne remplace en aucun cas l'avis d'un médecin ou d'un professionnel de santé. Les ratios insuline/glucides et les objectifs glycémiques sont configurés sous votre seule et entière responsabilité. En cliquant sur 'J'accepte', vous reconnaissez utiliser cet outil à vos propres risques et déchargez les développeurs de toute responsabilité concernant les décisions thérapeutiques.",
-    accept: "J'ai lu et j'accepte",
+    title: "Avertissement Légal",
+    disclaimer: "AVERTISSEMENT LÉGAL ET CONDITIONS D'UTILISATION (Version 1.0.0)\n\n1. Nature de l'Application\nGlucoFlow est exclusivement un outil d'aide au calcul mathématique basé sur des formules et des ratios fournis par l'utilisateur.\n\n2. Limitation Médicale\nCette application n'est pas un dispositif médical et ne remplace en aucun cas l'avis, le jugement clinique ou la surveillance d'un médecin, d'un endocrinologue ou de tout autre professionnel de santé qualifié. L'application est fournie « telle quelle », sans garantie d'aucune sorte, y compris la garantie de précision ou de performance.\n\n3. Responsabilité de l'Utilisateur\nLes ratios insuline/glucides, les facteurs de sensibilité et les objectifs glycémiques sont des données personnelles configurées sous votre seule et entière responsabilité.\nEn cliquant sur 'J'accepte', vous reconnaissez explicitement que l'utilisation de GlucoFlow se fait à vos propres risques et vous déchargez formellement les développeurs de toute responsabilité concernant les résultats, les erreurs de calculs ou les décisions thérapeutiques prises suite à l'utilisation de l'application.",
+    accept: "J'accepte",
   },
   
   // Header
