@@ -15,6 +15,8 @@ export default {
     extend: {
       fontFamily: {
         medhurst: ['Medhurst', 'sans-serif'],
+        christmas: ['"Mountains of Christmas"', 'cursive', 'sans-serif'],
+        halloween: ['Nosifer', 'cursive', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",

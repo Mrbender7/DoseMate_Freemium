@@ -13,8 +13,12 @@ import {
   AlertDialogTitle,
 } from "../components/ui/alert-dialog";
 import { Sun, Moon, ArrowUp, AlertTriangle } from "lucide-react";
+import { SpecialThemeSelector } from "../components/SpecialThemeSelector";
 import { PaletteSelector } from "../components/PaletteSelector";
 import { SteampunkClock } from "../components/ui/clock";
+import { SnowEffect } from "../components/effects/SnowEffect";
+import { CloudsEffect } from "../components/effects/CloudsEffect";
+import { useSpecialTheme } from "../hooks/use-special-theme";
 import { GlycemiaCard } from "../components/insulin/GlycemiaCard";
 import { MealCard } from "../components/insulin/MealCard";
 import { ExpertSettings } from "../components/insulin/ExpertSettings";
@@ -67,6 +71,8 @@ export default function GlucoFlow() {
   const [isMealCardOpen, setIsMealCardOpen] = useState<boolean>(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("glycemia");
+  
+  const { theme: specialTheme } = useSpecialTheme();
 
   // Reset to glycemia tab on mount
   useEffect(() => {
@@ -392,6 +398,8 @@ export default function GlucoFlow() {
 
   return (
     <div className="safe-area-container transition-colors duration-200">
+      {specialTheme === 'christmas' && <SnowEffect />}
+      {specialTheme === 'halloween' && <CloudsEffect />}
       <div className="max-w-4xl mx-auto space-y-1.5 md:space-y-2">
         {/* Header */}
         <div className="space-y-2">
@@ -407,6 +415,7 @@ export default function GlucoFlow() {
 
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
+              <SpecialThemeSelector />
               <PaletteSelector />
               
               <button
