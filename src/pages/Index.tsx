@@ -594,7 +594,7 @@ export default function DoseMate() {
 
         <div className="text-center pb-2 space-y-1">
           <p className="text-xs text-muted-foreground/60">
-            © {new Date().getFullYear()} GlucoFlow. {t.footer.copyright}
+            © {new Date().getFullYear()} DoseMate. {t.footer.copyright}
           </p>
           <p className="text-xs text-muted-foreground/40">
             v1.0.0
