@@ -80,7 +80,15 @@ export function OnboardingModal({ open, onAccept }: OnboardingModalProps) {
             })}
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter className="mt-3">
+        <AlertDialogFooter className="mt-3 flex-col gap-2">
+          <a 
+            href="https://mrbender7.github.io/glucoflow-docs/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[11px] text-primary hover:text-primary/80 transition-colors underline text-center"
+          >
+            {t.onboarding.privacyLink}
+          </a>
           <Button onClick={onAccept} className="w-full h-9 text-sm font-medium">
             {t.onboarding.accept}
           </Button>

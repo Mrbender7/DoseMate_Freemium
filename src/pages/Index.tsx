@@ -602,6 +602,18 @@ export default function GlucoFlow() {
               <p>
                 {t.privacy.content2}
               </p>
+              <p className="pt-2">
+                {t.privacy.policyLink}{" "}
+                <a 
+                  href="https://mrbender7.github.io/glucoflow-docs/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:text-primary/80 transition-colors underline"
+                >
+                  {t.privacy.policyLinkText}
+                </a>
+                .
+              </p>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
