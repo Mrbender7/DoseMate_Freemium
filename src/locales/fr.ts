@@ -120,4 +120,15 @@ export const fr = {
     evening: "Soir",
     extra: "Extra",
   },
+  
+  // Settings
+  settings: {
+    version: "Version",
+    contactSupport: "Contact Support",
+    resetAllData: "Réinitialiser toutes les données",
+    resetConfirmTitle: "Confirmer la réinitialisation",
+    resetConfirmDescription: "⚠️ Attention : cette action est irréversible. Toutes vos données seront supprimées définitivement.",
+    resetConfirmButton: "Confirmer la réinitialisation",
+    resetCancelButton: "Annuler",
+  },
 } as const;

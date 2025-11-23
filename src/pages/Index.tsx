@@ -21,6 +21,7 @@ import { MealCard } from "../components/insulin/MealCard";
 import { ExpertSettings } from "../components/insulin/ExpertSettings";
 import { ExpertSettingsAdvanced } from "../components/insulin/ExpertSettingsAdvanced";
 import { ExpertSettingsTable } from "../components/insulin/ExpertSettingsTable";
+import { SettingsFooter } from "../components/insulin/SettingsFooter";
 import { ResultCard } from "../components/insulin/ResultCard";
 import { HistoryCard } from "../components/insulin/HistoryCard";
 import { OnboardingModal } from "../components/OnboardingModal";
@@ -514,6 +515,8 @@ export default function GlucoFlow() {
 
             {modeExpert && (
               <TabsContent value="expert" className="mt-0 space-y-2">
+                <SettingsFooter />
+                
                 <Tabs defaultValue="advanced" className="w-full">
                   <TabsList className="grid w-full grid-cols-2 mb-2">
                     <TabsTrigger value="advanced" className="text-[11px]">{t.expert.parametersTab}</TabsTrigger>

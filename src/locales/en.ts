@@ -120,4 +120,15 @@ export const en = {
     evening: "Evening",
     extra: "Extra",
   },
+  
+  // Settings
+  settings: {
+    version: "Version",
+    contactSupport: "Contact Support",
+    resetAllData: "Reset All Data",
+    resetConfirmTitle: "Confirm Reset",
+    resetConfirmDescription: "⚠️ Warning: this action is irreversible. All your data will be permanently deleted.",
+    resetConfirmButton: "Confirm Reset",
+    resetCancelButton: "Cancel",
+  },
 } as const;
