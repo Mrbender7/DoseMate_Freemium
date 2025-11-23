@@ -17,6 +17,7 @@ export const fr = {
     darkMode: "Mode sombre activé",
     expertModeOn: "Mode expert activé",
     expertModeOff: "Mode simplifié activé",
+    close: "Fermer",
   },
   
   // Tabs
