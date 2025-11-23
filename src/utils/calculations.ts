@@ -37,7 +37,13 @@ export const momentIcon = (m: MomentKey) => {
   return "+";
 };
 
-export const momentLabel = (m: MomentKey) => {
+export const momentLabel = (m: MomentKey, lang: "fr" | "en" = "fr") => {
+  if (lang === "en") {
+    if (m === "morning") return "Morning";
+    if (m === "noon") return "Noon";
+    if (m === "evening") return "Evening";
+    return "Extra";
+  }
   if (m === "morning") return "Matin";
   if (m === "noon") return "Midi";
   if (m === "evening") return "Soir";
