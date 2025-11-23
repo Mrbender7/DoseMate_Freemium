@@ -23,10 +23,10 @@ export function OnboardingModal({ open, onAccept }: OnboardingModalProps) {
 
   return (
     <AlertDialog open={open}>
-      <AlertDialogContent className="backdrop-blur-md max-w-2xl">
+      <AlertDialogContent className="backdrop-blur-md max-w-3xl max-h-[90vh] overflow-y-auto">
         <AlertDialogHeader>
-          <div className="flex items-center justify-between mb-4">
-            <AlertDialogTitle className="text-lg font-bold">
+          <div className="flex items-center justify-between mb-6">
+            <AlertDialogTitle className="text-xl font-bold">
               {t.onboarding.title}
             </AlertDialogTitle>
             <div className="flex gap-2">
@@ -48,12 +48,40 @@ export function OnboardingModal({ open, onAccept }: OnboardingModalProps) {
               </Button>
             </div>
           </div>
-          <AlertDialogDescription className="text-sm leading-relaxed pt-2">
-            {t.onboarding.disclaimer}
+          <AlertDialogDescription className="text-sm leading-relaxed space-y-4">
+            {t.onboarding.disclaimer.split('\n\n').map((paragraph, index) => {
+              const isTitle = paragraph.startsWith('LEGAL DISCLAIMER') || 
+                             paragraph.startsWith('AVERTISSEMENT LÉGAL');
+              const isNumberedSection = /^[123]\./.test(paragraph);
+              
+              if (isTitle) {
+                return (
+                  <div key={index} className="font-semibold text-base text-center text-foreground pb-2 border-b">
+                    {paragraph}
+                  </div>
+                );
+              }
+              
+              if (isNumberedSection) {
+                const [title, ...content] = paragraph.split('\n');
+                return (
+                  <div key={index} className="bg-muted/30 p-4 rounded-lg border border-border/50">
+                    <h3 className="font-semibold text-foreground mb-2">{title}</h3>
+                    <p className="text-muted-foreground">{content.join(' ')}</p>
+                  </div>
+                );
+              }
+              
+              return (
+                <p key={index} className="text-muted-foreground">
+                  {paragraph}
+                </p>
+              );
+            })}
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter>
-          <Button onClick={onAccept} className="w-full">
+        <AlertDialogFooter className="mt-6">
+          <Button onClick={onAccept} className="w-full h-11 text-base font-medium">
             {t.onboarding.accept}
           </Button>
         </AlertDialogFooter>
