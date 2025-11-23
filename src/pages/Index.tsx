@@ -417,7 +417,7 @@ export default function GlucoFlow() {
                 className="glass-button-sm p-2 flex items-center gap-2"
                 title="Basculer thème"
               >
-                {darkMode ? <Moon className="h-4 w-4 text-primary" /> : <Sun className="h-4 w-4 text-amber-500" />}
+                <span className="text-base">{darkMode ? "🌙" : "☀️"}</span>
               </button>
 
               <button
