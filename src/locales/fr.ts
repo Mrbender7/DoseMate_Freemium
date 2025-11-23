@@ -3,6 +3,7 @@ export const fr = {
   onboarding: {
     title: "Avertissement Légal",
     disclaimer: "AVERTISSEMENT LÉGAL ET CONDITIONS D'UTILISATION (Version 1.0.0)\n\n1. Nature de l'Application\n\nGlucoFlow est exclusivement un outil d'aide au calcul mathématique basé sur des formules et des ratios fournis par l'utilisateur.\n\n2. Limitation Médicale\n\nCette application n'est pas un dispositif médical et ne remplace en aucun cas l'avis, le jugement clinique ou la surveillance d'un médecin, d'un endocrinologue ou de tout autre professionnel de santé qualifié. L'application est fournie « telle quelle », sans garantie d'aucune sorte, y compris la garantie de précision ou de performance.\n\n3. Responsabilité de l'Utilisateur\n\nLes ratios insuline/glucides, les facteurs de sensibilité et les objectifs glycémiques sont des données personnelles configurées sous votre seule et entière responsabilité.\n\nEn cliquant sur 'J'accepte', vous reconnaissez explicitement que l'utilisation de GlucoFlow se fait à vos propres risques et vous déchargez formellement les développeurs de toute responsabilité concernant les résultats, les erreurs de calculs ou les décisions thérapeutiques prises suite à l'utilisation de l'application.",
+    privacyLink: "Règles de Confidentialité",
     accept: "J'accepte",
   },
   
@@ -110,6 +111,8 @@ export const fr = {
     title: "Confidentialité",
     content1: "Cette application ne collecte, ne stocke ni ne transmet aucune donnée personnelle ou médicale à des serveurs externes. Toutes les informations sont uniquement enregistrées localement sur votre appareil, garantissant la confidentialité totale de vos données.",
     content2: "Pour renforcer votre sécurité, toutes vos données personnelles et médicales sont entièrement chiffrées localement sur votre appareil à l'aide d'un algorithme de chiffrement AES-256. Les opérations de chiffrement et de déchiffrement sont effectuées de manière transparente, sans intervention de votre part, assurant ainsi une protection complète de vos informations sensibles.",
+    policyLink: "Pour plus de détails, consultez notre",
+    policyLinkText: "Politique de Confidentialité complète",
     close: "Fermer",
   },
   
