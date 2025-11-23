@@ -2,14 +2,14 @@ export const en = {
   // Onboarding
   onboarding: {
     title: "Legal Disclaimer",
-    disclaimer: "LEGAL DISCLAIMER AND TERMS OF USE (Version 1.0.0)\n\n1. Nature of the Application\n\nGlucoFlow is exclusively a mathematical calculation aid tool based on formulas and ratios supplied by the user.\n\n2. Medical Limitation\n\nThis application is not a medical device and does not in any way replace the advice, clinical judgment, or supervision of a doctor, endocrinologist, or any qualified healthcare professional. The application is provided \"as is,\" without warranty of any kind, including warranty of accuracy or performance.\n\n3. User Responsibility\n\nInsulin/carb ratios, sensitivity factors, and glycemic targets are personal data configured under your sole and entire responsibility.\n\nBy clicking 'I Accept', you explicitly acknowledge that the use of GlucoFlow is at your own risk and you formally release the developers from any liability concerning the results, calculation errors, or therapeutic decisions made following the use of the application.",
+    disclaimer: "LEGAL DISCLAIMER AND TERMS OF USE (Version 1.0.0)\n\n1. Nature of the Application\n\nDoseMate is exclusively a mathematical calculation aid tool based on formulas and ratios supplied by the user.\n\n2. Medical Limitation\n\nThis application is not a medical device and does not in any way replace the advice, clinical judgment, or supervision of a doctor, endocrinologist, or any qualified healthcare professional. The application is provided \"as is,\" without warranty of any kind, including warranty of accuracy or performance.\n\n3. User Responsibility\n\nInsulin/carb ratios, sensitivity factors, and glycemic targets are personal data configured under your sole and entire responsibility.\n\nBy clicking 'I Accept', you explicitly acknowledge that the use of DoseMate is at your own risk and you formally release the developers from any liability concerning the results, calculation errors, or therapeutic decisions made following the use of the application.",
     privacyLink: "Privacy Policy",
     accept: "I Accept",
   },
   
   // Header
   header: {
-    title: "GlucoFlow",
+    title: "DoseMate",
     subtitle: "Fast-acting insulin calculator",
     modeSimple: "Simple",
     modeExpert: "Expert",

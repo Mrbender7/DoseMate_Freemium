@@ -1,8 +1,8 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.glucoflow.app',
-  appName: 'GlucoFlow',
+  appId: 'com.dosemate.app',
+  appName: 'DoseMate',
   webDir: 'dist',
   server: {
     androidScheme: 'https'
