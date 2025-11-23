@@ -22,9 +22,12 @@ import { ExpertSettingsAdvanced } from "../components/insulin/ExpertSettingsAdva
 import { ExpertSettingsTable } from "../components/insulin/ExpertSettingsTable";
 import { ResultCard } from "../components/insulin/ResultCard";
 import { HistoryCard } from "../components/insulin/HistoryCard";
+import { OnboardingModal } from "../components/OnboardingModal";
 import { uid, parseNumberInput, nowISO, getMomentOfDay } from "../utils/calculations";
 import { playNotificationSound } from "../utils/audioPlayer";
 import { getSecureItem, setSecureItem, removeSecureItem } from "../utils/secureStorage";
+import { useLanguage } from "../contexts/LanguageContext";
+import { useOnboarding } from "../hooks/use-onboarding";
 import glucoflowLogo from "../assets/glucoflow-logo.png";
 import type { 
   FoodItem, 
@@ -43,16 +46,19 @@ import {
 } from "../types/insulin";
 
 export default function GlucoFlow() {
+  const { t, language } = useLanguage();
+  const { hasAccepted, acceptOnboarding } = useOnboarding();
+  
   // Original v2.1 state
   const [glycemia, setGlycemia] = useState<string>("");
   const [foodItems, setFoodItems] = useState<FoodItem[]>([{ id: "f-1", carbsPer100: "", weight: "" }]);
   const [carbRatio, setCarbRatio] = useState<number>(DEFAULT_CARB_RATIO);
-  const [sensitivityFactor, setSensitivityFactor] = useState<number | "">(50);
+  const [sensitivityFactor, setSensitivityFactor] = useState<number | "">(0);
   const [targetByMoment, setTargetByMoment] = useState<Record<MomentKey, number>>({
-    morning: 100,
-    noon: 100,
-    evening: 110,
-    extra: 110,
+    morning: 0,
+    noon: 0,
+    evening: 0,
+    extra: 0,
   });
   const [customInsulinTable, setCustomInsulinTable] = useState<DoseRange[]>(DEFAULT_INSULIN_TABLE);
   const [useCustomTable, setUseCustomTable] = useState<boolean>(false);
@@ -248,6 +254,13 @@ export default function GlucoFlow() {
   }, [calculation]);
 
   function pushToHistory() {
+    // Vérification: empêcher l'enregistrement si les ratios ne sont pas configurés
+    if (carbRatio === 0) {
+      showToast(t.toasts.configureFirst);
+      setActiveTab("expert");
+      return;
+    }
+    
     const entry: HistoryEntry = {
       id: uid("h"),
       dateISO: nowISO(),
@@ -264,7 +277,7 @@ export default function GlucoFlow() {
       try {
         setSecureItem(STORAGE_KEY, JSON.stringify(next));
       } catch (e) {}
-      showToast("Calcul enregistré");
+      showToast(t.toasts.saved);
       return next;
     });
   }
@@ -272,7 +285,7 @@ export default function GlucoFlow() {
   function clearHistory() {
     setHistory([]);
     removeSecureItem(STORAGE_KEY);
-    showToast("Historique effacé");
+    showToast(t.history.cleared);
   }
 
   function deleteHistoryEntry(id: string) {
@@ -281,7 +294,7 @@ export default function GlucoFlow() {
       try {
         setSecureItem(STORAGE_KEY, JSON.stringify(next));
       } catch (e) {}
-      showToast("Entrée supprimée");
+      showToast(t.history.deleted);
       return next;
     });
   }
@@ -317,7 +330,7 @@ export default function GlucoFlow() {
             const next = [newEntry, ...prev.slice(1)].slice(0, 25);
             setSecureItem(STORAGE_KEY, JSON.stringify(next));
             setHistory(next);
-            showToast("Calcul mis à jour (auto)");
+            showToast(t.toasts.autoUpdated);
             setResultPulse(true);
             setTimeout(() => setResultPulse(false), 2000);
             return;
@@ -337,7 +350,7 @@ export default function GlucoFlow() {
         const next = [newEntry, ...(prev || [])].slice(0, 25);
         setSecureItem(STORAGE_KEY, JSON.stringify(next));
         setHistory(next);
-        showToast("Calcul enregistré (auto)");
+        showToast(t.toasts.autoSaved);
         setResultPulse(true);
         setTimeout(() => setResultPulse(false), 2000);
       } catch (e) {
@@ -364,7 +377,7 @@ export default function GlucoFlow() {
     if (glycemia.trim() !== "") return;
     const timeout = setTimeout(() => {
       setForceExtra(false);
-      showToast("Mode supplément annulé (aucune glycémie)");
+      showToast(t.toasts.supplementCancelled);
     }, 15000);
     return () => clearTimeout(timeout);
   }, [forceExtra, glycemia]);
@@ -391,57 +404,60 @@ export default function GlucoFlow() {
      ============================ */
 
   return (
-    <div className="safe-area-container transition-colors duration-200">
-      <div className="max-w-4xl mx-auto space-y-1.5 md:space-y-2">
-        {/* Header */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <img src={glucoflowLogo} alt="GlucoFlow Logo" className="h-8 w-8" />
-            <div>
-              <h1 className="text-xl md:text-2xl font-bold text-foreground font-medhurst">GlucoFlow</h1>
-              <p className="text-xs text-muted-foreground">
-                Calculateur insuline lispro
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between">
+    <>
+      <OnboardingModal open={!hasAccepted} onAccept={acceptOnboarding} />
+      
+      <div className="safe-area-container transition-colors duration-200">
+        <div className="max-w-4xl mx-auto space-y-1.5 md:space-y-2">
+          {/* Header */}
+          <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <PaletteSelector />
-              
-              <button
-                onClick={() => {
-                  setDarkMode((d) => !d);
-                  showToast(darkMode ? "Mode clair activé" : "Mode sombre activé");
-                }}
-                className="glass-button-sm p-2 flex items-center gap-2"
-                title="Basculer thème"
-              >
-                <span className="text-base">{darkMode ? "🌙" : "☀️"}</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  setModeExpert((m) => !m);
-                  showToast(!modeExpert ? "Mode expert activé" : "Mode simplifié activé");
-                }}
-                className="glass-button-sm p-2"
-                title="Basculer mode"
-              >
-                <span className="text-xs md:text-sm">{modeExpert ? "⚙️ Simple" : "⚙️ Expert"}</span>
-              </button>
+              <img src={glucoflowLogo} alt="GlucoFlow Logo" className="h-8 w-8" />
+              <div>
+                <h1 className="text-xl md:text-2xl font-bold text-foreground font-medhurst">{t.header.title}</h1>
+                <p className="text-xs text-muted-foreground">
+                  {t.header.subtitle}
+                </p>
+              </div>
             </div>
 
-            <SteampunkClock />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <PaletteSelector />
+                
+                <button
+                  onClick={() => {
+                    setDarkMode((d) => !d);
+                    showToast(darkMode ? t.header.lightMode : t.header.darkMode);
+                  }}
+                  className="glass-button-sm p-2 flex items-center gap-2"
+                  title="Toggle theme"
+                >
+                  <span className="text-base">{darkMode ? "🌙" : "☀️"}</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setModeExpert((m) => !m);
+                    showToast(!modeExpert ? t.header.expertModeOn : t.header.expertModeOff);
+                  }}
+                  className="glass-button-sm p-2"
+                  title="Toggle mode"
+                >
+                  <span className="text-xs md:text-sm">{modeExpert ? `⚙️ ${t.header.modeSimple}` : `⚙️ ${t.header.modeExpert}`}</span>
+                </button>
+              </div>
+
+              <SteampunkClock />
+            </div>
           </div>
-        </div>
 
         {/* Hypo alert */}
         {alertHypo && (
           <Alert className="border-destructive bg-destructive/10 animate-pulse">
             <AlertTriangle className="h-4 w-4 text-destructive" />
             <AlertDescription className="text-destructive font-semibold">
-              ⚠️ Hypoglycémie détectée ({glycemia} mg/dL). Traitez immédiatement et consultez un professionnel.
+              ⚠️ {t.glycemia.hypoAlert.replace("{value}", glycemia)}
             </AlertDescription>
           </Alert>
         )}
@@ -450,11 +466,11 @@ export default function GlucoFlow() {
         <div>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className={`grid w-full mb-2 ${modeExpert ? 'grid-cols-5' : 'grid-cols-4'}`}>
-              <TabsTrigger value="glycemia" className="text-xs md:text-sm">Glycémie</TabsTrigger>
-              <TabsTrigger value="meal" className="text-xs md:text-sm">Repas</TabsTrigger>
-              {modeExpert && <TabsTrigger value="expert" className="text-xs md:text-sm">Exp.</TabsTrigger>}
-              <TabsTrigger value="result" className="text-xs md:text-sm">Résultat</TabsTrigger>
-              <TabsTrigger value="history" className="text-xs md:text-sm">Historique</TabsTrigger>
+              <TabsTrigger value="glycemia" className="text-xs md:text-sm">{t.tabs.glycemia}</TabsTrigger>
+              <TabsTrigger value="meal" className="text-xs md:text-sm">{t.tabs.meal}</TabsTrigger>
+              {modeExpert && <TabsTrigger value="expert" className="text-xs md:text-sm">{t.tabs.expert}</TabsTrigger>}
+              <TabsTrigger value="result" className="text-xs md:text-sm">{t.tabs.result}</TabsTrigger>
+              <TabsTrigger value="history" className="text-xs md:text-sm">{t.tabs.history}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="glycemia" className="mt-0">
@@ -474,7 +490,7 @@ export default function GlucoFlow() {
                 }}
                 onToggleExtra={() => {
                   setForceExtra((f) => !f);
-                  showToast(forceExtra ? "Mode auto activé" : "Mode supplément forcé");
+                  showToast(forceExtra ? t.toasts.supplementOff : t.toasts.supplementOn);
                 }}
               />
             </TabsContent>
@@ -496,8 +512,8 @@ export default function GlucoFlow() {
               <TabsContent value="expert" className="mt-0 space-y-2">
                 <Tabs defaultValue="advanced" className="w-full">
                   <TabsList className="grid w-full grid-cols-2 mb-2">
-                    <TabsTrigger value="advanced" className="text-[11px]">Paramètres</TabsTrigger>
-                    <TabsTrigger value="table" className="text-[11px]">Tableau</TabsTrigger>
+                    <TabsTrigger value="advanced" className="text-[11px]">{t.expert.parametersTab}</TabsTrigger>
+                    <TabsTrigger value="table" className="text-[11px]">{t.expert.tableTab}</TabsTrigger>
                   </TabsList>
                   
                   <TabsContent value="advanced" className="mt-0">
@@ -546,23 +562,23 @@ export default function GlucoFlow() {
         <Card className="bg-muted/30">
           <CardContent className="py-2">
             <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
-              ⚠️ Usage personnel uniquement - ceci n'est pas un avis médical. Consultez toujours votre endocrinologue avant d'appliquer des modifications à votre traitement.
+              ⚠️ {t.footer.warning}
             </p>
           </CardContent>
         </Card>
 
         <div className="text-center pb-2 space-y-1">
           <p className="text-xs text-muted-foreground/60">
-            All rights reserved © F. Malherbe
+            © {new Date().getFullYear()} GlucoFlow. {t.footer.copyright}
           </p>
           <p className="text-xs text-muted-foreground/40">
-            v.1.1.
+            v.2.0
           </p>
           <button
             onClick={() => setShowPrivacyModal(true)}
             className="text-xs text-muted-foreground/50 hover:text-muted-foreground/80 transition-colors underline"
           >
-            Confidentialité
+            {t.footer.privacy}
           </button>
         </div>
       </div>
@@ -571,19 +587,19 @@ export default function GlucoFlow() {
       <AlertDialog open={showPrivacyModal} onOpenChange={setShowPrivacyModal}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-sm">Confidentialité</AlertDialogTitle>
+            <AlertDialogTitle className="text-sm">{t.privacy.title}</AlertDialogTitle>
             <AlertDialogDescription className="text-xs leading-relaxed pt-2 space-y-2">
               <p>
-                Cette application ne collecte, ne stocke ni ne transmet aucune donnée personnelle ou médicale à des serveurs externes. Toutes les informations sont uniquement enregistrées localement sur votre appareil, garantissant la confidentialité totale de vos données.
+                {t.privacy.content1}
               </p>
               <p>
-                Pour renforcer votre sécurité, toutes vos données personnelles et médicales sont entièrement chiffrées localement sur votre appareil à l'aide d'un algorithme de chiffrement AES-256. Les opérations de chiffrement et de déchiffrement sont effectuées de manière transparente, sans intervention de votre part, assurant ainsi une protection complète de vos informations sensibles.
+                {t.privacy.content2}
               </p>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogAction className="text-xs" onClick={() => setShowPrivacyModal(false)}>
-              Fermer
+              {t.privacy.close}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -594,7 +610,7 @@ export default function GlucoFlow() {
         <button
           onClick={scrollToTop}
           className="fixed right-4 bottom-14 p-2.5 rounded-full bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/30 transition-all duration-300 z-40 animate-fade-in"
-          aria-label="Remonter en haut"
+          aria-label="Scroll to top"
         >
           <ArrowUp className="h-5 w-5 text-primary" />
         </button>
@@ -609,5 +625,6 @@ export default function GlucoFlow() {
         </div>
       )}
     </div>
+  </>
   );
 }
