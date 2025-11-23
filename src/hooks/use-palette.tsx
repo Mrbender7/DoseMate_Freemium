@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export type PaletteType = "blue" | "mint" | "rose" | "lavender" | "peach";
+export type PaletteType = "blue" | "mint" | "rose" | "lavender" | "peach" | "red";
 
 const PALETTE_STORAGE_KEY = "glucoflow-palette";
 
@@ -24,6 +24,10 @@ export const PALETTES = {
   peach: {
     name: "Pêche",
     emoji: "🍑",
+  },
+  red: {
+    name: "Rouge",
+    emoji: "❤️",
   },
 } as const;
 
