@@ -5,6 +5,7 @@ import { Input } from "../ui/input";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 import { Utensils, Plus, Minus } from "lucide-react";
 import type { FoodItem } from "../../types/insulin";
+import { hapticFeedback } from "../../utils/hapticFeedback";
 
 interface MealCardProps {
   foodItems: FoodItem[];
@@ -75,7 +76,10 @@ export const MealCard = forwardRef<HTMLDivElement, MealCardProps>(
               ))}
               
               <Button 
-                onClick={onSaveToResult} 
+                onClick={() => {
+                  hapticFeedback();
+                  onSaveToResult();
+                }} 
                 className="w-full mt-2 h-8 text-xs"
                 variant="elevated"
               >

@@ -579,7 +579,7 @@ export default function GlucoFlow() {
             © {new Date().getFullYear()} GlucoFlow. {t.footer.copyright}
           </p>
           <p className="text-xs text-muted-foreground/40">
-            v.2.0
+            v1.0.0
           </p>
           <button
             onClick={() => setShowPrivacyModal(true)}
