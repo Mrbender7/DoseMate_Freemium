@@ -61,7 +61,7 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
       <CardHeader className="pb-2 pt-3 px-3">
         <CardTitle className="flex items-center gap-1.5 text-primary text-base">
           <Calculator className="h-4 w-4" />
-          Résultat du calcul
+          💉 Résultat du calcul
         </CardTitle>
       </CardHeader>
         <CardContent className="space-y-1.5 px-3 pb-3">

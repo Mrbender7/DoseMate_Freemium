@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { RotateCcw } from "lucide-react";
+import { RotateCcw, Lock, Unlock } from "lucide-react";
 import type { MomentKey, DoseRange } from "../../types/insulin";
 import { DEFAULT_INSULIN_TABLE } from "../../types/insulin";
 
@@ -24,11 +24,31 @@ export function ExpertSettingsTable({
   compact = false,
 }: ExpertSettingsTableProps) {
   const [selectedMoment, setSelectedMoment] = useState<MomentKey>("morning");
+  const [isLocked, setIsLocked] = useState<boolean>(true);
 
   return (
     <Card className="transition-all duration-300">
       <CardContent className="space-y-2 py-2 px-3">
         <div className="flex flex-wrap gap-1">
+          <Button
+            onClick={() => setIsLocked(!isLocked)}
+            variant={isLocked ? "outline" : "default"}
+            size="sm"
+            className="h-7 text-[11px] px-2 gap-1"
+            title={isLocked ? "Déverrouiller pour éditer" : "Verrouiller le tableau"}
+          >
+            {isLocked ? (
+              <>
+                <Lock className="h-3 w-3" />
+                Verrouillé
+              </>
+            ) : (
+              <>
+                <Unlock className="h-3 w-3" />
+                Déverrouillé
+              </>
+            )}
+          </Button>
           <Button
             onClick={onToggleCustomTable}
             variant={useCustomTable ? "default" : "outline"}
@@ -80,7 +100,8 @@ export function ExpertSettingsTable({
                         onCustomTableChange(newTable);
                       }}
                       className="w-16 mx-auto text-center h-8 text-xs"
-                      disabled={!useCustomTable}
+                      disabled={!useCustomTable || isLocked}
+                      readOnly={isLocked}
                     />
                   </td>
                   <td className="border border-border p-1.5">
@@ -94,7 +115,8 @@ export function ExpertSettingsTable({
                         onCustomTableChange(newTable);
                       }}
                       className="w-16 mx-auto text-center h-8 text-xs"
-                      disabled={!useCustomTable}
+                      disabled={!useCustomTable || isLocked}
+                      readOnly={isLocked}
                     />
                   </td>
                   <td className="border border-border p-1.5">
@@ -108,7 +130,8 @@ export function ExpertSettingsTable({
                         onCustomTableChange(newTable);
                       }}
                       className="w-16 mx-auto text-center h-8 text-xs"
-                      disabled={!useCustomTable}
+                      disabled={!useCustomTable || isLocked}
+                      readOnly={isLocked}
                     />
                   </td>
                   <td className="border border-border p-1.5">
@@ -122,7 +145,8 @@ export function ExpertSettingsTable({
                         onCustomTableChange(newTable);
                       }}
                       className="w-16 mx-auto text-center h-8 text-xs"
-                      disabled={!useCustomTable}
+                      disabled={!useCustomTable || isLocked}
+                      readOnly={isLocked}
                     />
                   </td>
                 </tr>
@@ -171,7 +195,8 @@ export function ExpertSettingsTable({
                           onCustomTableChange(newTable);
                         }}
                         className="w-full mx-auto text-center h-7 text-xs max-w-[70px]"
-                        disabled={!useCustomTable}
+                        disabled={!useCustomTable || isLocked}
+                        readOnly={isLocked}
                       />
                     </td>
                   </tr>
@@ -182,8 +207,8 @@ export function ExpertSettingsTable({
         </div>
 
         <div className="text-[10px] text-muted-foreground bg-muted/30 p-2 rounded-lg">
-          <p>💡 Active le tableau personnalisé pour modifier les doses.</p>
-          <p className="mt-1">Modifications sauvegardées automatiquement.</p>
+          <p>💡 Déverrouille puis active le tableau personnalisé pour modifier les doses.</p>
+          <p className="mt-1">🔒 Verrouille le tableau après modifications pour éviter les changements accidentels.</p>
         </div>
       </CardContent>
     </Card>
