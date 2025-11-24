@@ -18,8 +18,6 @@ import { LanguageToggle } from "../components/LanguageToggle";
 import { SteampunkClock } from "../components/ui/clock";
 import { GlycemiaCard } from "../components/insulin/GlycemiaCard";
 import { MealCard } from "../components/insulin/MealCard";
-import { ExpertSettings } from "../components/insulin/ExpertSettings";
-import { ExpertSettingsAdvanced } from "../components/insulin/ExpertSettingsAdvanced";
 import { ExpertSettingsTable } from "../components/insulin/ExpertSettingsTable";
 import { MealParametersSettings } from "../components/insulin/MealParametersSettings";
 import { SettingsFooter } from "../components/insulin/SettingsFooter";
@@ -52,20 +50,12 @@ export default function DoseMate() {
   const { t, language } = useLanguage();
   const { hasAccepted, acceptOnboarding } = useOnboarding();
   
-  // Original v2.1 state
+  // State
   const [glycemia, setGlycemia] = useState<string>("");
   const [foodItems, setFoodItems] = useState<FoodItem[]>([{ id: "f-1", carbsPer100: "", weight: "" }]);
   const [carbRatio, setCarbRatio] = useState<number>(DEFAULT_CARB_RATIO);
-  const [sensitivityFactor, setSensitivityFactor] = useState<number | "">(0);
-  const [targetByMoment, setTargetByMoment] = useState<Record<MomentKey, number>>({
-    morning: 0,
-    noon: 0,
-    evening: 0,
-    extra: 0,
-  });
   const [customInsulinTable, setCustomInsulinTable] = useState<DoseRange[]>(DEFAULT_INSULIN_TABLE);
   const [useCustomTable, setUseCustomTable] = useState<boolean>(false);
-  const [modeExpert, setModeExpert] = useState<boolean>(false);
   const [darkMode, setDarkMode] = useState<boolean>(true);
   const [forceExtra, setForceExtra] = useState<boolean>(false);
   const [toast, setToast] = useState<{ id: string; text: string; fading?: boolean } | null>(null);
@@ -101,10 +91,7 @@ export default function DoseMate() {
       if (meta) {
         const parsed = JSON.parse(meta);
         if (parsed.carbRatio) setCarbRatio(parsed.carbRatio);
-        if (parsed.sensitivityFactor !== undefined) setSensitivityFactor(parsed.sensitivityFactor);
-        if (parsed.targetByMoment) setTargetByMoment(parsed.targetByMoment);
         if (parsed.darkMode !== undefined) setDarkMode(parsed.darkMode);
-        if (parsed.modeExpert !== undefined) setModeExpert(parsed.modeExpert);
       }
       const customTableRaw = getSecureItem(STORAGE_CUSTOM_TABLE_KEY);
       if (customTableRaw) {
@@ -118,11 +105,11 @@ export default function DoseMate() {
   }, []);
 
   useEffect(() => {
-    const meta = { carbRatio, sensitivityFactor, targetByMoment, darkMode, modeExpert };
+    const meta = { carbRatio, darkMode };
     try {
       setSecureItem(STORAGE_META_KEY, JSON.stringify(meta));
     } catch (e) {}
-  }, [carbRatio, sensitivityFactor, targetByMoment, darkMode, modeExpert]);
+  }, [carbRatio, darkMode]);
 
   useEffect(() => {
     try {
@@ -159,13 +146,13 @@ export default function DoseMate() {
     const result: any = {
       moment: forceExtra ? "extra" : getMomentOfDay(),
       base: null,
-      correction: null,
       meal: null,
       totalCalculated: 0,
       totalAdministered: 0,
       note: null,
     };
 
+    // Partie A : Correction Glycémie (lookup dans le tableau)
     const activeTable = useCustomTable ? customInsulinTable : DEFAULT_INSULIN_TABLE;
     if (!Number.isNaN(gly)) {
       if (gly < 70) result.hypo = true;
@@ -174,30 +161,22 @@ export default function DoseMate() {
         result.base = range.doses[result.moment] ?? 0;
         result.totalCalculated += result.base;
       }
-
-      const sens = typeof sensitivityFactor === "number" && sensitivityFactor > 0 ? sensitivityFactor : NaN;
-      const target = targetByMoment[result.moment] ?? 100;
-      if (modeExpert && !Number.isNaN(sens) && !Number.isNaN(gly) && gly > target) {
-        const corr = (gly - target) / sens;
-        result.correction = Math.round(corr * 10) / 10;
-        result.totalCalculated += result.correction;
-      } else {
-        result.correction = null;
-      }
     }
 
+    // Partie B : Dose Repas (glucides / ratio)
     const totalCarbs = foodItems.reduce((sum, it) => {
       const c100 = parseNumberInput(it.carbsPer100) || 0;
       const w = parseNumberInput(it.weight) || 0;
       return sum + (c100 * w) / 100;
     }, 0);
 
-    if (totalCarbs > 0) {
-      const mealDose = totalCarbs / (carbRatio || DEFAULT_CARB_RATIO);
+    if (totalCarbs > 0 && carbRatio > 0) {
+      const mealDose = totalCarbs / carbRatio;
       result.meal = Math.round(mealDose);
       result.totalCalculated += mealDose;
     }
 
+    // Plafonnement
     if (result.totalCalculated > MAX_CALCULATED) {
       result.totalCalculated = MAX_CALCULATED;
     }
@@ -215,7 +194,7 @@ export default function DoseMate() {
     }
 
     return result;
-  }, [glycemia, foodItems, customInsulinTable, useCustomTable, sensitivityFactor, targetByMoment, carbRatio, modeExpert, forceExtra]);
+  }, [glycemia, foodItems, customInsulinTable, useCustomTable, carbRatio, forceExtra]);
 
   useEffect(() => {
     if (calculation.hypo) {
@@ -241,8 +220,7 @@ export default function DoseMate() {
   const resultDisplay = useMemo(() => {
     const r = calculation;
     const parts: string[] = [];
-    if (r.base !== null && r.base !== undefined) parts.push(`${r.base}u base`);
-    if (r.correction !== null && r.correction !== undefined) parts.push(`${r.correction}u corr`);
+    if (r.base !== null && r.base !== undefined) parts.push(`${r.base}u protocole`);
     if (r.meal !== null && r.meal !== undefined) parts.push(`${r.meal}u repas`);
     
     let display = "";
@@ -444,12 +422,11 @@ export default function DoseMate() {
                   onClick={() => {
                     setShowExpertCard((s) => !s);
                     if (!showExpertCard) {
-                      setModeExpert(true);
-                      showToast(t.header.expertModeOn);
+                      showToast("Paramètres ouverts");
                     }
                   }}
                   className="glass-button-sm p-2"
-                  title="Toggle mode"
+                  title="Paramètres"
                 >
                   <span className="text-xl">⚙️</span>
                 </button>
@@ -491,9 +468,8 @@ export default function DoseMate() {
               <SettingsFooter />
               
               <Tabs defaultValue="meal" className="w-full">
-                <TabsList className="grid w-full grid-cols-3 mb-2">
+                <TabsList className="grid w-full grid-cols-2 mb-2">
                   <TabsTrigger value="meal" className="text-xs">Paramètres<br />repas</TabsTrigger>
-                  <TabsTrigger value="advanced" className="text-xs">Avancés</TabsTrigger>
                   <TabsTrigger value="table" className="text-xs">Tableau</TabsTrigger>
                 </TabsList>
                 
@@ -501,16 +477,6 @@ export default function DoseMate() {
                   <MealParametersSettings
                     carbRatio={carbRatio}
                     onCarbRatioChange={setCarbRatio}
-                  />
-                </TabsContent>
-                
-                <TabsContent value="advanced" className="mt-2">
-                  <ExpertSettingsAdvanced
-                    sensitivityFactor={sensitivityFactor}
-                    targetByMoment={targetByMoment}
-                    onSensitivityChange={setSensitivityFactor}
-                    onTargetChange={(moment, value) => setTargetByMoment((s) => ({ ...s, [moment]: value }))}
-                    compact={false}
                   />
                 </TabsContent>
                 
