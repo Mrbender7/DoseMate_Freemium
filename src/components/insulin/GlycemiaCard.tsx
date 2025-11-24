@@ -8,11 +8,9 @@ import type { MomentKey } from "../../types/insulin";
 
 interface GlycemiaCardProps {
   glycemia: string;
-  carbRatio: number;
   moment: MomentKey;
   forceExtra: boolean;
   onGlycemiaChange: (value: string) => void;
-  onCarbRatioChange: (value: number) => void;
   onReset: () => void;
   onSave: () => void;
   onToggleExtra: () => void;
@@ -20,11 +18,9 @@ interface GlycemiaCardProps {
 
 export function GlycemiaCard({
   glycemia,
-  carbRatio,
   moment,
   forceExtra,
   onGlycemiaChange,
-  onCarbRatioChange,
   onReset,
   onSave,
   onToggleExtra,
@@ -48,33 +44,22 @@ export function GlycemiaCard({
         </div>
       </CardHeader>
       <CardContent className="space-y-2 px-3 pb-3">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5 md:gap-2">
-          <div>
-            <label className="text-xs font-medium text-muted-foreground">
-              🩸 {t.glycemia.label}
-            </label>
-            <Input
-              type="number"
-              inputMode="numeric"
-              value={glycemia}
-              onChange={(e) => {
-                const value = e.target.value;
-                onGlycemiaChange(value);
-                if (value.length === 3) (e.target as HTMLInputElement).blur();
-              }}
-              placeholder={t.glycemia.placeholder}
-              className="mt-0.5 h-9 text-sm"
-            />
-          </div>
-          <div>
-            <label className="text-xs font-medium text-muted-foreground">🥐 {t.glycemia.carbRatio}</label>
-            <Input
-              type="number"
-              value={String(carbRatio)}
-              onChange={(e) => onCarbRatioChange(Math.max(1, Number(e.target.value) || 10))}
-              className="mt-0.5 h-9 text-sm"
-            />
-          </div>
+        <div>
+          <label className="text-xs font-medium text-muted-foreground">
+            🩸 {t.glycemia.label}
+          </label>
+          <Input
+            type="number"
+            inputMode="numeric"
+            value={glycemia}
+            onChange={(e) => {
+              const value = e.target.value;
+              onGlycemiaChange(value);
+              if (value.length === 3) (e.target as HTMLInputElement).blur();
+            }}
+            placeholder={t.glycemia.placeholder}
+            className="mt-0.5 h-9 text-sm"
+          />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">

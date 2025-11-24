@@ -21,6 +21,7 @@ import { MealCard } from "../components/insulin/MealCard";
 import { ExpertSettings } from "../components/insulin/ExpertSettings";
 import { ExpertSettingsAdvanced } from "../components/insulin/ExpertSettingsAdvanced";
 import { ExpertSettingsTable } from "../components/insulin/ExpertSettingsTable";
+import { MealParametersSettings } from "../components/insulin/MealParametersSettings";
 import { SettingsFooter } from "../components/insulin/SettingsFooter";
 import { ResultCard } from "../components/insulin/ResultCard";
 import { HistoryCard } from "../components/insulin/HistoryCard";
@@ -476,7 +477,7 @@ export default function DoseMate() {
           <Card className="min-h-[60vh]">
             <CardContent className="p-4 space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold text-foreground">{t.tabs.expert}</h2>
+                <h2 className="text-lg font-bold text-foreground">⚙️ Paramètres</h2>
                 <Button
                   onClick={() => setShowExpertCard(false)}
                   variant="outline"
@@ -489,11 +490,19 @@ export default function DoseMate() {
               
               <SettingsFooter />
               
-              <Tabs defaultValue="advanced" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-2">
-                  <TabsTrigger value="advanced" className="text-xs">{t.expert.parametersTab}</TabsTrigger>
-                  <TabsTrigger value="table" className="text-xs">{t.expert.tableTab}</TabsTrigger>
+              <Tabs defaultValue="meal" className="w-full">
+                <TabsList className="grid w-full grid-cols-3 mb-2">
+                  <TabsTrigger value="meal" className="text-xs">Paramètres<br />repas</TabsTrigger>
+                  <TabsTrigger value="advanced" className="text-xs">Avancés</TabsTrigger>
+                  <TabsTrigger value="table" className="text-xs">Tableau</TabsTrigger>
                 </TabsList>
+                
+                <TabsContent value="meal" className="mt-2">
+                  <MealParametersSettings
+                    carbRatio={carbRatio}
+                    onCarbRatioChange={setCarbRatio}
+                  />
+                </TabsContent>
                 
                 <TabsContent value="advanced" className="mt-2">
                   <ExpertSettingsAdvanced
@@ -532,11 +541,9 @@ export default function DoseMate() {
               <TabsContent value="glycemia" className="mt-0">
                 <GlycemiaCard
                   glycemia={glycemia}
-                  carbRatio={carbRatio}
                   moment={calculation.moment}
                   forceExtra={forceExtra}
                   onGlycemiaChange={setGlycemia}
-                  onCarbRatioChange={setCarbRatio}
                   onReset={resetInputs}
                   onSave={() => {
                     if (document.activeElement instanceof HTMLElement) {
