@@ -34,7 +34,7 @@ export const STORAGE_CUSTOM_TABLE_KEY = "glucoflow_customTable";
 
 export const DISPLAY_MAX = 22;
 export const MAX_CALCULATED = 25;
-export const DEFAULT_CARB_RATIO = 0;
+export const DEFAULT_CARB_RATIO = 10;
 
 export const DEFAULT_INSULIN_TABLE: DoseRange[] = [
   { min: -Infinity, max: 70, doses: { morning: 0, noon: 0, evening: 0, extra: 0 } },
