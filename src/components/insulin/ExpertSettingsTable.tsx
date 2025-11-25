@@ -2,9 +2,8 @@ import { useState } from "react";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { RotateCcw, Lock, Unlock } from "lucide-react";
+import { Lock, Unlock, Save } from "lucide-react";
 import type { MomentKey, DoseRange } from "../../types/insulin";
-import { DEFAULT_INSULIN_TABLE } from "../../types/insulin";
 import { hapticFeedback } from "../../utils/hapticFeedback";
 
 interface ExpertSettingsTableProps {
@@ -13,6 +12,7 @@ interface ExpertSettingsTableProps {
   onCustomTableChange: (table: DoseRange[]) => void;
   onToggleCustomTable: () => void;
   showToast: (message: string) => void;
+  onSaveAndReturn?: () => void;
   compact?: boolean;
 }
 
@@ -22,6 +22,7 @@ export function ExpertSettingsTable({
   onCustomTableChange,
   onToggleCustomTable,
   showToast,
+  onSaveAndReturn,
   compact = false,
 }: ExpertSettingsTableProps) {
   const [selectedMoment, setSelectedMoment] = useState<MomentKey>("morning");
@@ -43,7 +44,7 @@ export function ExpertSettingsTable({
   return (
     <Card className="transition-all duration-300">
       <CardContent className="space-y-2 py-2 px-3">
-        <div className="flex flex-wrap gap-1">
+        <div className="flex flex-wrap gap-1.5">
           <Button
             onClick={() => {
               hapticFeedback();
@@ -67,24 +68,21 @@ export function ExpertSettingsTable({
             )}
           </Button>
           <Button
-            onClick={onToggleCustomTable}
-            variant={useCustomTable ? "default" : "outline"}
-            size="sm"
-            className="h-7 text-[11px] px-2"
-          >
-            {useCustomTable ? "✓ Personnalisé" : "Par défaut"}
-          </Button>
-          <Button
             onClick={() => {
-              onCustomTableChange([...DEFAULT_INSULIN_TABLE]);
-              showToast("Tableau réinitialisé");
+              hapticFeedback();
+              setIsLocked(true);
+              showToast("✓ Paramètres validés");
+              if (onSaveAndReturn) {
+                onSaveAndReturn();
+              }
             }}
-            variant="outline"
+            variant="default"
             size="sm"
             className="h-7 text-[11px] px-2 gap-1"
+            title="Enregistrer et revenir"
           >
-            <RotateCcw className="h-2.5 w-2.5" />
-            Reset
+            <Save className="h-3 w-3" />
+            Enregistrer
           </Button>
         </div>
 

@@ -249,11 +249,29 @@ export default function DoseMate() {
     return display;
   }, [calculation]);
 
+  // Vérifier si la configuration est complète
+  function isConfigComplete() {
+    // Vérifier le ratio glucides
+    const validRatio = Number(carbRatio);
+    if (!Number.isFinite(validRatio) || validRatio <= 0) {
+      return false;
+    }
+    
+    // Vérifier si le tableau a au moins une valeur non-zéro
+    const activeTable = useCustomTable ? customInsulinTable : DEFAULT_INSULIN_TABLE;
+    const hasTableValues = activeTable.some(range => 
+      Object.values(range.doses).some(dose => dose > 0)
+    );
+    
+    return hasTableValues;
+  }
+
   function pushToHistory() {
-    // Vérification: empêcher l'enregistrement si les ratios ne sont pas configurés
-    if (carbRatio === 0) {
-      showToast(t.toasts.configureFirst);
-      setActiveTab("expert");
+    // Sécurisation : vérifier la configuration avant d'enregistrer
+    if (!isConfigComplete()) {
+      showToast("⚠️ Configuration manquante");
+      setShowExpertCard(true);
+      setActiveTab("settings");
       return;
     }
     
@@ -501,6 +519,10 @@ export default function DoseMate() {
                     onCustomTableChange={setCustomInsulinTable}
                     onToggleCustomTable={() => setUseCustomTable(!useCustomTable)}
                     showToast={showToast}
+                    onSaveAndReturn={() => {
+                      setShowExpertCard(false);
+                      setActiveTab("glycemia");
+                    }}
                     compact={false}
                   />
                 </TabsContent>
