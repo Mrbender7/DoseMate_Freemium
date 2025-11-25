@@ -31,10 +31,13 @@ export function ExpertSettingsTable({
     return saved !== null ? JSON.parse(saved) : true;
   });
 
-  // Sauvegarder l'état du verrouillage dans localStorage
-  useEffect(() => {
-    localStorage.setItem("dosemate_table_locked", JSON.stringify(isLocked));
-  }, [isLocked]);
+  // Fonction de toggle du verrouillage
+  const toggleLock = () => {
+    const newState = !isLocked;
+    setIsLocked(newState);
+    hapticFeedback();
+    // L'état est automatiquement sauvegardé via useEffect
+  };
 
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
@@ -54,10 +57,7 @@ export function ExpertSettingsTable({
       <CardContent className="space-y-2 py-2 px-3">
         <div className="flex flex-wrap gap-1.5">
           <Button
-            onClick={() => {
-              hapticFeedback();
-              setIsLocked(!isLocked);
-            }}
+            onClick={toggleLock}
             variant={isLocked ? "outline" : "default"}
             size="sm"
             className="h-7 text-[11px] px-2 gap-1"
