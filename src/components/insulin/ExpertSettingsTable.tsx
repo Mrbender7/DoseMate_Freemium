@@ -70,7 +70,6 @@ export function ExpertSettingsTable({
           <Button
             onClick={() => {
               hapticFeedback();
-              setIsLocked(true);
               showToast("✓ Paramètres validés");
               if (onSaveAndReturn) {
                 onSaveAndReturn();
