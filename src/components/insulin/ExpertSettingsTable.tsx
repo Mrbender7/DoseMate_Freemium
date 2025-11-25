@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -26,7 +26,15 @@ export function ExpertSettingsTable({
   compact = false,
 }: ExpertSettingsTableProps) {
   const [selectedMoment, setSelectedMoment] = useState<MomentKey>("morning");
-  const [isLocked, setIsLocked] = useState<boolean>(true);
+  const [isLocked, setIsLocked] = useState<boolean>(() => {
+    const saved = localStorage.getItem("dosemate_table_locked");
+    return saved !== null ? JSON.parse(saved) : true;
+  });
+
+  // Sauvegarder l'état du verrouillage dans localStorage
+  useEffect(() => {
+    localStorage.setItem("dosemate_table_locked", JSON.stringify(isLocked));
+  }, [isLocked]);
 
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
