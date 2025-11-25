@@ -90,7 +90,16 @@ export default function DoseMate() {
       const meta = getSecureItem(STORAGE_META_KEY);
       if (meta) {
         const parsed = JSON.parse(meta);
-        if (parsed.carbRatio) setCarbRatio(parsed.carbRatio);
+        // Garde-fou : s'assurer que carbRatio est un nombre valide et positif
+        if (parsed.carbRatio !== undefined && parsed.carbRatio !== null) {
+          const loadedRatio = Number(parsed.carbRatio);
+          if (Number.isFinite(loadedRatio) && loadedRatio > 0) {
+            setCarbRatio(loadedRatio);
+          } else {
+            // Si le ratio stocké est invalide, utiliser la valeur par défaut
+            setCarbRatio(DEFAULT_CARB_RATIO);
+          }
+        }
         if (parsed.darkMode !== undefined) setDarkMode(parsed.darkMode);
       }
       const customTableRaw = getSecureItem(STORAGE_CUSTOM_TABLE_KEY);
@@ -170,10 +179,15 @@ export default function DoseMate() {
       return sum + (c100 * w) / 100;
     }, 0);
 
-    if (totalCarbs > 0 && carbRatio > 0) {
-      const mealDose = totalCarbs / carbRatio;
+    // Garde-fou : vérifier que carbRatio est un nombre valide et positif
+    const validCarbRatio = Number(carbRatio);
+    if (totalCarbs > 0 && Number.isFinite(validCarbRatio) && validCarbRatio > 0) {
+      const mealDose = totalCarbs / validCarbRatio;
       result.meal = Math.round(mealDose);
       result.totalCalculated += mealDose;
+    } else if (totalCarbs > 0) {
+      // Si des glucides sont saisis mais le ratio est invalide, meal reste à null
+      result.meal = 0;
     }
 
     // Plafonnement
