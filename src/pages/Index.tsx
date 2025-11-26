@@ -569,7 +569,15 @@ export default function DoseMate() {
                   onUpdateItem={updateFoodItem}
                   isOpen={true}
                   onOpenChange={setIsMealCardOpen}
-                  onSaveToResult={() => setActiveTab("result")}
+                  onSaveToResult={() => {
+                    if (!isConfigComplete()) {
+                      showToast("⚠️ Configuration manquante");
+                      setShowExpertCard(true);
+                      setActiveTab("settings");
+                      return;
+                    }
+                    setActiveTab("result");
+                  }}
                 />
               </TabsContent>
 
