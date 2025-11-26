@@ -22,7 +22,7 @@ export const en = {
   
   // Tabs
   tabs: {
-    glycemia: "Blood Sugar",
+    glycemia: "Glucose",
     meal: "Meal",
     expert: "Exp.",
     result: "Result",
@@ -31,8 +31,8 @@ export const en = {
   
   // Glycemia Card
   glycemia: {
-    title: "Blood Sugar",
-    label: "Blood Sugar (mg/dL)",
+    title: "Glucose",
+    label: "Glucose (mg/dL)",
     placeholder: "e.g.: 145",
     carbRatio: "Carb ratio → U",
     reset: "Reset",
