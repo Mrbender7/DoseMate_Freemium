@@ -129,7 +129,7 @@ export const fr = {
   settings: {
     version: "Version",
     contactSupport: "Contact Support",
-    resetAllData: "Réinitialiser toutes les données",
+    resetAllData: "Réinitialiser les données",
     resetConfirmTitle: "Confirmer la réinitialisation",
     resetConfirmDescription: "⚠️ Attention : cette action est irréversible. Toutes vos données seront supprimées définitivement.",
     resetConfirmButton: "Confirmer la réinitialisation",
