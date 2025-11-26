@@ -19,8 +19,9 @@ export function SettingsFooter() {
   const [showResetDialog, setShowResetDialog] = useState(false);
 
   const handleResetAll = () => {
-    // Clear all localStorage
+    // Clear all localStorage and force unlock state on next launch
     localStorage.clear();
+    localStorage.setItem("dosemate_table_locked", JSON.stringify(false));
     // Reload the app to trigger onboarding
     window.location.reload();
   };

@@ -28,15 +28,19 @@ export function ExpertSettingsTable({
   const [selectedMoment, setSelectedMoment] = useState<MomentKey>("morning");
   const [isLocked, setIsLocked] = useState<boolean>(() => {
     const saved = localStorage.getItem("dosemate_table_locked");
-    return saved !== null ? JSON.parse(saved) : true;
+    return saved !== null ? JSON.parse(saved) : false;
   });
+
+  // Sauvegarder l'état du verrouillage dans localStorage
+  useEffect(() => {
+    localStorage.setItem("dosemate_table_locked", JSON.stringify(isLocked));
+  }, [isLocked]);
 
   // Fonction de toggle du verrouillage
   const toggleLock = () => {
     const newState = !isLocked;
     setIsLocked(newState);
     hapticFeedback();
-    // L'état est automatiquement sauvegardé via useEffect
   };
 
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -128,7 +132,7 @@ export function ExpertSettingsTable({
                         onCustomTableChange(newTable);
                       })}
                       className="w-16 mx-auto text-center h-8 text-xs"
-                      disabled={!useCustomTable || isLocked}
+                      disabled={isLocked}
                       readOnly={isLocked}
                     />
                   </td>
@@ -149,7 +153,7 @@ export function ExpertSettingsTable({
                         onCustomTableChange(newTable);
                       })}
                       className="w-16 mx-auto text-center h-8 text-xs"
-                      disabled={!useCustomTable || isLocked}
+                      disabled={isLocked}
                       readOnly={isLocked}
                     />
                   </td>
@@ -170,7 +174,7 @@ export function ExpertSettingsTable({
                         onCustomTableChange(newTable);
                       })}
                       className="w-16 mx-auto text-center h-8 text-xs"
-                      disabled={!useCustomTable || isLocked}
+                      disabled={isLocked}
                       readOnly={isLocked}
                     />
                   </td>
@@ -191,7 +195,7 @@ export function ExpertSettingsTable({
                         onCustomTableChange(newTable);
                       })}
                       className="w-16 mx-auto text-center h-8 text-xs"
-                      disabled={!useCustomTable || isLocked}
+                      disabled={isLocked}
                       readOnly={isLocked}
                     />
                   </td>
@@ -247,7 +251,7 @@ export function ExpertSettingsTable({
                           onCustomTableChange(newTable);
                         })}
                         className="w-full mx-auto text-center h-7 text-xs max-w-[70px]"
-                        disabled={!useCustomTable || isLocked}
+                        disabled={isLocked}
                         readOnly={isLocked}
                       />
                     </td>
