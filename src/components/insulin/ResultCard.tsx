@@ -7,6 +7,7 @@ import { Separator } from "../ui/separator";
 import { Utensils, AlertTriangle, Calculator } from "lucide-react";
 import { momentIcon, momentLabel, doseStyleClass } from "../../utils/calculations";
 import type { MomentKey } from "../../types/insulin";
+import { useLanguage } from "../../contexts/LanguageContext";
 
 interface Calculation {
   moment: MomentKey;
@@ -27,20 +28,21 @@ interface ResultCardProps {
 
 export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
   ({ calculation, pulse = false }, ref) => {
+    const { t } = useLanguage();
     const r = calculation;
     const parts: string[] = [];
-    if (r.base !== null && r.base !== undefined) parts.push(`${r.base}u base`);
-    if (r.correction !== null && r.correction !== undefined) parts.push(`${r.correction}u corr`);
-    if (r.meal !== null && r.meal !== undefined) parts.push(`${r.meal}u repas`);
+    if (r.base !== null && r.base !== undefined) parts.push(`${r.base}u ${t.result.base}`);
+    if (r.correction !== null && r.correction !== undefined) parts.push(`${r.correction}u ${t.result.correction}`);
+    if (r.meal !== null && r.meal !== undefined) parts.push(`${r.meal}u ${t.result.meal}`);
     
     let display = "";
     if (parts.length > 0) {
       display = parts.join(" + ") + " = ";
     }
-    display += `${r.totalAdministered}u (admin.)`;
+    display += `${r.totalAdministered}u ${t.result.administered}`;
     
     if (r.alertMax && r.totalCalculated !== undefined) {
-      display += ` (réelle ${Number(r.totalCalculated.toFixed(1))}u)`;
+      display += ` (${t.result.actual} ${Number(r.totalCalculated.toFixed(1))}u)`;
     }
     const resultDisplay = display;
 
@@ -61,15 +63,15 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
       <CardHeader className="pb-2 pt-3 px-3">
         <CardTitle className="flex items-center gap-1.5 text-primary text-base">
           <Calculator className="h-4 w-4" />
-          💉 Résultat du calcul
+          {t.result.title}
         </CardTitle>
       </CardHeader>
         <CardContent className="space-y-1.5 px-3 pb-3">
           <div className="text-center">
-            <p className="text-xs text-muted-foreground mb-1.5">Dose totale à administrer</p>
+            <p className="text-xs text-muted-foreground mb-1.5">{t.result.totalDose}</p>
             <div className={`p-2 md:p-3 rounded-lg inline-block ${doseStyleClass(calculation.totalAdministered)} transition-all duration-500 ${glowEffect} relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-700`}>
               <div className="font-bold text-3xl md:text-4xl text-foreground">{calculation.totalAdministered} U</div>
-              <div className="text-[10px] opacity-70 mt-0.5">Arrondi à l'unité la plus proche</div>
+              <div className="text-[10px] opacity-70 mt-0.5">{t.result.roundedInfo}</div>
             </div>
 
             {calculation.alertMax && (
@@ -77,9 +79,9 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
                 <Alert className="border-destructive bg-destructive/10 py-2">
                   <AlertTriangle className="h-3.5 w-3.5 text-destructive" />
                   <AlertDescription className="text-destructive font-semibold text-xs">
-                    Dose élevée détectée - vérifiez avec votre endocrinologue.
+                    {t.result.highDoseAlert}
                     <div className="text-[10px] text-destructive/80 mt-0.5">
-                      💡 <strong>Dose calculée exacte :</strong> {Number(calculation.totalCalculated.toFixed(1))} U (historique enregistre la dose réelle).
+                      {t.result.calculatedDoseInfo} {Number(calculation.totalCalculated.toFixed(1))} U
                     </div>
                   </AlertDescription>
                 </Alert>
@@ -95,19 +97,19 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-1.5">
             <div className="text-center p-1.5 bg-muted/30 rounded-lg">
-              <div className="text-[10px] text-muted-foreground mb-0.5">Moment</div>
+              <div className="text-[10px] text-muted-foreground mb-0.5">{t.result.moment}</div>
               <Badge variant="secondary" className="text-xs h-6">
                 {momentIcon(calculation.moment)} {momentLabel(calculation.moment)}
               </Badge>
             </div>
 
             <div className="text-center p-1.5 bg-muted/30 rounded-lg">
-              <div className="text-[10px] text-muted-foreground mb-0.5">Dose protocole</div>
+              <div className="text-[10px] text-muted-foreground mb-0.5">{t.result.protocolDose}</div>
               <div className="font-mono text-xl font-bold text-foreground">{calculation.base ?? "-"} U</div>
             </div>
 
             <div className="text-center p-1.5 bg-muted/30 rounded-lg">
-              <div className="text-[10px] text-muted-foreground mb-0.5">Dose repas</div>
+              <div className="text-[10px] text-muted-foreground mb-0.5">{t.result.mealDose}</div>
               <div className="font-mono text-xl font-bold text-foreground">{calculation.meal ?? "-"} U</div>
             </div>
           </div>
