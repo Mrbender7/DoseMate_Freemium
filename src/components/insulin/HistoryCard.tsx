@@ -8,6 +8,7 @@ import * as XLSX from "xlsx";
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { Capacitor } from '@capacitor/core';
+import { useLanguage } from "../../contexts/LanguageContext";
 
 interface HistoryCardProps {
   history: HistoryEntry[];
@@ -18,6 +19,7 @@ interface HistoryCardProps {
 }
 
 export function HistoryCard({ history, onClearHistory, onDeleteEntry, showToast, compact = false }: HistoryCardProps) {
+  const { t } = useLanguage();
   const sevenDaySummary = useMemo(() => {
     const now = new Date();
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 3600 * 1000);
@@ -175,23 +177,23 @@ export function HistoryCard({ history, onClearHistory, onDeleteEntry, showToast,
       <CardHeader className="py-2 px-3">
         <CardTitle className="flex items-center gap-1.5 text-primary text-base">
           <BarChart3 className="h-4 w-4" />
-          Historique & statistiques
+          {t.history.title}
         </CardTitle>
         <div className="flex items-center gap-1.5 text-muted-foreground mt-0.5 flex-wrap text-[10px]">
-          <span className="flex items-center gap-0.5">☀️ Matin</span>
-          <span className="flex items-center gap-0.5">🌤️ Midi</span>
-          <span className="flex items-center gap-0.5">🌙 Soir</span>
-          <span className="flex items-center gap-0.5"><span className="text-destructive font-bold">+</span> Supplément</span>
+          <span className="flex items-center gap-0.5">☀️ {t.history.morning}</span>
+          <span className="flex items-center gap-0.5">🌤️ {t.history.noon}</span>
+          <span className="flex items-center gap-0.5">🌙 {t.history.evening}</span>
+          <span className="flex items-center gap-0.5"><span className="text-destructive font-bold">+</span> {t.history.supplement}</span>
         </div>
       </CardHeader>
       <CardContent className="space-y-2 py-2 px-3">
         <div className="flex flex-col items-start gap-1.5 bg-muted/20 rounded-lg p-2">
           <div className="text-[11px]">
-            <div className="font-semibold text-foreground">Entrées : {history.length}</div>
+            <div className="font-semibold text-foreground">{t.history.entries} : {history.length}</div>
             <div className="text-muted-foreground mt-0.5">
               {sevenDaySummary.count > 0 
                 ? `7j: ${sevenDaySummary.avgGly} mg/dL - ${sevenDaySummary.avgDoseAdmin} U` 
-                : "Aucune donnée"}
+                : t.history.noData}
             </div>
           </div>
 
@@ -206,21 +208,21 @@ export function HistoryCard({ history, onClearHistory, onDeleteEntry, showToast,
               <Download className="h-2.5 w-2.5" /> JSON
             </Button>
             <Button onClick={onClearHistory} variant="outline" size="sm" className="gap-1 h-7 px-2 text-[10px]">
-              <RotateCcw className="h-2.5 w-2.5" /> Vider
+              <RotateCcw className="h-2.5 w-2.5" /> {t.history.clearShort}
             </Button>
           </div>
         </div>
 
         <div className="space-y-1 overflow-auto hide-scrollbar max-h-[40vh]">
           {history.length === 0 ? (
-            <div className="text-muted-foreground text-center py-3 text-xs">Aucun calcul enregistré</div>
+            <div className="text-muted-foreground text-center py-3 text-xs">{t.history.empty}</div>
           ) : (
             history.map((h) => (
               <div key={h.id} className="rounded-lg bg-card/50 border border-border/50 hover:bg-card/80 transition-colors p-2 relative">
                 <button
                   onClick={() => onDeleteEntry(h.id)}
                   className="absolute top-1 right-1 p-0.5 rounded hover:bg-destructive/20 text-muted-foreground hover:text-destructive transition-colors"
-                  aria-label="Supprimer cette entrée"
+                  aria-label={t.history.deleteEntry}
                 >
                   <X className="h-3 w-3" />
                 </button>
@@ -236,7 +238,7 @@ export function HistoryCard({ history, onClearHistory, onDeleteEntry, showToast,
                 </div>
                 <div className="font-medium text-foreground text-xs">{h.display}</div>
                 <div className="text-muted-foreground mt-0.5 text-[10px]">
-                  Admin: {h.totalAdministered} U - Calc: {Number(h.totalCalculated.toFixed(1))} U
+                  {t.history.admin}: {h.totalAdministered} U - {t.history.calc}: {Number(h.totalCalculated.toFixed(1))} U
                 </div>
               </div>
             ))

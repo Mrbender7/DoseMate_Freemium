@@ -43,23 +43,34 @@ export const fr = {
   
   // Meal Card
   meal: {
-    title: "Repas & Glucides",
+    title: "Repas",
     carbsPer100: "Glucides /100g",
     weight: "Poids (g)",
     add: "Ajouter un aliment",
     total: "Total glucides",
     saveToResult: "Voir le résultat",
+    save: "Enregistrer",
+    foodItem: "Aliment",
+    carbsPlaceholder: "ex : 36",
+    weightPlaceholder: "ex : 250",
   },
   
   // Result Card
   result: {
-    title: "Résultat",
+    title: "💉 Résultat du calcul",
     base: "base",
     correction: "corr",
     meal: "repas",
     administered: "(admin.)",
     actual: "réelle",
     maxAlert: "Dose calculée supérieure à la dose max administrable",
+    totalDose: "Dose totale à administrer",
+    roundedInfo: "Arrondi à l'unité la plus proche",
+    highDoseAlert: "Dose élevée détectée - vérifiez avec votre endocrinologue.",
+    calculatedDoseInfo: "💡 Dose calculée exacte :",
+    moment: "Moment",
+    protocolDose: "Dose protocole",
+    mealDose: "Dose repas",
   },
   
   // Expert Settings
@@ -78,15 +89,31 @@ export const fr = {
     unlockTable: "Déverrouiller",
     tableExplanation: "Ce tableau contient vos doses de base personnalisées par votre endocrinologue. Cliquez sur le cadenas pour le modifier.",
     glycemiaRange: "Plage glycémie",
+    mealParametersTitle: "Paramètres\nrepas",
+    carbRatioLabel: "🥐 Ratio Insuline/Glucides (g)",
+    carbRatioPlaceholder: "ex : 10",
+    mealNoteInfo: "💡 Ce ratio unique s'applique à tous les repas.",
+    mealNoteFormula: "Formule : (Glucides/100g × Poids) ÷ Ratio",
+    mealNoteWarning: "⚠️ Consultez votre endocrinologue avant toute modification.",
   },
   
   // History
   history: {
-    title: "Historique",
+    title: "Historique & statistiques",
     clear: "Effacer tout",
     cleared: "Historique effacé",
     deleted: "Entrée supprimée",
     empty: "Aucun calcul enregistré",
+    entries: "Entrées",
+    noData: "Aucune donnée",
+    clearShort: "Vider",
+    morning: "Matin",
+    noon: "Midi",
+    evening: "Soir",
+    supplement: "Supplément",
+    admin: "Admin",
+    calc: "Calc",
+    deleteEntry: "Supprimer cette entrée",
   },
   
   // Toasts

@@ -43,23 +43,34 @@ export const en = {
   
   // Meal Card
   meal: {
-    title: "Meal & Carbs",
+    title: "Meal",
     carbsPer100: "Carbs /100g",
     weight: "Weight (g)",
     add: "Add food item",
     total: "Total carbs",
     saveToResult: "View result",
+    save: "Save",
+    foodItem: "Food item",
+    carbsPlaceholder: "e.g.: 36",
+    weightPlaceholder: "e.g.: 250",
   },
   
   // Result Card
   result: {
-    title: "Result",
+    title: "💉 Calculation Result",
     base: "base",
     correction: "corr",
     meal: "meal",
     administered: "(admin.)",
     actual: "actual",
     maxAlert: "Calculated dose exceeds maximum administrable dose",
+    totalDose: "Total dose to administer",
+    roundedInfo: "Rounded to nearest unit",
+    highDoseAlert: "High dose detected - verify with your endocrinologist.",
+    calculatedDoseInfo: "💡 Exact calculated dose:",
+    moment: "Time",
+    protocolDose: "Protocol dose",
+    mealDose: "Meal dose",
   },
   
   // Expert Settings
@@ -77,16 +88,32 @@ export const en = {
     lockTable: "Lock",
     unlockTable: "Unlock",
     tableExplanation: "This table contains your base doses personalized by your endocrinologist. Click the lock to edit.",
-    glycemiaRange: "Blood sugar range",
+    glycemiaRange: "Glucose range",
+    mealParametersTitle: "Meal\nSettings",
+    carbRatioLabel: "🥐 Insulin/Carb Ratio (g)",
+    carbRatioPlaceholder: "e.g.: 10",
+    mealNoteInfo: "💡 This single ratio applies to all meals.",
+    mealNoteFormula: "Formula: (Carbs/100g × Weight) ÷ Ratio",
+    mealNoteWarning: "⚠️ Consult your endocrinologist before any changes.",
   },
   
   // History
   history: {
-    title: "History",
+    title: "History & Statistics",
     clear: "Clear all",
     cleared: "History cleared",
     deleted: "Entry deleted",
     empty: "No calculations saved",
+    entries: "Entries",
+    noData: "No data",
+    clearShort: "Clear",
+    morning: "Morning",
+    noon: "Noon",
+    evening: "Evening",
+    supplement: "Supplement",
+    admin: "Admin",
+    calc: "Calc",
+    deleteEntry: "Delete this entry",
   },
   
   // Toasts

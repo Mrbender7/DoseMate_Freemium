@@ -6,6 +6,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/colla
 import { Utensils, Plus, Minus } from "lucide-react";
 import type { FoodItem } from "../../types/insulin";
 import { hapticFeedback } from "../../utils/hapticFeedback";
+import { useLanguage } from "../../contexts/LanguageContext";
 
 interface MealCardProps {
   foodItems: FoodItem[];
@@ -19,13 +20,15 @@ interface MealCardProps {
 
 export const MealCard = forwardRef<HTMLDivElement, MealCardProps>(
   ({ foodItems, onAddItem, onRemoveItem, onUpdateItem, isOpen, onOpenChange, onSaveToResult }, ref) => {
+  const { t } = useLanguage();
+  
   return (
     <Collapsible open={isOpen} onOpenChange={onOpenChange}>
       <CollapsibleTrigger asChild>
         <Card ref={ref} className="cursor-pointer transition-all duration-300">
           <CardHeader className="pb-2 pt-3 px-3">
             <CardTitle className="flex items-center gap-1.5 text-primary text-base">
-              <Utensils className="h-4 w-4" /> Repas
+              <Utensils className="h-4 w-4" /> {t.meal.title}
             </CardTitle>
           </CardHeader>
         </Card>
@@ -37,7 +40,7 @@ export const MealCard = forwardRef<HTMLDivElement, MealCardProps>(
               {foodItems.map((it, idx) => (
                 <div key={it.id} className="p-2.5 rounded-lg bg-muted/30 border border-border/50">
                   <div className="flex items-center justify-between mb-2">
-                    <div className="text-xs font-semibold text-foreground">Aliment {idx + 1}</div>
+                    <div className="text-xs font-semibold text-foreground">{t.meal.foodItem} {idx + 1}</div>
                     <div className="flex gap-1.5">
                       {idx === foodItems.length - 1 && (
                         <Button onClick={onAddItem} size="sm" variant="outline" className="h-7 w-7 p-0">
@@ -54,20 +57,20 @@ export const MealCard = forwardRef<HTMLDivElement, MealCardProps>(
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
                     <div>
-                      <label className="text-xs font-medium text-muted-foreground">🥐 Glucides / 100g</label>
+                      <label className="text-xs font-medium text-muted-foreground">🥐 {t.meal.carbsPer100}</label>
                       <Input 
                         value={it.carbsPer100} 
                         onChange={(e) => onUpdateItem(it.id, "carbsPer100", e.target.value)} 
-                        placeholder="ex : 36" 
+                        placeholder={t.meal.carbsPlaceholder}
                         className="mt-0.5 h-9 text-sm" 
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-medium text-muted-foreground">Poids (g)</label>
+                      <label className="text-xs font-medium text-muted-foreground">{t.meal.weight}</label>
                       <Input 
                         value={it.weight} 
                         onChange={(e) => onUpdateItem(it.id, "weight", e.target.value)} 
-                        placeholder="ex : 250" 
+                        placeholder={t.meal.weightPlaceholder}
                         className="mt-0.5 h-9 text-sm" 
                       />
                     </div>
@@ -83,7 +86,7 @@ export const MealCard = forwardRef<HTMLDivElement, MealCardProps>(
                 className="w-full mt-2 h-8 text-xs"
                 variant="elevated"
               >
-                Enregistrer
+                {t.meal.save}
               </Button>
             </CardContent>
           </Card>
