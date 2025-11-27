@@ -425,31 +425,22 @@ export default function DoseMate() {
         <div className="max-w-4xl mx-auto space-y-1.5 md:space-y-2">
           {/* Header */}
           <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <img src={dosemateLogo} alt="DoseMate Logo" className="h-8 w-8" />
-              <div>
-                <h1 className="text-xl md:text-2xl font-bold text-foreground">{t.header.title}</h1>
-                <p className="text-xs text-muted-foreground">
-                  {t.header.subtitle}
-                </p>
+            <div className="flex items-start justify-between gap-4">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <img src={dosemateLogo} alt="DoseMate Logo" className="h-8 w-8" />
+                  <div>
+                    <h1 className="text-xl md:text-2xl font-bold text-foreground">{t.header.title}</h1>
+                    <p className="text-xs text-muted-foreground">
+                      {t.header.subtitle}
+                    </p>
+                  </div>
+                </div>
+                <SteampunkClock />
               </div>
-            </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <PaletteSelector />
-                
-                <button
-                  onClick={() => {
-                    setDarkMode((d) => !d);
-                    showToast(darkMode ? t.header.lightMode : t.header.darkMode);
-                  }}
-                  className="glass-button-sm p-2 flex items-center gap-2"
-                  title="Toggle theme"
-                >
-                  <span className="text-base">{darkMode ? "🌙" : "☀️"}</span>
-                </button>
-
+              <div className="flex flex-col items-end gap-1.5">
+                <LanguageToggle />
                 <button
                   onClick={() => {
                     setShowExpertCard((s) => !s);
@@ -462,11 +453,6 @@ export default function DoseMate() {
                 >
                   <span className="text-xl">⚙️</span>
                 </button>
-              </div>
-
-              <div className="flex flex-col items-end gap-1.5">
-                <LanguageToggle />
-                <SteampunkClock />
               </div>
             </div>
           </div>
@@ -498,7 +484,20 @@ export default function DoseMate() {
                 </Button>
               </div>
               
-              <SettingsFooter />
+              <div className="flex items-center gap-2">
+                <PaletteSelector />
+                
+                <button
+                  onClick={() => {
+                    setDarkMode((d) => !d);
+                    showToast(darkMode ? t.header.lightMode : t.header.darkMode);
+                  }}
+                  className="glass-button-sm p-2 flex items-center gap-2"
+                  title="Toggle theme"
+                >
+                  <span className="text-base">{darkMode ? "🌙" : "☀️"}</span>
+                </button>
+              </div>
               
               <Tabs defaultValue="meal" className="w-full">
                 <TabsList className="grid w-full grid-cols-2 mb-2">
@@ -528,6 +527,8 @@ export default function DoseMate() {
                   />
                 </TabsContent>
               </Tabs>
+              
+              <SettingsFooter />
             </CardContent>
           </Card>
         ) : (
