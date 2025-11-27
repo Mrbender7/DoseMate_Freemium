@@ -480,7 +480,6 @@ export default function DoseMate() {
                   className="text-xs"
                 >
                   {t.header.close}
-                  {t.header.close || "Fermer"}
                 </Button>
               </div>
               
