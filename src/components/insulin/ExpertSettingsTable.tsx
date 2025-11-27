@@ -5,6 +5,7 @@ import { Input } from "../ui/input";
 import { Lock, Unlock, Save } from "lucide-react";
 import type { MomentKey, DoseRange } from "../../types/insulin";
 import { hapticFeedback } from "../../utils/hapticFeedback";
+import { useLanguage } from "../../contexts/LanguageContext";
 
 interface ExpertSettingsTableProps {
   customInsulinTable: DoseRange[];
@@ -25,6 +26,7 @@ export function ExpertSettingsTable({
   onSaveAndReturn,
   compact = false,
 }: ExpertSettingsTableProps) {
+  const { t } = useLanguage();
   const [selectedMoment, setSelectedMoment] = useState<MomentKey>("morning");
   const [isLocked, setIsLocked] = useState<boolean>(() => {
     const saved = localStorage.getItem("dosemate_table_locked");
@@ -65,24 +67,24 @@ export function ExpertSettingsTable({
             variant={isLocked ? "outline" : "default"}
             size="sm"
             className="h-7 text-[11px] px-2 gap-1"
-            title={isLocked ? "Déverrouiller pour éditer" : "Verrouiller le tableau"}
+            title={isLocked ? t.table.unlockToEdit : t.table.lockTable}
           >
             {isLocked ? (
               <>
                 <Lock className="h-3 w-3" />
-                Verrouillé
+                {t.table.locked}
               </>
             ) : (
               <>
                 <Unlock className="h-3 w-3" />
-                Déverrouillé
+                {t.table.unlocked}
               </>
             )}
           </Button>
           <Button
             onClick={() => {
               hapticFeedback();
-              showToast("✓ Paramètres validés");
+              showToast(t.table.validated);
               if (onSaveAndReturn) {
                 onSaveAndReturn();
               }
@@ -90,10 +92,10 @@ export function ExpertSettingsTable({
             variant="default"
             size="sm"
             className="h-7 text-[11px] px-2 gap-1"
-            title="Enregistrer et revenir"
+            title={t.table.saveAndReturn}
           >
             <Save className="h-3 w-3" />
-            Enregistrer
+            {t.table.save}
           </Button>
         </div>
 
@@ -102,11 +104,11 @@ export function ExpertSettingsTable({
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-muted/50">
-                <th className="border border-border p-1.5 text-left text-xs font-semibold">Plage glycémie</th>
-                <th className="border border-border p-1.5 text-center text-xs font-semibold">☀️ Matin</th>
-                <th className="border border-border p-1.5 text-center text-xs font-semibold">🌤️ Midi</th>
-                <th className="border border-border p-1.5 text-center text-xs font-semibold">🌙 Soir</th>
-                <th className="border border-border p-1.5 text-center text-xs font-semibold">+ Extra</th>
+                <th className="border border-border p-1.5 text-left text-xs font-semibold">{t.table.glycemiaRange}</th>
+                <th className="border border-border p-1.5 text-center text-xs font-semibold">{t.table.morning}</th>
+                <th className="border border-border p-1.5 text-center text-xs font-semibold">{t.table.noon}</th>
+                <th className="border border-border p-1.5 text-center text-xs font-semibold">{t.table.evening}</th>
+                <th className="border border-border p-1.5 text-center text-xs font-semibold">{t.table.extra}</th>
               </tr>
             </thead>
             <tbody>
@@ -212,7 +214,7 @@ export function ExpertSettingsTable({
               <thead>
                 <tr className="bg-muted/50">
                   <th className="border border-border text-left font-semibold p-1.5 text-[11px]">
-                    Plage
+                    {t.table.range}
                   </th>
                   <th className="border border-border text-center font-semibold p-1.5">
                     <select
@@ -220,10 +222,10 @@ export function ExpertSettingsTable({
                       onChange={(e) => setSelectedMoment(e.target.value as MomentKey)}
                       className="w-full rounded border border-border bg-background text-foreground font-semibold shadow-sm focus:ring-2 focus:ring-primary focus:border-primary p-0.5 text-[10px]"
                     >
-                      <option value="morning" className="bg-background text-foreground">☀️ Matin</option>
-                      <option value="noon" className="bg-background text-foreground">🌤️ Midi</option>
-                      <option value="evening" className="bg-background text-foreground">🌙 Soir</option>
-                      <option value="extra" className="bg-background text-foreground">+ Extra</option>
+                      <option value="morning" className="bg-background text-foreground">{t.table.morning}</option>
+                      <option value="noon" className="bg-background text-foreground">{t.table.noon}</option>
+                      <option value="evening" className="bg-background text-foreground">{t.table.evening}</option>
+                      <option value="extra" className="bg-background text-foreground">{t.table.extra}</option>
                     </select>
                   </th>
                 </tr>
@@ -263,8 +265,8 @@ export function ExpertSettingsTable({
         </div>
 
         <div className="text-[10px] text-muted-foreground bg-muted/30 p-2 rounded-lg">
-          <p>💡 Déverrouille puis active le tableau personnalisé pour modifier les doses.</p>
-          <p className="mt-1">🔒 Verrouille le tableau après modifications pour éviter les changements accidentels.</p>
+          <p>{t.table.unlockInfo}</p>
+          <p className="mt-1">{t.table.lockInfo}</p>
         </div>
       </CardContent>
     </Card>

@@ -269,7 +269,7 @@ export default function DoseMate() {
   function pushToHistory() {
     // Sécurisation : vérifier la configuration avant d'enregistrer
     if (!isConfigComplete()) {
-      showToast("⚠️ Configuration manquante");
+      showToast(t.settings.configurationMissing);
       setShowExpertCard(true);
       setActiveTab("settings");
       return;
@@ -454,11 +454,11 @@ export default function DoseMate() {
                   onClick={() => {
                     setShowExpertCard((s) => !s);
                     if (!showExpertCard) {
-                      showToast("Paramètres ouverts");
+                      showToast(t.settings.parametersOpen);
                     }
                   }}
                   className="glass-button-sm p-2"
-                  title="Paramètres"
+                  title={t.settings.parametersTitle}
                 >
                   <span className="text-xl">⚙️</span>
                 </button>
@@ -486,13 +486,14 @@ export default function DoseMate() {
           <Card className="min-h-[60vh]">
             <CardContent className="p-4 space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold text-foreground">⚙️ Paramètres</h2>
+                <h2 className="text-lg font-bold text-foreground">{t.settings.parametersTitle}</h2>
                 <Button
                   onClick={() => setShowExpertCard(false)}
                   variant="outline"
                   size="sm"
                   className="text-xs"
                 >
+                  {t.header.close}
                   {t.header.close || "Fermer"}
                 </Button>
               </div>

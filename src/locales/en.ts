@@ -161,5 +161,27 @@ export const en = {
     resetConfirmDescription: "⚠️ Warning: this action is irreversible. All your data will be permanently deleted.",
     resetConfirmButton: "Confirm Reset",
     resetCancelButton: "Cancel",
+    parametersOpen: "Settings opened",
+    parametersTitle: "⚙️ Settings",
+    configurationMissing: "⚠️ Configuration missing",
+  },
+  
+  // Expert Table
+  table: {
+    locked: "Locked",
+    unlocked: "Unlocked",
+    unlockToEdit: "Unlock to edit",
+    lockTable: "Lock table",
+    validated: "✓ Settings validated",
+    saveAndReturn: "Save and return",
+    save: "Save",
+    glycemiaRange: "Glucose range",
+    range: "Range",
+    morning: "☀️ Morning",
+    noon: "🌤️ Noon",
+    evening: "🌙 Evening",
+    extra: "+ Extra",
+    unlockInfo: "💡 Unlock then activate the custom table to modify doses.",
+    lockInfo: "🔒 Lock the table after modifications to prevent accidental changes.",
   },
 } as const;

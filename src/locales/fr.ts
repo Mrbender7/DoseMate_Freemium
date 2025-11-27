@@ -161,5 +161,27 @@ export const fr = {
     resetConfirmDescription: "⚠️ Attention : cette action est irréversible. Toutes vos données seront supprimées définitivement.",
     resetConfirmButton: "Confirmer la réinitialisation",
     resetCancelButton: "Annuler",
+    parametersOpen: "Paramètres ouverts",
+    parametersTitle: "⚙️ Paramètres",
+    configurationMissing: "⚠️ Configuration manquante",
+  },
+  
+  // Expert Table
+  table: {
+    locked: "Verrouillé",
+    unlocked: "Déverrouillé",
+    unlockToEdit: "Déverrouiller pour éditer",
+    lockTable: "Verrouiller le tableau",
+    validated: "✓ Paramètres validés",
+    saveAndReturn: "Enregistrer et revenir",
+    save: "Enregistrer",
+    glycemiaRange: "Plage glycémie",
+    range: "Plage",
+    morning: "☀️ Matin",
+    noon: "🌤️ Midi",
+    evening: "🌙 Soir",
+    extra: "+ Extra",
+    unlockInfo: "💡 Déverrouille puis active le tableau personnalisé pour modifier les doses.",
+    lockInfo: "🔒 Verrouille le tableau après modifications pour éviter les changements accidentels.",
   },
 } as const;
