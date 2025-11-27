@@ -428,7 +428,7 @@ export default function DoseMate() {
             <div className="flex items-center gap-2">
               <img src={dosemateLogo} alt="DoseMate Logo" className="h-8 w-8" />
               <div>
-                <h1 className="text-xl md:text-2xl font-bold text-foreground font-medhurst">{t.header.title}</h1>
+                <h1 className="text-xl md:text-2xl font-bold text-foreground">{t.header.title}</h1>
                 <p className="text-xs text-muted-foreground">
                   {t.header.subtitle}
                 </p>
