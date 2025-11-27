@@ -28,7 +28,7 @@ interface ResultCardProps {
 
 export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
   ({ calculation, pulse = false }, ref) => {
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
     const r = calculation;
     const parts: string[] = [];
     if (r.base !== null && r.base !== undefined) parts.push(`${r.base}u ${t.result.base}`);
@@ -99,7 +99,7 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
             <div className="text-center p-1.5 bg-muted/30 rounded-lg">
               <div className="text-[10px] text-muted-foreground mb-0.5">{t.result.moment}</div>
               <Badge variant="secondary" className="text-xs h-6">
-                {momentIcon(calculation.moment)} {momentLabel(calculation.moment)}
+                {momentIcon(calculation.moment)} {momentLabel(calculation.moment, language)}
               </Badge>
             </div>
 
