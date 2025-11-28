@@ -6,6 +6,7 @@ import { Lock, Unlock, Save } from "lucide-react";
 import type { MomentKey, DoseRange } from "../../types/insulin";
 import { hapticFeedback } from "../../utils/hapticFeedback";
 import { useLanguage } from "../../contexts/LanguageContext";
+import { Preferences } from '@capacitor/preferences';
 
 interface ExpertSettingsTableProps {
   customInsulinTable: DoseRange[];
@@ -28,14 +29,36 @@ export function ExpertSettingsTable({
 }: ExpertSettingsTableProps) {
   const { t } = useLanguage();
   const [selectedMoment, setSelectedMoment] = useState<MomentKey>("morning");
-  const [isLocked, setIsLocked] = useState<boolean>(() => {
-    const saved = localStorage.getItem("dosemate_table_locked");
-    return saved !== null ? JSON.parse(saved) : false;
-  });
+  const [isLocked, setIsLocked] = useState<boolean>(false);
 
-  // Sauvegarder l'état du verrouillage dans localStorage
+  // Charger l'état du verrouillage depuis Capacitor Preferences au montage
   useEffect(() => {
-    localStorage.setItem("dosemate_table_locked", JSON.stringify(isLocked));
+    const loadLockState = async () => {
+      try {
+        const { value } = await Preferences.get({ key: "dosemate_table_locked" });
+        if (value !== null) {
+          setIsLocked(JSON.parse(value));
+        }
+      } catch (error) {
+        console.error("Failed to load lock state", error);
+      }
+    };
+    loadLockState();
+  }, []);
+
+  // Sauvegarder l'état du verrouillage dans Capacitor Preferences
+  useEffect(() => {
+    const saveLockState = async () => {
+      try {
+        await Preferences.set({ 
+          key: "dosemate_table_locked", 
+          value: JSON.stringify(isLocked) 
+        });
+      } catch (error) {
+        console.error("Failed to save lock state", error);
+      }
+    };
+    saveLockState();
   }, [isLocked]);
 
   // Fonction de toggle du verrouillage
