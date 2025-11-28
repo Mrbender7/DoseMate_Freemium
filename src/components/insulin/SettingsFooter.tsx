@@ -15,7 +15,7 @@ import { Trash2, Mail } from "lucide-react";
 import { useLanguage } from "../../contexts/LanguageContext";
 
 export function SettingsFooter() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [showResetDialog, setShowResetDialog] = useState(false);
 
   const handleResetAll = () => {
@@ -37,7 +37,7 @@ export function SettingsFooter() {
             className="w-full gap-2 h-9"
           >
             <Trash2 className="h-4 w-4" />
-            {t.settings.resetAllData}
+            {language === 'fr' ? 'Effacer tout' : 'Clear all'}
           </Button>
 
           <a
