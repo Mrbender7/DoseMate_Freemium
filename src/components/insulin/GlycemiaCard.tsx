@@ -50,7 +50,7 @@ export function GlycemiaCard({
           </label>
           <Input
             type="number"
-            inputMode="numeric"
+            inputMode="decimal"
             value={glycemia}
             onChange={(e) => {
               const value = e.target.value;

@@ -120,6 +120,7 @@ export function ExpertSettingsTable({
                   <td className="border border-border p-1.5">
                     <Input
                       type="number"
+                      inputMode="decimal"
                       min="0"
                       value={range.doses.morning}
                       onChange={(e) => {
@@ -141,6 +142,7 @@ export function ExpertSettingsTable({
                   <td className="border border-border p-1.5">
                     <Input
                       type="number"
+                      inputMode="decimal"
                       min="0"
                       value={range.doses.noon}
                       onChange={(e) => {
@@ -162,6 +164,7 @@ export function ExpertSettingsTable({
                   <td className="border border-border p-1.5">
                     <Input
                       type="number"
+                      inputMode="decimal"
                       min="0"
                       value={range.doses.evening}
                       onChange={(e) => {
@@ -183,6 +186,7 @@ export function ExpertSettingsTable({
                   <td className="border border-border p-1.5">
                     <Input
                       type="number"
+                      inputMode="decimal"
                       min="0"
                       value={range.doses.extra}
                       onChange={(e) => {
@@ -239,6 +243,7 @@ export function ExpertSettingsTable({
                     <td className="border border-border p-1">
                       <Input
                         type="number"
+                        inputMode="decimal"
                         min="0"
                         value={range.doses[selectedMoment]}
                         onChange={(e) => {
