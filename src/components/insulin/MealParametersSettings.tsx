@@ -27,7 +27,7 @@ export function MealParametersSettings({
           </label>
           <Input
             type="number"
-            inputMode="numeric"
+            inputMode="decimal"
             value={String(carbRatio)}
             onChange={(e) => {
               const value = Math.max(1, Number(e.target.value) || 10);

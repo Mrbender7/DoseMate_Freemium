@@ -59,6 +59,8 @@ export const MealCard = forwardRef<HTMLDivElement, MealCardProps>(
                     <div>
                       <label className="text-xs font-medium text-muted-foreground">🥐 {t.meal.carbsPer100}</label>
                       <Input 
+                        type="number"
+                        inputMode="decimal"
                         value={it.carbsPer100} 
                         onChange={(e) => onUpdateItem(it.id, "carbsPer100", e.target.value)} 
                         placeholder={t.meal.carbsPlaceholder}
@@ -68,6 +70,8 @@ export const MealCard = forwardRef<HTMLDivElement, MealCardProps>(
                     <div>
                       <label className="text-xs font-medium text-muted-foreground">{t.meal.weight}</label>
                       <Input 
+                        type="number"
+                        inputMode="decimal"
                         value={it.weight} 
                         onChange={(e) => onUpdateItem(it.id, "weight", e.target.value)} 
                         placeholder={t.meal.weightPlaceholder}
