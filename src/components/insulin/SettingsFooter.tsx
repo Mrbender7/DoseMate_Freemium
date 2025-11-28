@@ -13,17 +13,30 @@ import {
 } from "../ui/alert-dialog";
 import { Trash2, Mail } from "lucide-react";
 import { useLanguage } from "../../contexts/LanguageContext";
+import { Preferences } from '@capacitor/preferences';
 
 export function SettingsFooter() {
   const { t, language } = useLanguage();
   const [showResetDialog, setShowResetDialog] = useState(false);
 
-  const handleResetAll = () => {
-    // Clear all localStorage and force unlock state on next launch
-    localStorage.clear();
-    localStorage.setItem("dosemate_table_locked", JSON.stringify(false));
-    // Reload the app to trigger onboarding
-    window.location.reload();
+  const handleResetAll = async () => {
+    try {
+      // Clear all Capacitor Preferences
+      await Preferences.clear();
+      // Set unlock state for next launch
+      await Preferences.set({ 
+        key: "dosemate_table_locked", 
+        value: JSON.stringify(false) 
+      });
+      // Reload the app to trigger onboarding
+      window.location.reload();
+    } catch (error) {
+      console.error("Failed to reset all data", error);
+      // Fallback to localStorage if Preferences fails
+      localStorage.clear();
+      localStorage.setItem("dosemate_table_locked", JSON.stringify(false));
+      window.location.reload();
+    }
   };
 
   return (

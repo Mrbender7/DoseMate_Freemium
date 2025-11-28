@@ -11,7 +11,7 @@ import { useLanguage, Language } from "../contexts/LanguageContext";
 
 interface OnboardingModalProps {
   open: boolean;
-  onAccept: () => void;
+  onAccept: () => void | Promise<void>;
 }
 
 export function OnboardingModal({ open, onAccept }: OnboardingModalProps) {
@@ -19,6 +19,10 @@ export function OnboardingModal({ open, onAccept }: OnboardingModalProps) {
 
   const handleLanguageChange = (lang: Language) => {
     setLanguage(lang);
+  };
+
+  const handleAccept = async () => {
+    await onAccept();
   };
 
   return (
@@ -89,7 +93,7 @@ export function OnboardingModal({ open, onAccept }: OnboardingModalProps) {
           >
             {t.onboarding.privacyLink}
           </a>
-          <Button onClick={onAccept} className="w-full h-9 text-sm font-medium">
+          <Button onClick={handleAccept} className="w-full h-9 text-sm font-medium">
             {t.onboarding.accept}
           </Button>
         </AlertDialogFooter>

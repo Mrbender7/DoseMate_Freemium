@@ -26,7 +26,8 @@ import { HistoryCard } from "../components/insulin/HistoryCard";
 import { OnboardingModal } from "../components/OnboardingModal";
 import { uid, parseNumberInput, nowISO, getMomentOfDay } from "../utils/calculations";
 import { playNotificationSound } from "../utils/audioPlayer";
-import { getSecureItem, setSecureItem, removeSecureItem } from "../utils/secureStorage";
+import { getNativeItem, setNativeItem, removeNativeItem } from "../utils/nativeStorage";
+import { initEncryption } from "../utils/encryption";
 import { useLanguage } from "../contexts/LanguageContext";
 import { useOnboarding } from "../hooks/use-onboarding";
 import dosemateLogo from "../assets/dosemate-logo.png";
@@ -80,82 +81,97 @@ export default function DoseMate() {
      Logic
      ============================ */
 
-  // Persistance robuste : chargement au démarrage
+  // Persistance robuste : chargement au démarrage avec Capacitor Preferences
   useEffect(() => {
-    try {
-      // Charge uniquement l'historique (pas les valeurs de calcul en cours)
-      const raw = getSecureItem(STORAGE_KEY);
-      if (raw) {
-        const loadedHistory = JSON.parse(raw);
-        if (Array.isArray(loadedHistory)) {
-          setHistory(loadedHistory);
-        }
-      }
-      
-      // Charge les paramètres utilisateur
-      const meta = getSecureItem(STORAGE_META_KEY);
-      if (meta) {
-        const parsed = JSON.parse(meta);
-        // Garde-fou : s'assurer que carbRatio est un nombre valide et positif
-        if (parsed.carbRatio !== undefined && parsed.carbRatio !== null) {
-          const loadedRatio = Number(parsed.carbRatio);
-          if (Number.isFinite(loadedRatio) && loadedRatio > 0) {
-            setCarbRatio(loadedRatio);
-          } else {
-            // Si le ratio stocké est invalide, utiliser la valeur par défaut
-            setCarbRatio(DEFAULT_CARB_RATIO);
+    const loadData = async () => {
+      try {
+        // Initialiser le système de chiffrement
+        await initEncryption();
+        
+        // Charge uniquement l'historique (pas les valeurs de calcul en cours)
+        const raw = await getNativeItem(STORAGE_KEY);
+        if (raw) {
+          const loadedHistory = JSON.parse(raw);
+          if (Array.isArray(loadedHistory)) {
+            setHistory(loadedHistory);
           }
         }
-        if (parsed.darkMode !== undefined) setDarkMode(parsed.darkMode);
-      }
-      
-      // Charge le tableau personnalisé avec vérifications robustes
-      const customTableRaw = getSecureItem(STORAGE_CUSTOM_TABLE_KEY);
-      if (customTableRaw) {
-        try {
-          const customTableData = JSON.parse(customTableRaw);
-          // Vérifie que les données sont valides avant de les charger
-          if (customTableData && Array.isArray(customTableData.table)) {
-            setCustomInsulinTable(customTableData.table);
-            setUseCustomTable(customTableData.useCustom || false);
-          } else {
-            // Données invalides, utiliser les valeurs par défaut
+        
+        // Charge les paramètres utilisateur
+        const meta = await getNativeItem(STORAGE_META_KEY);
+        if (meta) {
+          const parsed = JSON.parse(meta);
+          // Garde-fou : s'assurer que carbRatio est un nombre valide et positif
+          if (parsed.carbRatio !== undefined && parsed.carbRatio !== null) {
+            const loadedRatio = Number(parsed.carbRatio);
+            if (Number.isFinite(loadedRatio) && loadedRatio > 0) {
+              setCarbRatio(loadedRatio);
+            } else {
+              // Si le ratio stocké est invalide, utiliser la valeur par défaut
+              setCarbRatio(DEFAULT_CARB_RATIO);
+            }
+          }
+          if (parsed.darkMode !== undefined) setDarkMode(parsed.darkMode);
+        }
+        
+        // Charge le tableau personnalisé avec vérifications robustes
+        const customTableRaw = await getNativeItem(STORAGE_CUSTOM_TABLE_KEY);
+        if (customTableRaw) {
+          try {
+            const customTableData = JSON.parse(customTableRaw);
+            // Vérifie que les données sont valides avant de les charger
+            if (customTableData && Array.isArray(customTableData.table)) {
+              setCustomInsulinTable(customTableData.table);
+              setUseCustomTable(customTableData.useCustom || false);
+            } else {
+              // Données invalides, utiliser les valeurs par défaut
+              setCustomInsulinTable(DEFAULT_INSULIN_TABLE);
+            }
+          } catch (parseError) {
+            console.warn("Failed to parse custom table data, using defaults", parseError);
             setCustomInsulinTable(DEFAULT_INSULIN_TABLE);
           }
-        } catch (parseError) {
-          console.warn("Failed to parse custom table data, using defaults", parseError);
+        } else {
+          // Aucune donnée sauvegardée, utiliser les valeurs par défaut
           setCustomInsulinTable(DEFAULT_INSULIN_TABLE);
         }
-      } else {
-        // Aucune donnée sauvegardée, utiliser les valeurs par défaut
+      } catch (e) {
+        console.warn("Failed to load stored data", e);
+        // En cas d'erreur, réinitialiser avec les valeurs par défaut
         setCustomInsulinTable(DEFAULT_INSULIN_TABLE);
+        setCarbRatio(DEFAULT_CARB_RATIO);
       }
-    } catch (e) {
-      console.warn("Failed to load stored data", e);
-      // En cas d'erreur, réinitialiser avec les valeurs par défaut
-      setCustomInsulinTable(DEFAULT_INSULIN_TABLE);
-      setCarbRatio(DEFAULT_CARB_RATIO);
-    }
+    };
+    
+    loadData();
   }, []);
 
   useEffect(() => {
-    const meta = { carbRatio, darkMode };
-    try {
-      setSecureItem(STORAGE_META_KEY, JSON.stringify(meta));
-    } catch (e) {}
+    const saveMeta = async () => {
+      const meta = { carbRatio, darkMode };
+      try {
+        await setNativeItem(STORAGE_META_KEY, JSON.stringify(meta));
+      } catch (e) {
+        console.error("Failed to save meta data", e);
+      }
+    };
+    saveMeta();
   }, [carbRatio, darkMode]);
 
-  // Sauvegarde automatique et immédiate du tableau personnalisé
+  // Sauvegarde automatique et immédiate du tableau personnalisé avec Capacitor Preferences
   useEffect(() => {
-    try {
-      // Vérifie que les données sont valides avant de sauvegarder
-      if (Array.isArray(customInsulinTable) && customInsulinTable.length > 0) {
-        const customTableData = { table: customInsulinTable, useCustom: useCustomTable };
-        setSecureItem(STORAGE_CUSTOM_TABLE_KEY, JSON.stringify(customTableData));
+    const saveCustomTable = async () => {
+      try {
+        // Vérifie que les données sont valides avant de sauvegarder
+        if (Array.isArray(customInsulinTable) && customInsulinTable.length > 0) {
+          const customTableData = { table: customInsulinTable, useCustom: useCustomTable };
+          await setNativeItem(STORAGE_CUSTOM_TABLE_KEY, JSON.stringify(customTableData));
+        }
+      } catch (e) {
+        console.error("Failed to save custom table data", e);
       }
-    } catch (e) {
-      console.error("Failed to save custom table data", e);
-    }
+    };
+    saveCustomTable();
   }, [customInsulinTable, useCustomTable]);
 
   function showToast(text: string, ms = 2800) {
@@ -319,9 +335,10 @@ export default function DoseMate() {
     };
     setHistory((prev) => {
       const next = [entry, ...prev].slice(0, 25);
-      try {
-        setSecureItem(STORAGE_KEY, JSON.stringify(next));
-      } catch (e) {}
+      // Sauvegarde asynchrone sans bloquer l'UI
+      setNativeItem(STORAGE_KEY, JSON.stringify(next)).catch(e => 
+        console.error("Failed to save history", e)
+      );
       showToast(t.toasts.saved);
       return next;
     });
@@ -329,16 +346,19 @@ export default function DoseMate() {
 
   function clearHistory() {
     setHistory([]);
-    removeSecureItem(STORAGE_KEY);
+    removeNativeItem(STORAGE_KEY).catch(e => 
+      console.error("Failed to clear history", e)
+    );
     showToast(t.history.cleared);
   }
 
   function deleteHistoryEntry(id: string) {
     setHistory((prev) => {
       const next = prev.filter((entry) => entry.id !== id);
-      try {
-        setSecureItem(STORAGE_KEY, JSON.stringify(next));
-      } catch (e) {}
+      // Sauvegarde asynchrone sans bloquer l'UI
+      setNativeItem(STORAGE_KEY, JSON.stringify(next)).catch(e => 
+        console.error("Failed to delete history entry", e)
+      );
       showToast(t.history.deleted);
       return next;
     });
@@ -346,9 +366,9 @@ export default function DoseMate() {
 
   useEffect(() => {
     if (!calculation || calculation.totalCalculated <= 0) return;
-    const timeout = setTimeout(() => {
+    const timeout = setTimeout(async () => {
       try {
-        const prevRaw = getSecureItem(STORAGE_KEY);
+        const prevRaw = await getNativeItem(STORAGE_KEY);
         const prev = prevRaw ? JSON.parse(prevRaw) as HistoryEntry[] : [];
         const now = new Date();
         
@@ -373,7 +393,7 @@ export default function DoseMate() {
               moment: calculation.moment
             };
             const next = [newEntry, ...prev.slice(1)].slice(0, 25);
-            setSecureItem(STORAGE_KEY, JSON.stringify(next));
+            await setNativeItem(STORAGE_KEY, JSON.stringify(next));
             setHistory(next);
             showToast(t.toasts.autoUpdated);
             setResultPulse(true);
@@ -393,7 +413,7 @@ export default function DoseMate() {
           moment: calculation.moment
         };
         const next = [newEntry, ...(prev || [])].slice(0, 25);
-        setSecureItem(STORAGE_KEY, JSON.stringify(next));
+        await setNativeItem(STORAGE_KEY, JSON.stringify(next));
         setHistory(next);
         showToast(t.toasts.autoSaved);
         setResultPulse(true);

@@ -1,8 +1,10 @@
 import CryptoJS from 'crypto-js';
+import { Preferences } from '@capacitor/preferences';
 
 /**
- * Système de chiffrement local pour GlucoFlow
+ * Système de chiffrement local pour DoseMate
  * Utilise AES-256 pour chiffrer les données sensibles
+ * Optimisé pour Capacitor avec Preferences API
  */
 
 const ENCRYPTION_KEY_STORAGE = '__gf_ek__';
@@ -17,17 +19,21 @@ function generateEncryptionKey(): string {
 }
 
 /**
- * Récupère ou crée la clé de chiffrement
- * La clé est générée au premier lancement et stockée de manière sécurisée
+ * Récupère ou crée la clé de chiffrement de manière asynchrone
+ * La clé est générée au premier lancement et stockée dans Capacitor Preferences
  */
-function getEncryptionKey(): string {
+async function getEncryptionKey(): Promise<string> {
   try {
-    let key = localStorage.getItem(ENCRYPTION_KEY_STORAGE);
+    const { value: key } = await Preferences.get({ key: ENCRYPTION_KEY_STORAGE });
     
     if (!key) {
       // Première utilisation : générer une nouvelle clé
-      key = generateEncryptionKey();
-      localStorage.setItem(ENCRYPTION_KEY_STORAGE, key);
+      const newKey = generateEncryptionKey();
+      await Preferences.set({ 
+        key: ENCRYPTION_KEY_STORAGE, 
+        value: newKey 
+      });
+      return newKey;
     }
     
     return key;
@@ -39,15 +45,15 @@ function getEncryptionKey(): string {
 }
 
 /**
- * Chiffre une chaîne de caractères avec AES-256
+ * Chiffre une chaîne de caractères avec AES-256 (asynchrone)
  * @param data - Données à chiffrer
  * @returns Données chiffrées en Base64
  */
-export function encrypt(data: string): string {
+export async function encryptAsync(data: string): Promise<string> {
   if (!data) return data;
   
   try {
-    const key = getEncryptionKey();
+    const key = await getEncryptionKey();
     const encrypted = CryptoJS.AES.encrypt(data, key);
     return encrypted.toString();
   } catch (error) {
@@ -58,15 +64,15 @@ export function encrypt(data: string): string {
 }
 
 /**
- * Déchiffre une chaîne chiffrée
+ * Déchiffre une chaîne chiffrée (asynchrone)
  * @param encryptedData - Données chiffrées
  * @returns Données déchiffrées
  */
-export function decrypt(encryptedData: string): string {
+export async function decryptAsync(encryptedData: string): Promise<string> {
   if (!encryptedData) return encryptedData;
   
   try {
-    const key = getEncryptionKey();
+    const key = await getEncryptionKey();
     const decrypted = CryptoJS.AES.decrypt(encryptedData, key);
     const decryptedString = decrypted.toString(CryptoJS.enc.Utf8);
     
@@ -76,6 +82,53 @@ export function decrypt(encryptedData: string): string {
   } catch (error) {
     console.error('Erreur de déchiffrement', error);
     // Retourner les données originales en cas d'erreur
+    return encryptedData;
+  }
+}
+
+// Exports de compatibilité synchrone (à éviter si possible)
+// Ces fonctions utilisent une clé en cache en mémoire
+let cachedKey: string | null = null;
+
+/**
+ * Initialise la clé de chiffrement en cache (à appeler au démarrage)
+ */
+export async function initEncryption(): Promise<void> {
+  cachedKey = await getEncryptionKey();
+}
+
+/**
+ * Chiffre une chaîne de caractères avec AES-256 (synchrone, utilise le cache)
+ * @deprecated Préférer encryptAsync pour une meilleure sécurité
+ */
+export function encrypt(data: string): string {
+  if (!data) return data;
+  
+  try {
+    const key = cachedKey || generateEncryptionKey();
+    const encrypted = CryptoJS.AES.encrypt(data, key);
+    return encrypted.toString();
+  } catch (error) {
+    console.error('Erreur de chiffrement', error);
+    return data;
+  }
+}
+
+/**
+ * Déchiffre une chaîne chiffrée (synchrone, utilise le cache)
+ * @deprecated Préférer decryptAsync pour une meilleure sécurité
+ */
+export function decrypt(encryptedData: string): string {
+  if (!encryptedData) return encryptedData;
+  
+  try {
+    const key = cachedKey || generateEncryptionKey();
+    const decrypted = CryptoJS.AES.decrypt(encryptedData, key);
+    const decryptedString = decrypted.toString(CryptoJS.enc.Utf8);
+    
+    return decryptedString || encryptedData;
+  } catch (error) {
+    console.error('Erreur de déchiffrement', error);
     return encryptedData;
   }
 }

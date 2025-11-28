@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getSecureItem, setSecureItem } from "../utils/secureStorage";
+import { getNativeItem, setNativeItem } from "../utils/nativeStorage";
 
 export type PaletteType = "blue" | "mint" | "rose" | "lavender" | "peach" | "red" | "cyan";
 
@@ -37,27 +37,44 @@ export const PALETTES = {
 } as const;
 
 export function usePalette() {
-  const [palette, setPaletteState] = useState<PaletteType>(() => {
-    try {
-      const stored = getSecureItem(PALETTE_STORAGE_KEY);
-      return (stored as PaletteType) || "blue";
-    } catch {
-      return "blue";
-    }
-  });
+  const [palette, setPaletteState] = useState<PaletteType>("blue");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  // Charger la palette au montage
   useEffect(() => {
-    try {
-      setSecureItem(PALETTE_STORAGE_KEY, palette);
-      document.documentElement.setAttribute("data-palette", palette);
-    } catch (e) {
-      console.warn("Failed to save palette preference", e);
-    }
-  }, [palette]);
-
-  useEffect(() => {
-    document.documentElement.setAttribute("data-palette", palette);
+    const loadPalette = async () => {
+      try {
+        const stored = await getNativeItem(PALETTE_STORAGE_KEY);
+        if (stored) {
+          setPaletteState(stored as PaletteType);
+          document.documentElement.setAttribute("data-palette", stored);
+        } else {
+          document.documentElement.setAttribute("data-palette", "blue");
+        }
+      } catch (error) {
+        console.error("Failed to load palette", error);
+        document.documentElement.setAttribute("data-palette", "blue");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadPalette();
   }, []);
 
-  return { palette, setPalette: setPaletteState };
+  // Sauvegarder la palette à chaque changement
+  useEffect(() => {
+    if (!isLoading) {
+      const savePalette = async () => {
+        try {
+          await setNativeItem(PALETTE_STORAGE_KEY, palette);
+          document.documentElement.setAttribute("data-palette", palette);
+        } catch (e) {
+          console.warn("Failed to save palette preference", e);
+        }
+      };
+      savePalette();
+    }
+  }, [palette, isLoading]);
+
+  return { palette, setPalette: setPaletteState, isLoading };
 }
