@@ -192,7 +192,7 @@ export function HistoryCard({ history, onClearHistory, onDeleteEntry, showToast,
             <div className="font-semibold text-foreground">{t.history.entries} : {history.length}</div>
             <div className="text-muted-foreground mt-0.5">
               {sevenDaySummary.count > 0 
-                ? `7j: ${sevenDaySummary.avgGly} mg/dL - ${sevenDaySummary.avgDoseAdmin} U` 
+                ? `7j: ${sevenDaySummary.avgGly} mg/dL - ${sevenDaySummary.avgDoseAdmin} u` 
                 : t.history.noData}
             </div>
           </div>
@@ -238,7 +238,7 @@ export function HistoryCard({ history, onClearHistory, onDeleteEntry, showToast,
                 </div>
                 <div className="font-medium text-foreground text-xs">{h.display}</div>
                 <div className="text-muted-foreground mt-0.5 text-[10px]">
-                  {t.history.admin}: {h.totalAdministered} U - {t.history.calc}: {Number(h.totalCalculated.toFixed(1))} U
+                  {t.history.admin}: {h.totalAdministered} u - {t.history.calc}: {Number(h.totalCalculated.toFixed(1))} u
                 </div>
               </div>
             ))

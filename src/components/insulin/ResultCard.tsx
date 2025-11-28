@@ -70,7 +70,7 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
           <div className="text-center">
             <p className="text-xs text-muted-foreground mb-1.5">{t.result.totalDose}</p>
             <div className={`p-2 md:p-3 rounded-lg inline-block ${doseStyleClass(calculation.totalAdministered)} transition-all duration-500 ${glowEffect} relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-700`}>
-              <div className="font-bold text-3xl md:text-4xl text-foreground">{calculation.totalAdministered} U</div>
+              <div className="font-bold text-3xl md:text-4xl text-foreground">{calculation.totalAdministered} u</div>
               <div className="text-[10px] opacity-70 mt-0.5">{t.result.roundedInfo}</div>
             </div>
 
@@ -81,7 +81,7 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
                   <AlertDescription className="text-destructive font-semibold text-xs">
                     {t.result.highDoseAlert}
                     <div className="text-[10px] text-destructive/80 mt-0.5">
-                      {t.result.calculatedDoseInfo} {Number(calculation.totalCalculated.toFixed(1))} U
+                      {t.result.calculatedDoseInfo} {Number(calculation.totalCalculated.toFixed(1))} u
                     </div>
                   </AlertDescription>
                 </Alert>
@@ -105,12 +105,12 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
 
             <div className="text-center p-1.5 bg-muted/30 rounded-lg">
               <div className="text-[10px] text-muted-foreground mb-0.5">{t.result.protocolDose}</div>
-              <div className="font-mono text-xl font-bold text-foreground">{calculation.base ?? "-"} U</div>
+              <div className="font-mono text-xl font-bold text-foreground">{calculation.base ?? "-"} u</div>
             </div>
 
             <div className="text-center p-1.5 bg-muted/30 rounded-lg">
               <div className="text-[10px] text-muted-foreground mb-0.5">{t.result.mealDose}</div>
-              <div className="font-mono text-xl font-bold text-foreground">{calculation.meal ?? "-"} U</div>
+              <div className="font-mono text-xl font-bold text-foreground">{calculation.meal ?? "-"} u</div>
             </div>
           </div>
         </CardContent>
