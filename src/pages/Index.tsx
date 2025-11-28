@@ -80,11 +80,17 @@ export default function DoseMate() {
      Logic
      ============================ */
 
+  // Persistance robuste : chargement au démarrage
   useEffect(() => {
     try {
       // Charge uniquement l'historique (pas les valeurs de calcul en cours)
       const raw = getSecureItem(STORAGE_KEY);
-      if (raw) setHistory(JSON.parse(raw));
+      if (raw) {
+        const loadedHistory = JSON.parse(raw);
+        if (Array.isArray(loadedHistory)) {
+          setHistory(loadedHistory);
+        }
+      }
       
       // Charge les paramètres utilisateur
       const meta = getSecureItem(STORAGE_META_KEY);
@@ -102,14 +108,33 @@ export default function DoseMate() {
         }
         if (parsed.darkMode !== undefined) setDarkMode(parsed.darkMode);
       }
+      
+      // Charge le tableau personnalisé avec vérifications robustes
       const customTableRaw = getSecureItem(STORAGE_CUSTOM_TABLE_KEY);
       if (customTableRaw) {
-        const customTableData = JSON.parse(customTableRaw);
-        setCustomInsulinTable(customTableData.table);
-        setUseCustomTable(customTableData.useCustom || false);
+        try {
+          const customTableData = JSON.parse(customTableRaw);
+          // Vérifie que les données sont valides avant de les charger
+          if (customTableData && Array.isArray(customTableData.table)) {
+            setCustomInsulinTable(customTableData.table);
+            setUseCustomTable(customTableData.useCustom || false);
+          } else {
+            // Données invalides, utiliser les valeurs par défaut
+            setCustomInsulinTable(DEFAULT_INSULIN_TABLE);
+          }
+        } catch (parseError) {
+          console.warn("Failed to parse custom table data, using defaults", parseError);
+          setCustomInsulinTable(DEFAULT_INSULIN_TABLE);
+        }
+      } else {
+        // Aucune donnée sauvegardée, utiliser les valeurs par défaut
+        setCustomInsulinTable(DEFAULT_INSULIN_TABLE);
       }
     } catch (e) {
       console.warn("Failed to load stored data", e);
+      // En cas d'erreur, réinitialiser avec les valeurs par défaut
+      setCustomInsulinTable(DEFAULT_INSULIN_TABLE);
+      setCarbRatio(DEFAULT_CARB_RATIO);
     }
   }, []);
 
@@ -120,11 +145,17 @@ export default function DoseMate() {
     } catch (e) {}
   }, [carbRatio, darkMode]);
 
+  // Sauvegarde automatique et immédiate du tableau personnalisé
   useEffect(() => {
     try {
-      const customTableData = { table: customInsulinTable, useCustom: useCustomTable };
-      setSecureItem(STORAGE_CUSTOM_TABLE_KEY, JSON.stringify(customTableData));
-    } catch (e) {}
+      // Vérifie que les données sont valides avant de sauvegarder
+      if (Array.isArray(customInsulinTable) && customInsulinTable.length > 0) {
+        const customTableData = { table: customInsulinTable, useCustom: useCustomTable };
+        setSecureItem(STORAGE_CUSTOM_TABLE_KEY, JSON.stringify(customTableData));
+      }
+    } catch (e) {
+      console.error("Failed to save custom table data", e);
+    }
   }, [customInsulinTable, useCustomTable]);
 
   function showToast(text: string, ms = 2800) {
