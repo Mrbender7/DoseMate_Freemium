@@ -46,7 +46,7 @@ export function GlycemiaCard({
       <CardContent className="space-y-2 px-3 pb-3">
         <div>
           <label className="text-xs font-medium text-muted-foreground">
-            🩸 {t.glycemia.label}
+            📈 {t.glycemia.label}
           </label>
           <Input
             type="number"
