@@ -32,9 +32,6 @@ export function SettingsFooter() {
       window.location.reload();
     } catch (error) {
       console.error("Failed to reset all data", error);
-      // Fallback to localStorage if Preferences fails
-      localStorage.clear();
-      localStorage.setItem("dosemate_table_locked", JSON.stringify(false));
       window.location.reload();
     }
   };
