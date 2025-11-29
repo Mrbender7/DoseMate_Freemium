@@ -68,6 +68,7 @@ export default function DoseMate() {
   const [showPrivacyModal, setShowPrivacyModal] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("glycemia");
   const [showExpertCard, setShowExpertCard] = useState<boolean>(false);
+  const [expertTabValue, setExpertTabValue] = useState<string>("meal");
 
   // Reset to glycemia tab on mount
   useEffect(() => {
@@ -322,6 +323,9 @@ export default function DoseMate() {
       return;
     }
     
+    // Play notification sound on manual save
+    playNotificationSound(`/notification.mp3?v=${Date.now()}`, 5, 1, 0.3);
+    
     const entry: HistoryEntry = {
       id: uid("h"),
       dateISO: nowISO(),
@@ -371,10 +375,6 @@ export default function DoseMate() {
         const prevRaw = await getNativeItem(STORAGE_KEY);
         const prev = prevRaw ? JSON.parse(prevRaw) as HistoryEntry[] : [];
         const now = new Date();
-        
-        // Play notification sound (5 seconds with 1 second fade-out)
-        // Add timestamp to bypass cache
-        playNotificationSound(`/notification.mp3?v=${Date.now()}`, 5, 1, 0.3);
         
         if (prev.length > 0) {
           const last = prev[0];
@@ -470,6 +470,7 @@ export default function DoseMate() {
 
   const handleAcceptOnboarding = async () => {
     await acceptOnboarding();
+    setExpertTabValue("table");
     setShowExpertCard(true);
   };
 
@@ -554,7 +555,7 @@ export default function DoseMate() {
                 </button>
               </div>
               
-              <Tabs defaultValue="meal" className="w-full">
+              <Tabs value={expertTabValue} onValueChange={setExpertTabValue} className="w-full">
                 <TabsList className="grid w-full grid-cols-2 mb-2">
                   <TabsTrigger value="meal" className="text-xs">Paramètres<br />repas</TabsTrigger>
                   <TabsTrigger value="table" className="text-xs">Tableau</TabsTrigger>
