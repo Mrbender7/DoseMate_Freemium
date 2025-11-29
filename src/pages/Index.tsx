@@ -281,20 +281,20 @@ export default function DoseMate() {
   const resultDisplay = useMemo(() => {
     const r = calculation;
     const parts: string[] = [];
-    if (r.base !== null && r.base !== undefined) parts.push(`${r.base}u protocole`);
-    if (r.meal !== null && r.meal !== undefined) parts.push(`${r.meal}u repas`);
+    if (r.base !== null && r.base !== undefined) parts.push(`${r.base}u ${t.result.protocol}`);
+    if (r.meal !== null && r.meal !== undefined) parts.push(`${r.meal}u ${t.result.mealShort}`);
     
     let display = "";
     if (parts.length > 0) {
       display = parts.join(" + ") + " = ";
     }
-    display += `${r.totalAdministered}u (admin.)`;
+    display += `${r.totalAdministered}u (${t.result.administered})`;
     
     if (r.alertMax && r.totalCalculated !== undefined) {
-      display += ` (réelle ${Number(r.totalCalculated.toFixed(1))}u)`;
+      display += ` (${t.result.actual} ${Number(r.totalCalculated.toFixed(1))}u)`;
     }
     return display;
-  }, [calculation]);
+  }, [calculation, t.result.protocol, t.result.mealShort, t.result.administered, t.result.actual]);
 
   // Vérifier si la configuration est complète
   function isConfigComplete() {
@@ -468,9 +468,14 @@ export default function DoseMate() {
      Render
      ============================ */
 
+  const handleAcceptOnboarding = async () => {
+    await acceptOnboarding();
+    setShowExpertCard(true);
+  };
+
   return (
     <>
-      <OnboardingModal open={!hasAccepted} onAccept={acceptOnboarding} />
+      <OnboardingModal open={!hasAccepted} onAccept={handleAcceptOnboarding} />
       
       <div className="safe-area-container transition-colors duration-200">
         <div className="max-w-4xl mx-auto space-y-1.5 md:space-y-2">

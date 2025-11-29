@@ -71,6 +71,8 @@ export const en = {
     moment: "Time",
     protocolDose: "Protocol dose",
     mealDose: "Meal dose",
+    protocol: "protocol",
+    mealShort: "meal",
   },
   
   // Expert Settings

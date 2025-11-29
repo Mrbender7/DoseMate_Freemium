@@ -71,6 +71,8 @@ export const fr = {
     moment: "Moment",
     protocolDose: "Dose protocole",
     mealDose: "Dose repas",
+    protocol: "protocole",
+    mealShort: "repas",
   },
   
   // Expert Settings
