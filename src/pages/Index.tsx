@@ -76,6 +76,7 @@ export default function DoseMate() {
 
   const resultRef = useRef<HTMLDivElement>(null);
   const mealRef = useRef<HTMLDivElement>(null);
+  const previousDoseRef = useRef<number>(0);
 
   /* ============================
      Logic
@@ -275,6 +276,22 @@ export default function DoseMate() {
     }
   }, [glycemia]);
 
+  // Déclenchement du son de notification quand une nouvelle dose est calculée
+  useEffect(() => {
+    const currentDose = calculation.totalAdministered;
+    const previousDose = previousDoseRef.current;
+    
+    // Le son se joue uniquement si:
+    // 1. La dose actuelle est > 0 (une vraie dose calculée)
+    // 2. La dose a changé par rapport à la précédente
+    if (currentDose > 0 && currentDose !== previousDose) {
+      playNotificationSound(`/notification.mp3?v=${Date.now()}`, 5, 1, 0.3);
+    }
+    
+    // Mettre à jour la référence pour la prochaine fois
+    previousDoseRef.current = currentDose;
+  }, [calculation.totalAdministered]);
+
   const resultDisplay = useMemo(() => {
     // Guard against undefined translations
     if (!t || !t.result) {
@@ -323,9 +340,6 @@ export default function DoseMate() {
       setActiveTab("settings");
       return;
     }
-    
-    // Play notification sound on manual save
-    playNotificationSound(`/notification.mp3?v=${Date.now()}`, 5, 1, 0.3);
     
     const entry: HistoryEntry = {
       id: uid("h"),
