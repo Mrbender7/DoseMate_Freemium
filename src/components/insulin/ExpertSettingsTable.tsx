@@ -81,6 +81,22 @@ export function ExpertSettingsTable({
     }
   };
 
+  const handleSave = async () => {
+    try {
+      await Preferences.set({
+        key: 'dosemate_insulin_table',
+        value: JSON.stringify(customInsulinTable)
+      });
+      hapticFeedback();
+      showToast(t.table.validated);
+      if (onSaveAndReturn) {
+        onSaveAndReturn();
+      }
+    } catch (error) {
+      console.error("Failed to save insulin table", error);
+    }
+  };
+
   return (
     <Card className="transition-all duration-300">
       <CardContent className="space-y-2 py-2 px-3">
@@ -105,13 +121,7 @@ export function ExpertSettingsTable({
             )}
           </Button>
           <Button
-            onClick={() => {
-              hapticFeedback();
-              showToast(t.table.validated);
-              if (onSaveAndReturn) {
-                onSaveAndReturn();
-              }
-            }}
+            onClick={handleSave}
             variant="default"
             size="sm"
             className="h-7 text-[11px] px-2 gap-1"
