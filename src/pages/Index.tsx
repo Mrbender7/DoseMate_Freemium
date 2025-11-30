@@ -48,7 +48,7 @@ import {
 
 export default function DoseMate() {
   const { t, language } = useLanguage();
-  const { hasAccepted, acceptOnboarding } = useOnboarding();
+  const { hasAccepted, acceptOnboarding, isLoading: isLoadingOnboarding } = useOnboarding();
   
   // State
   const [glycemia, setGlycemia] = useState<string>("");
@@ -477,7 +477,7 @@ export default function DoseMate() {
 
   return (
     <>
-      <OnboardingModal open={!hasAccepted} onAccept={handleAcceptOnboarding} />
+      <OnboardingModal open={!isLoadingOnboarding && !hasAccepted} onAccept={handleAcceptOnboarding} />
       
       <div className="safe-area-container transition-colors duration-200">
         <div className="max-w-4xl mx-auto space-y-1.5 md:space-y-2">
