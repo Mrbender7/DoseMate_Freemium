@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
@@ -29,11 +29,25 @@ interface ResultCardProps {
 export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
   ({ calculation, pulse = false }, ref) => {
     const { t, language } = useLanguage();
+    const [showAlertAnimation, setShowAlertAnimation] = useState(false);
     
     // Guard against undefined translations
     if (!t || !t.result) {
       return null;
     }
+    
+    // Contrôler la durée du clignotement de l'alerte (3 secondes)
+    useEffect(() => {
+      if (calculation.alertMax) {
+        setShowAlertAnimation(true);
+        const timer = setTimeout(() => {
+          setShowAlertAnimation(false);
+        }, 3000);
+        return () => clearTimeout(timer);
+      } else {
+        setShowAlertAnimation(false);
+      }
+    }, [calculation.alertMax]);
     
     const r = calculation;
     const parts: string[] = [];
@@ -55,8 +69,10 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
     // Effet glow utilisant la couleur primaire du thème
     const glowEffect = pulse ? "animate-pulse shadow-[0_0_30px_hsl(var(--primary)/0.5)]" : "";
     
-    // Alerte visuelle pour dépassement de dose maximale
-    const alertBorder = r.alertMax ? "border-destructive animate-pulse" : "border-primary/20";
+    // Alerte visuelle pour dépassement de dose maximale (clignotement limité à 3 secondes)
+    const alertBorder = r.alertMax 
+      ? `border-destructive ${showAlertAnimation ? "animate-pulse" : ""}` 
+      : "border-primary/20";
 
     return (
       <Card ref={ref} className={`border-2 ${alertBorder} transition-all duration-300`}>
