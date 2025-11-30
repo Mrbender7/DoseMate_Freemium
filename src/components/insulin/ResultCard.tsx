@@ -52,17 +52,8 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
     }
     const resultDisplay = display;
 
-    // Déterminer la couleur du glow en fonction de la dose
-    let glowEffect = "";
-    if (pulse) {
-      if (r.totalAdministered <= 15) {
-        glowEffect = "animate-pulse shadow-[0_0_30px_rgba(34,197,94,0.5)]";
-      } else if (r.totalAdministered <= 18) {
-        glowEffect = "animate-pulse shadow-[0_0_30px_rgba(234,179,8,0.5)]";
-      } else {
-        glowEffect = "animate-pulse shadow-[0_0_30px_rgba(239,68,68,0.5)]";
-      }
-    }
+    // Effet glow utilisant la couleur primaire du thème
+    const glowEffect = pulse ? "animate-pulse shadow-[0_0_30px_hsl(var(--primary)/0.5)]" : "";
 
     return (
       <Card ref={ref} className="border-2 border-primary/20 transition-all duration-300">
