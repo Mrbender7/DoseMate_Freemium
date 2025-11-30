@@ -76,7 +76,7 @@ export default function DoseMate() {
 
   const resultRef = useRef<HTMLDivElement>(null);
   const mealRef = useRef<HTMLDivElement>(null);
-  const previousDoseRef = useRef<number>(0);
+  const lastDosePlayed = useRef<number>(0);
 
   /* ============================
      Logic
@@ -279,17 +279,14 @@ export default function DoseMate() {
   // Déclenchement du son de notification quand une nouvelle dose est calculée
   useEffect(() => {
     const currentDose = calculation.totalAdministered;
-    const previousDose = previousDoseRef.current;
     
     // Le son se joue uniquement si:
     // 1. La dose actuelle est > 0 (une vraie dose calculée)
-    // 2. La dose a changé par rapport à la précédente
-    if (currentDose > 0 && currentDose !== previousDose) {
+    // 2. La dose est différente de la dernière dose pour laquelle le son a été joué
+    if (currentDose > 0 && currentDose !== lastDosePlayed.current) {
       playNotificationSound(`/notification.mp3?v=${Date.now()}`, 5, 1, 0.3);
+      lastDosePlayed.current = currentDose;
     }
-    
-    // Mettre à jour la référence pour la prochaine fois
-    previousDoseRef.current = currentDose;
   }, [calculation.totalAdministered]);
 
   const resultDisplay = useMemo(() => {
