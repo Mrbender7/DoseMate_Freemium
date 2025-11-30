@@ -27,7 +27,6 @@ import { OnboardingModal } from "../components/OnboardingModal";
 import { uid, parseNumberInput, nowISO, getMomentOfDay } from "../utils/calculations";
 import { playNotificationSound } from "../utils/audioPlayer";
 import { getNativeItem, setNativeItem, removeNativeItem } from "../utils/nativeStorage";
-import { initEncryption } from "../utils/encryption";
 import { useLanguage } from "../contexts/LanguageContext";
 import { useOnboarding } from "../hooks/use-onboarding";
 import dosemateLogo from "../assets/dosemate-logo.png";
@@ -86,9 +85,6 @@ export default function DoseMate() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        // Initialiser le système de chiffrement
-        await initEncryption();
-        
         // Charge uniquement l'historique (pas les valeurs de calcul en cours)
         const raw = await getNativeItem(STORAGE_KEY);
         if (raw) {
@@ -280,6 +276,11 @@ export default function DoseMate() {
   }, [glycemia]);
 
   const resultDisplay = useMemo(() => {
+    // Guard against undefined translations
+    if (!t || !t.result) {
+      return "";
+    }
+    
     const r = calculation;
     const parts: string[] = [];
     if (r.base !== null && r.base !== undefined) parts.push(`${r.base}u ${t.result.protocol}`);
@@ -295,7 +296,7 @@ export default function DoseMate() {
       display += ` (${t.result.actual} ${Number(r.totalCalculated.toFixed(1))}u)`;
     }
     return display;
-  }, [calculation, t.result.protocol, t.result.mealShort, t.result.administered, t.result.actual]);
+  }, [calculation, t]);
 
   // Vérifier si la configuration est complète
   function isConfigComplete() {
