@@ -1,5 +1,5 @@
 import { Preferences } from '@capacitor/preferences';
-import { encrypt, decrypt } from './encryption';
+import { encryptAsync, decryptAsync } from './encryption';
 
 /**
  * Wrapper sécurisé pour Capacitor Preferences avec chiffrement automatique
@@ -14,7 +14,7 @@ import { encrypt, decrypt } from './encryption';
  */
 export async function setNativeItem(key: string, value: string): Promise<void> {
   try {
-    const encryptedValue = encrypt(value);
+    const encryptedValue = await encryptAsync(value);
     await Preferences.set({ key, value: encryptedValue });
   } catch (error) {
     console.error('Erreur lors du stockage sécurisé natif', error);
@@ -35,7 +35,7 @@ export async function getNativeItem(key: string): Promise<string | null> {
       return null;
     }
     
-    return decrypt(encryptedValue);
+    return await decryptAsync(encryptedValue);
   } catch (error) {
     console.error('Erreur lors de la récupération sécurisée native', error);
     return null;

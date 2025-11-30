@@ -29,6 +29,12 @@ interface ResultCardProps {
 export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
   ({ calculation, pulse = false }, ref) => {
     const { t, language } = useLanguage();
+    
+    // Guard against undefined translations
+    if (!t || !t.result) {
+      return null;
+    }
+    
     const r = calculation;
     const parts: string[] = [];
     if (r.base !== null && r.base !== undefined) parts.push(`${r.base}u ${t.result.base}`);
