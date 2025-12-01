@@ -112,17 +112,28 @@ export default function DoseMate() {
           if (parsed.darkMode !== undefined) setDarkMode(parsed.darkMode);
         }
         
-        // Charge le tableau personnalisé avec vérifications robustes
+        // Charge le tableau personnalisé avec vérifications robustes (compatible anciennes versions)
         const customTableRaw = await getNativeItem(STORAGE_CUSTOM_TABLE_KEY);
         if (customTableRaw) {
           try {
-            const customTableData = JSON.parse(customTableRaw);
-            // Vérifie que les données sont valides avant de les charger
-            if (customTableData && Array.isArray(customTableData.table)) {
-              setCustomInsulinTable(customTableData.table);
-              setUseCustomTable(customTableData.useCustom || false);
+            const parsed = JSON.parse(customTableRaw);
+
+            // Supporte à la fois l'ancien format (tableau brut) et le nouveau ({ table, useCustom })
+            const loadedTable: DoseRange[] | null = Array.isArray(parsed)
+              ? parsed
+              : parsed && Array.isArray(parsed.table)
+              ? parsed.table
+              : null;
+
+            if (loadedTable && loadedTable.length > 0) {
+              setCustomInsulinTable(loadedTable);
+
+              // Active automatiquement le tableau personnalisé si au moins une valeur > 0 existe
+              const hasValues = loadedTable.some((range) =>
+                Object.values(range.doses).some((dose) => dose > 0)
+              );
+              setUseCustomTable(hasValues);
             } else {
-              // Données invalides, utiliser les valeurs par défaut
               setCustomInsulinTable(DEFAULT_INSULIN_TABLE);
             }
           } catch (parseError) {
@@ -162,7 +173,11 @@ export default function DoseMate() {
       try {
         // Vérifie que les données sont valides avant de sauvegarder
         if (Array.isArray(customInsulinTable) && customInsulinTable.length > 0) {
-          const customTableData = { table: customInsulinTable, useCustom: useCustomTable };
+          const hasValues = customInsulinTable.some((range) =>
+            Object.values(range.doses).some((dose) => dose > 0)
+          );
+
+          const customTableData = { table: customInsulinTable, useCustom: hasValues ? useCustomTable || true : useCustomTable };
           await setNativeItem(STORAGE_CUSTOM_TABLE_KEY, JSON.stringify(customTableData));
         }
       } catch (e) {
@@ -170,6 +185,19 @@ export default function DoseMate() {
       }
     };
     saveCustomTable();
+  }, [customInsulinTable, useCustomTable]);
+
+  // S'assure que le flag useCustomTable est activé dès qu'au moins une valeur du tableau est > 0
+  useEffect(() => {
+    if (!Array.isArray(customInsulinTable) || customInsulinTable.length === 0) return;
+
+    const hasValues = customInsulinTable.some((range) =>
+      Object.values(range.doses).some((dose) => dose > 0)
+    );
+
+    if (hasValues && !useCustomTable) {
+      setUseCustomTable(true);
+    }
   }, [customInsulinTable, useCustomTable]);
 
   function showToast(text: string, ms = 2800) {
