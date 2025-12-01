@@ -61,7 +61,9 @@ export default function DoseMate() {
   const [toast, setToast] = useState<{ id: string; text: string; fading?: boolean } | null>(null);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [alertHypo, setAlertHypo] = useState<boolean>(false);
+  const [alertHypoPulse, setAlertHypoPulse] = useState<boolean>(false);
   const [alertHyper, setAlertHyper] = useState<boolean>(false);
+  const [alertHyperPulse, setAlertHyperPulse] = useState<boolean>(false);
   const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
   const [resultPulse, setResultPulse] = useState<boolean>(false);
   const [isMealCardOpen, setIsMealCardOpen] = useState<boolean>(false);
@@ -297,23 +299,45 @@ export default function DoseMate() {
     if (calculation.hypo) {
       const timeout = setTimeout(() => {
         setAlertHypo(true);
+        setAlertHypoPulse(true);
       }, 2000); // Délai x2 (était implicite à ~1s, maintenant 2s)
       return () => clearTimeout(timeout);
     } else {
       setAlertHypo(false);
+      setAlertHypoPulse(false);
     }
   }, [calculation.hypo]);
+
+  useEffect(() => {
+    if (alertHypoPulse) {
+      const timeout = setTimeout(() => {
+        setAlertHypoPulse(false);
+      }, 3000);
+      return () => clearTimeout(timeout);
+    }
+  }, [alertHypoPulse]);
 
   useEffect(() => {
     if (calculation.hyper) {
       const timeout = setTimeout(() => {
         setAlertHyper(true);
+        setAlertHyperPulse(true);
       }, 2000);
       return () => clearTimeout(timeout);
     } else {
       setAlertHyper(false);
+      setAlertHyperPulse(false);
     }
   }, [calculation.hyper]);
+
+  useEffect(() => {
+    if (alertHyperPulse) {
+      const timeout = setTimeout(() => {
+        setAlertHyperPulse(false);
+      }, 3000);
+      return () => clearTimeout(timeout);
+    }
+  }, [alertHyperPulse]);
 
   // Auto-switch to result tab when glycemia is entered
   useEffect(() => {
@@ -577,20 +601,20 @@ export default function DoseMate() {
 
         {/* Hypo alert */}
         {alertHypo && (
-          <Alert className="border-destructive bg-destructive/10 animate-pulse">
+          <Alert className={`border-destructive bg-destructive/10 ${alertHypoPulse ? 'animate-pulse' : ''}`}>
             <AlertTriangle className="h-4 w-4 text-destructive" />
             <AlertDescription className="text-destructive font-semibold">
-              ⚠️ {t.glycemia.hypoAlert.replace("{value}", glycemia)}
+              {t.glycemia.hypoAlert.replace("{value}", glycemia)}
             </AlertDescription>
           </Alert>
         )}
 
         {/* Hyper alert */}
         {alertHyper && (
-          <Alert className="border-destructive bg-destructive/10 animate-pulse">
+          <Alert className={`border-destructive bg-destructive/10 ${alertHyperPulse ? 'animate-pulse' : ''}`}>
             <AlertTriangle className="h-4 w-4 text-destructive" />
             <AlertDescription className="text-destructive font-semibold">
-              ⚠️ {t.glycemia.hyperAlert.replace("{value}", glycemia)}
+              {t.glycemia.hyperAlert.replace("{value}", glycemia)}
             </AlertDescription>
           </Alert>
         )}
