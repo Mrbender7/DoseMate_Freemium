@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -6,7 +6,7 @@ import { Lock, Unlock, Save } from "lucide-react";
 import type { MomentKey, DoseRange } from "../../types/insulin";
 import { hapticFeedback } from "../../utils/hapticFeedback";
 import { useLanguage } from "../../contexts/LanguageContext";
-// Suppression de l'import de Preferences : import { Preferences } from '@capacitor/preferences';
+import { Preferences } from '@capacitor/preferences';
 
 interface ExpertSettingsTableProps {
   customInsulinTable: DoseRange[];
@@ -31,30 +31,31 @@ export function ExpertSettingsTable({
   const [selectedMoment, setSelectedMoment] = useState<MomentKey>("morning");
   const [isLocked, setIsLocked] = useState<boolean>(false);
 
-  // Charger l'état du verrouillage depuis localStorage au montage
+  // Charger l'état du verrouillage depuis Capacitor Preferences au montage
   useEffect(() => {
-    const loadLockState = () => {
+    const loadLockState = async () => {
       try {
-        // Remplacé par localStorage.getItem
-        const value = localStorage.getItem("dosemate_table_locked");
+        const { value } = await Preferences.get({ key: "dosemate_table_locked" });
         if (value !== null) {
           setIsLocked(JSON.parse(value));
         }
       } catch (error) {
-        console.error("Failed to load lock state from localStorage", error);
+        console.error("Failed to load lock state", error);
       }
     };
     loadLockState();
   }, []);
 
-  // Sauvegarder l'état du verrouillage dans localStorage
+  // Sauvegarder l'état du verrouillage dans Capacitor Preferences
   useEffect(() => {
-    const saveLockState = () => {
+    const saveLockState = async () => {
       try {
-        // Remplacé par localStorage.setItem
-        localStorage.setItem("dosemate_table_locked", JSON.stringify(isLocked));
+        await Preferences.set({ 
+          key: "dosemate_table_locked", 
+          value: JSON.stringify(isLocked) 
+        });
       } catch (error) {
-        console.error("Failed to save lock state to localStorage", error);
+        console.error("Failed to save lock state", error);
       }
     };
     saveLockState();
@@ -80,22 +81,6 @@ export function ExpertSettingsTable({
     }
   };
 
-  // NOUVELLE FONCTION handleSave (simplifiée)
-  const handleSave = async () => {
-    try {
-      // NOTE: La sauvegarde est maintenant gérée par l'useEffect dans le composant parent (index.tsx)
-      // Cette fonction ne fait plus que le retour et l'affichage du toast.
-      hapticFeedback();
-      showToast(t.table.validated);
-      if (onSaveAndReturn) {
-        onSaveAndReturn();
-      }
-    } catch (error) {
-      console.error("Failed to save insulin table (shouldn't happen)", error);
-    }
-  };
-  // FIN NOUVELLE FONCTION handleSave
-
   return (
     <Card className="transition-all duration-300">
       <CardContent className="space-y-2 py-2 px-3">
@@ -120,7 +105,13 @@ export function ExpertSettingsTable({
             )}
           </Button>
           <Button
-            onClick={handleSave}
+            onClick={() => {
+              hapticFeedback();
+              showToast(t.table.validated);
+              if (onSaveAndReturn) {
+                onSaveAndReturn();
+              }
+            }}
             variant="default"
             size="sm"
             className="h-7 text-[11px] px-2 gap-1"
