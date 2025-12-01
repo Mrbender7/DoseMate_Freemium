@@ -38,7 +38,7 @@ export const en = {
     reset: "Reset",
     save: "Save",
     supplement: "Suppl.",
-    hypoAlert: "Hypoglycemia detected ({value} mg/dL). Treat immediately and consult a professional.",
+    hypoAlert: "Hypoglycemia detected ({value} mg/dL). Treat immediately and consult a professional. Do not inject insulin.",
     hyperAlert: "Hyperglycemia detected ({value} mg/dL). Treat immediately and consult a doctor.",
   },
   
