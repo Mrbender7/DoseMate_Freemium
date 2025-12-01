@@ -61,6 +61,7 @@ export default function DoseMate() {
   const [toast, setToast] = useState<{ id: string; text: string; fading?: boolean } | null>(null);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [alertHypo, setAlertHypo] = useState<boolean>(false);
+  const [alertHyper, setAlertHyper] = useState<boolean>(false);
   const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
   const [resultPulse, setResultPulse] = useState<boolean>(false);
   const [isMealCardOpen, setIsMealCardOpen] = useState<boolean>(false);
@@ -238,7 +239,16 @@ export default function DoseMate() {
     const activeTable = useCustomTable ? customInsulinTable : DEFAULT_INSULIN_TABLE;
     if (!Number.isNaN(gly)) {
       if (gly < 70) result.hypo = true;
-      const range = activeTable.find((r) => gly >= r.min && gly <= r.max);
+      if (gly > 351) result.hyper = true;
+      
+      // Recherche de la plage correspondante
+      let range = activeTable.find((r) => gly >= r.min && gly <= r.max);
+      
+      // Si aucune plage n'est trouvée et que gly > 351, utiliser la dernière plage du tableau
+      if (!range && gly > 351 && activeTable.length > 0) {
+        range = activeTable[activeTable.length - 1];
+      }
+      
       if (range) {
         result.base = range.doses[result.moment] ?? 0;
         result.totalCalculated += result.base;
@@ -293,6 +303,17 @@ export default function DoseMate() {
       setAlertHypo(false);
     }
   }, [calculation.hypo]);
+
+  useEffect(() => {
+    if (calculation.hyper) {
+      const timeout = setTimeout(() => {
+        setAlertHyper(true);
+      }, 2000);
+      return () => clearTimeout(timeout);
+    } else {
+      setAlertHyper(false);
+    }
+  }, [calculation.hyper]);
 
   // Auto-switch to result tab when glycemia is entered
   useEffect(() => {
@@ -560,6 +581,16 @@ export default function DoseMate() {
             <AlertTriangle className="h-4 w-4 text-destructive" />
             <AlertDescription className="text-destructive font-semibold">
               ⚠️ {t.glycemia.hypoAlert.replace("{value}", glycemia)}
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Hyper alert */}
+        {alertHyper && (
+          <Alert className="border-destructive bg-destructive/10 animate-pulse">
+            <AlertTriangle className="h-4 w-4 text-destructive" />
+            <AlertDescription className="text-destructive font-semibold">
+              ⚠️ {t.glycemia.hyperAlert.replace("{value}", glycemia)}
             </AlertDescription>
           </Alert>
         )}
