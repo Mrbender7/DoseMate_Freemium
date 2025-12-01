@@ -39,6 +39,7 @@ export const en = {
     save: "Save",
     supplement: "Suppl.",
     hypoAlert: "Hypoglycemia detected ({value} mg/dL). Treat immediately and consult a professional.",
+    hyperAlert: "Hyperglycemia detected ({value} mg/dL). Treat immediately and consult a doctor.",
   },
   
   // Meal Card
