@@ -49,7 +49,7 @@ import {
 export default function DoseMate() {
   const { t, language } = useLanguage();
   const { hasAccepted, acceptOnboarding, isLoading: isLoadingOnboarding } = useOnboarding();
-  
+
   // State
   const [glycemia, setGlycemia] = useState<string>("");
   const [foodItems, setFoodItems] = useState<FoodItem[]>([{ id: "f-1", carbsPer100: "", weight: "" }]);
@@ -57,6 +57,7 @@ export default function DoseMate() {
   const [customInsulinTable, setCustomInsulinTable] = useState<DoseRange[]>(DEFAULT_INSULIN_TABLE);
   const [useCustomTable, setUseCustomTable] = useState<boolean>(false);
   const [darkMode, setDarkMode] = useState<boolean>(true);
+  const [isDataLoaded, setIsDataLoaded] = useState<boolean>(false);
   const [forceExtra, setForceExtra] = useState<boolean>(false);
   const [toast, setToast] = useState<{ id: string; text: string; fading?: boolean } | null>(null);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
@@ -89,37 +90,56 @@ export default function DoseMate() {
   useEffect(() => {
     const loadData = async () => {
       try {
+        console.log('[DoseMate] Starting data load...');
+
         // Charge uniquement l'historique (pas les valeurs de calcul en cours)
         const raw = await getNativeItem(STORAGE_KEY);
         if (raw) {
           const loadedHistory = JSON.parse(raw);
           if (Array.isArray(loadedHistory)) {
             setHistory(loadedHistory);
+            console.log('[DoseMate] History loaded:', loadedHistory.length, 'entries');
           }
         }
-        
+
         // Charge les paramètres utilisateur
         const meta = await getNativeItem(STORAGE_META_KEY);
         if (meta) {
+          console.log('[DoseMate] Meta loaded:', meta);
           const parsed = JSON.parse(meta);
+
           // Garde-fou : s'assurer que carbRatio est un nombre valide et positif
           if (parsed.carbRatio !== undefined && parsed.carbRatio !== null) {
             const loadedRatio = Number(parsed.carbRatio);
             if (Number.isFinite(loadedRatio) && loadedRatio > 0) {
               setCarbRatio(loadedRatio);
+              console.log('[DoseMate] CarbRatio set to:', loadedRatio);
             } else {
-              // Si le ratio stocké est invalide, utiliser la valeur par défaut
               setCarbRatio(DEFAULT_CARB_RATIO);
+              console.log('[DoseMate] Invalid carbRatio, using default:', DEFAULT_CARB_RATIO);
             }
           }
-          if (parsed.darkMode !== undefined) setDarkMode(parsed.darkMode);
+
+          if (parsed.darkMode !== undefined) {
+            setDarkMode(parsed.darkMode);
+            console.log('[DoseMate] DarkMode set to:', parsed.darkMode);
+            // Appliquer immédiatement le thème
+            if (parsed.darkMode) {
+              document.documentElement.classList.add("dark");
+            } else {
+              document.documentElement.classList.remove("dark");
+            }
+          }
         }
-        
+
         // Charge le tableau personnalisé avec vérifications robustes (compatible anciennes versions)
         const customTableRaw = await getNativeItem(STORAGE_CUSTOM_TABLE_KEY);
+        console.log('[DoseMate] Custom table raw:', customTableRaw ? 'exists' : 'null');
+
         if (customTableRaw) {
           try {
             const parsed = JSON.parse(customTableRaw);
+            console.log('[DoseMate] Custom table parsed:', parsed);
 
             // Supporte à la fois l'ancien format (tableau brut) et le nouveau ({ table, useCustom })
             const loadedTable: DoseRange[] | null = Array.isArray(parsed)
@@ -130,48 +150,71 @@ export default function DoseMate() {
 
             if (loadedTable && loadedTable.length > 0) {
               setCustomInsulinTable(loadedTable);
+              console.log('[DoseMate] Custom table set with', loadedTable.length, 'ranges');
+
+              // Charge le flag useCustom depuis les données sauvegardées
+              const savedUseCustom = parsed && typeof parsed.useCustom === 'boolean'
+                ? parsed.useCustom
+                : false;
 
               // Active automatiquement le tableau personnalisé si au moins une valeur > 0 existe
               const hasValues = loadedTable.some((range) =>
                 Object.values(range.doses).some((dose) => dose > 0)
               );
-              setUseCustomTable(hasValues);
+
+              const shouldUseCustom = savedUseCustom || hasValues;
+              setUseCustomTable(shouldUseCustom);
+              console.log('[DoseMate] UseCustomTable set to:', shouldUseCustom, '(saved:', savedUseCustom, ', hasValues:', hasValues, ')');
             } else {
+              console.log('[DoseMate] No valid table found, using defaults');
               setCustomInsulinTable(DEFAULT_INSULIN_TABLE);
+              setUseCustomTable(false);
             }
           } catch (parseError) {
-            console.warn("Failed to parse custom table data, using defaults", parseError);
+            console.error('[DoseMate] Failed to parse custom table data:', parseError);
             setCustomInsulinTable(DEFAULT_INSULIN_TABLE);
+            setUseCustomTable(false);
           }
         } else {
-          // Aucune donnée sauvegardée, utiliser les valeurs par défaut
+          console.log('[DoseMate] No custom table found, using defaults');
           setCustomInsulinTable(DEFAULT_INSULIN_TABLE);
+          setUseCustomTable(false);
         }
       } catch (e) {
-        console.warn("Failed to load stored data", e);
+        console.error('[DoseMate] Failed to load stored data:', e);
         // En cas d'erreur, réinitialiser avec les valeurs par défaut
         setCustomInsulinTable(DEFAULT_INSULIN_TABLE);
         setCarbRatio(DEFAULT_CARB_RATIO);
+        setUseCustomTable(false);
+      } finally {
+        setIsDataLoaded(true);
+        console.log('[DoseMate] Data load complete');
       }
     };
-    
+
     loadData();
   }, []);
 
   useEffect(() => {
+    if (!isDataLoaded) return;
+
     const saveMeta = async () => {
       const meta = { carbRatio, darkMode };
       try {
+        console.log('[DoseMate] Saving meta:', meta);
         await setNativeItem(STORAGE_META_KEY, JSON.stringify(meta));
+        console.log('[DoseMate] Meta saved successfully');
       } catch (e) {
-        console.error("Failed to save meta data", e);
+        console.error('[DoseMate] Failed to save meta data:', e);
       }
     };
     saveMeta();
-  }, [carbRatio, darkMode]);
+  }, [carbRatio, darkMode, isDataLoaded]);
 
   // Sauvegarde automatique et immédiate du tableau personnalisé avec Capacitor Preferences
   useEffect(() => {
+    if (!isDataLoaded) return;
+
     const saveCustomTable = async () => {
       try {
         // Vérifie que les données sont valides avant de sauvegarder
@@ -180,18 +223,31 @@ export default function DoseMate() {
             Object.values(range.doses).some((dose) => dose > 0)
           );
 
-          const customTableData = { table: customInsulinTable, useCustom: hasValues ? useCustomTable || true : useCustomTable };
+          const customTableData = {
+            table: customInsulinTable,
+            useCustom: useCustomTable
+          };
+
+          console.log('[DoseMate] Saving custom table:', {
+            ranges: customInsulinTable.length,
+            useCustom: useCustomTable,
+            hasValues
+          });
+
           await setNativeItem(STORAGE_CUSTOM_TABLE_KEY, JSON.stringify(customTableData));
+          console.log('[DoseMate] Custom table saved successfully');
         }
       } catch (e) {
-        console.error("Failed to save custom table data", e);
+        console.error('[DoseMate] Failed to save custom table data:', e);
       }
     };
     saveCustomTable();
-  }, [customInsulinTable, useCustomTable]);
+  }, [customInsulinTable, useCustomTable, isDataLoaded]);
 
   // S'assure que le flag useCustomTable est activé dès qu'au moins une valeur du tableau est > 0
+  // Mais seulement après le chargement initial pour éviter les conflits
   useEffect(() => {
+    if (!isDataLoaded) return;
     if (!Array.isArray(customInsulinTable) || customInsulinTable.length === 0) return;
 
     const hasValues = customInsulinTable.some((range) =>
@@ -199,9 +255,10 @@ export default function DoseMate() {
     );
 
     if (hasValues && !useCustomTable) {
+      console.log('[DoseMate] Auto-enabling custom table (has values)');
       setUseCustomTable(true);
     }
-  }, [customInsulinTable, useCustomTable]);
+  }, [customInsulinTable, useCustomTable, isDataLoaded]);
 
   function showToast(text: string, ms = 2800) {
     const id = uid("toast");

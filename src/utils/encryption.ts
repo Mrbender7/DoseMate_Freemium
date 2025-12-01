@@ -51,13 +51,15 @@ async function getEncryptionKey(): Promise<string> {
  */
 export async function encryptAsync(data: string): Promise<string> {
   if (!data) return data;
-  
+
   try {
     const key = await getEncryptionKey();
     const encrypted = CryptoJS.AES.encrypt(data, key);
-    return encrypted.toString();
+    const result = encrypted.toString();
+    console.log('[Encryption] Data encrypted, length:', result.length);
+    return result;
   } catch (error) {
-    console.error('Erreur de chiffrement', error);
+    console.error('[Encryption] Encryption error:', error);
     // En cas d'erreur, retourner les données non chiffrées pour éviter la perte de données
     return data;
   }
@@ -70,17 +72,23 @@ export async function encryptAsync(data: string): Promise<string> {
  */
 export async function decryptAsync(encryptedData: string): Promise<string> {
   if (!encryptedData) return encryptedData;
-  
+
   try {
     const key = await getEncryptionKey();
     const decrypted = CryptoJS.AES.decrypt(encryptedData, key);
     const decryptedString = decrypted.toString(CryptoJS.enc.Utf8);
-    
+
     // Si le déchiffrement échoue, retourner les données originales
     // (cas où les données n'étaient pas chiffrées)
-    return decryptedString || encryptedData;
+    if (decryptedString) {
+      console.log('[Encryption] Data decrypted successfully, length:', decryptedString.length);
+      return decryptedString;
+    } else {
+      console.warn('[Encryption] Decryption returned empty, returning original data');
+      return encryptedData;
+    }
   } catch (error) {
-    console.error('Erreur de déchiffrement', error);
+    console.error('[Encryption] Decryption error:', error);
     // Retourner les données originales en cas d'erreur
     return encryptedData;
   }
