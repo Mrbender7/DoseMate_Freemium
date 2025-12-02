@@ -36,6 +36,11 @@ export const PALETTES = {
   },
 } as const;
 
+// Fonction de validation pour verifier qu'une valeur est une palette valide
+function isValidPalette(value: string): value is PaletteType {
+  return ["blue", "mint", "rose", "lavender", "peach", "red", "cyan"].includes(value);
+}
+
 export function usePalette() {
   const [palette, setPaletteState] = useState<PaletteType>("blue");
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -45,14 +50,19 @@ export function usePalette() {
     const loadPalette = async () => {
       try {
         const stored = await getNativeItem(PALETTE_STORAGE_KEY);
-        if (stored) {
+        console.log('[Palette] Loaded from storage:', stored);
+
+        // Valider que la valeur chargee est une palette valide
+        if (stored && isValidPalette(stored)) {
           setPaletteState(stored as PaletteType);
           document.documentElement.setAttribute("data-palette", stored);
+          console.log('[Palette] Applied palette:', stored);
         } else {
+          console.log('[Palette] Invalid or missing palette, using default: blue');
           document.documentElement.setAttribute("data-palette", "blue");
         }
       } catch (error) {
-        console.error("Failed to load palette", error);
+        console.error("[Palette] Failed to load palette", error);
         document.documentElement.setAttribute("data-palette", "blue");
       } finally {
         setIsLoading(false);
@@ -66,10 +76,12 @@ export function usePalette() {
     if (!isLoading) {
       const savePalette = async () => {
         try {
+          console.log('[Palette] Saving palette:', palette);
           await setNativeItem(PALETTE_STORAGE_KEY, palette);
           document.documentElement.setAttribute("data-palette", palette);
+          console.log('[Palette] Palette saved successfully');
         } catch (e) {
-          console.warn("Failed to save palette preference", e);
+          console.error("[Palette] Failed to save palette preference", e);
         }
       };
       savePalette();
