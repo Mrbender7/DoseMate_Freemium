@@ -1,5 +1,4 @@
-import { Palette } from "lucide-react";
-import { usePalette, PALETTES, type PaletteType } from "../hooks/use-palette";
+import { usePalette, PALETTES, type PaletteType } from "../contexts/PaletteContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
