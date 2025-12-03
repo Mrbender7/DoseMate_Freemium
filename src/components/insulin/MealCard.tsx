@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
-import { Utensils, Plus, Minus } from "lucide-react";
+import { Utensils, Plus, Minus, Download } from "lucide-react";
 import type { FoodItem } from "../../types/insulin";
 import { hapticFeedback } from "../../utils/hapticFeedback";
 import { useLanguage } from "../../contexts/LanguageContext";
@@ -87,9 +87,10 @@ export const MealCard = forwardRef<HTMLDivElement, MealCardProps>(
                   hapticFeedback();
                   onSaveToResult();
                 }} 
-                className="w-full mt-2 h-8 text-xs"
+                className="w-full mt-2 h-8 text-xs gap-1.5"
                 variant="elevated"
               >
+                <Download className="h-3.5 w-3.5" />
                 {t.meal.save}
               </Button>
             </CardContent>

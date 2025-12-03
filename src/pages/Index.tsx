@@ -25,7 +25,7 @@ import { ResultCard } from "../components/insulin/ResultCard";
 import { HistoryCard } from "../components/insulin/HistoryCard";
 import { OnboardingModal } from "../components/OnboardingModal";
 import { uid, parseNumberInput, nowISO, getMomentOfDay } from "../utils/calculations";
-import { playNotificationSound } from "../utils/audioPlayer";
+
 import { getNativeItem, setNativeItem, removeNativeItem } from "../utils/nativeStorage";
 import { useLanguage } from "../contexts/LanguageContext";
 import { useOnboarding } from "../hooks/use-onboarding";
@@ -80,7 +80,6 @@ export default function DoseMate() {
 
   const resultRef = useRef<HTMLDivElement>(null);
   const mealRef = useRef<HTMLDivElement>(null);
-  const lastDosePlayed = useRef<number>(0);
 
   /* ============================
      Logic
@@ -396,28 +395,6 @@ export default function DoseMate() {
     }
   }, [alertHyperPulse]);
 
-  // Auto-switch to result tab when glycemia is entered
-  useEffect(() => {
-    if (glycemia && parseNumberInput(glycemia) > 0) {
-      const timer = setTimeout(() => {
-        setActiveTab("result");
-      }, 1500);
-      return () => clearTimeout(timer);
-    }
-  }, [glycemia]);
-
-  // Déclenchement du son de notification quand une nouvelle dose est calculée
-  useEffect(() => {
-    const currentDose = calculation.totalAdministered;
-    
-    // Le son se joue uniquement si:
-    // 1. La dose actuelle est > 0 (une vraie dose calculée)
-    // 2. La dose est différente de la dernière dose pour laquelle le son a été joué
-    if (currentDose > 0 && currentDose !== lastDosePlayed.current) {
-      playNotificationSound(`/notification.mp3?v=${Date.now()}`, 5, 1, 0.3);
-      lastDosePlayed.current = currentDose;
-    }
-  }, [calculation.totalAdministered]);
 
   const resultDisplay = useMemo(() => {
     // Guard against undefined translations
@@ -762,6 +739,7 @@ export default function DoseMate() {
                       document.activeElement.blur();
                     }
                     pushToHistory();
+                    setActiveTab("result");
                   }}
                   onToggleExtra={() => {
                     setForceExtra((f) => !f);
