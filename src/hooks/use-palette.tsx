@@ -44,6 +44,7 @@ function isValidPalette(value: string): value is PaletteType {
 export function usePalette() {
   const [palette, setPaletteState] = useState<PaletteType>("blue");
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
 
   // Charger la palette au montage
   useEffect(() => {
@@ -54,7 +55,7 @@ export function usePalette() {
 
         // Valider que la valeur chargee est une palette valide
         if (stored && isValidPalette(stored)) {
-          setPaletteState(stored as PaletteType);
+          setPaletteState(stored);
           document.documentElement.setAttribute("data-palette", stored);
           console.log('[Palette] Applied palette:', stored);
         } else {
@@ -66,27 +67,36 @@ export function usePalette() {
         document.documentElement.setAttribute("data-palette", "blue");
       } finally {
         setIsLoading(false);
+        // Marquer comme initialisé APRÈS un délai pour éviter la race condition
+        setTimeout(() => {
+          setIsInitialized(true);
+          console.log('[Palette] Initialization complete');
+        }, 100);
       }
     };
     loadPalette();
   }, []);
 
-  // Sauvegarder la palette à chaque changement
+  // Sauvegarder la palette à chaque changement (seulement après initialisation)
   useEffect(() => {
-    if (!isLoading) {
-      const savePalette = async () => {
-        try {
-          console.log('[Palette] Saving palette:', palette);
-          await setNativeItem(PALETTE_STORAGE_KEY, palette);
-          document.documentElement.setAttribute("data-palette", palette);
-          console.log('[Palette] Palette saved successfully');
-        } catch (e) {
-          console.error("[Palette] Failed to save palette preference", e);
-        }
-      };
-      savePalette();
+    // Ne pas sauvegarder pendant le chargement initial ou avant l'initialisation
+    if (isLoading || !isInitialized) {
+      console.log('[Palette] Skipping save - loading:', isLoading, 'initialized:', isInitialized);
+      return;
     }
-  }, [palette, isLoading]);
+    
+    const savePalette = async () => {
+      try {
+        console.log('[Palette] Saving palette:', palette);
+        await setNativeItem(PALETTE_STORAGE_KEY, palette);
+        document.documentElement.setAttribute("data-palette", palette);
+        console.log('[Palette] Palette saved successfully');
+      } catch (e) {
+        console.error("[Palette] Failed to save palette preference", e);
+      }
+    };
+    savePalette();
+  }, [palette, isLoading, isInitialized]);
 
   return { palette, setPalette: setPaletteState, isLoading };
 }
