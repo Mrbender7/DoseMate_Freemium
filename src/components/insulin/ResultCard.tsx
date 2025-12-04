@@ -87,7 +87,7 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
       : "border-primary/20";
 
     return (
-      <Card ref={ref} className={`border-2 ${alertBorder} transition-all duration-300 animate-in fade-in-0 slide-in-from-bottom-2`}>
+      <Card ref={ref} className={`border-2 ${alertBorder} transition-all duration-300`}>
       <CardHeader className="pb-2 pt-3 px-3">
         <CardTitle className="flex items-center gap-1.5 text-primary text-base">
           <Calculator className="h-4 w-4" />
