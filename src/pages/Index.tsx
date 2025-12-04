@@ -487,62 +487,7 @@ export default function DoseMate() {
     });
   }
 
-  useEffect(() => {
-    if (!calculation || calculation.totalCalculated <= 0) return;
-    const timeout = setTimeout(async () => {
-      try {
-        const prevRaw = await getNativeItem(STORAGE_KEY);
-        const prev = prevRaw ? JSON.parse(prevRaw) as HistoryEntry[] : [];
-        const now = new Date();
-        
-        if (prev.length > 0) {
-          const last = prev[0];
-          const lastDate = new Date(last.dateISO);
-          const delta = now.getTime() - lastDate.getTime();
-          if (delta < 20000) {
-            const newEntry: HistoryEntry = {
-              id: uid("h"),
-              dateISO: nowISO(),
-              display: resultDisplay,
-              glycemia: parseNumberInput(glycemia) || undefined,
-              base: calculation.base ?? undefined,
-              meal: calculation.meal ?? undefined,
-              totalAdministered: calculation.totalAdministered,
-              totalCalculated: Number(calculation.totalCalculated.toFixed(1)),
-              moment: calculation.moment
-            };
-            const next = [newEntry, ...prev.slice(1)].slice(0, 25);
-            await setNativeItem(STORAGE_KEY, JSON.stringify(next));
-            setHistory(next);
-            showToast(t.toasts.autoUpdated);
-            setResultPulse(true);
-            setTimeout(() => setResultPulse(false), 2000);
-            return;
-          }
-        }
-        const newEntry: HistoryEntry = {
-          id: uid("h"),
-          dateISO: nowISO(),
-          display: resultDisplay,
-          glycemia: parseNumberInput(glycemia) || undefined,
-          base: calculation.base ?? undefined,
-          meal: calculation.meal ?? undefined,
-          totalAdministered: calculation.totalAdministered,
-          totalCalculated: Number(calculation.totalCalculated.toFixed(1)),
-          moment: calculation.moment
-        };
-        const next = [newEntry, ...(prev || [])].slice(0, 25);
-        await setNativeItem(STORAGE_KEY, JSON.stringify(next));
-        setHistory(next);
-        showToast(t.toasts.autoSaved);
-        setResultPulse(true);
-        setTimeout(() => setResultPulse(false), 2000);
-      } catch (e) {
-        console.warn("autosave fail", e);
-      }
-    }, 1200);
-    return () => clearTimeout(timeout);
-  }, [resultDisplay, glycemia, calculation]);
+  // Auto-save useEffect supprimé - l'historique est sauvegardé uniquement via pushToHistory() lors du clic sur "Enregistrer"
 
   function resetInputs() {
     setGlycemia("");
