@@ -30,13 +30,25 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
   ({ calculation, pulse = false }, ref) => {
     const { t, language } = useLanguage();
     const [showAlertAnimation, setShowAlertAnimation] = useState(false);
+    const [showPulseAnimation, setShowPulseAnimation] = useState(false);
     
     // Guard against undefined translations
     if (!t || !t.result) {
       return null;
     }
     
-    // Contrôler la durée du clignotement de l'alerte (3 secondes)
+    // Déclencher le pulse uniquement au montage du composant (ouverture de la carte)
+    useEffect(() => {
+      if (pulse) {
+        setShowPulseAnimation(true);
+        const timer = setTimeout(() => {
+          setShowPulseAnimation(false);
+        }, 2000);
+        return () => clearTimeout(timer);
+      }
+    }, [pulse]);
+    
+    // Contrôler la durée du clignotement de l'alerte (3 secondes) - au montage uniquement
     useEffect(() => {
       if (calculation.alertMax) {
         setShowAlertAnimation(true);
@@ -47,7 +59,7 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
       } else {
         setShowAlertAnimation(false);
       }
-    }, [calculation.alertMax]);
+    }, []);
     
     const r = calculation;
     const parts: string[] = [];
@@ -66,10 +78,10 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
     }
     const resultDisplay = display;
 
-    // Effet glow utilisant la couleur primaire du thème
-    const glowEffect = pulse ? "animate-pulse shadow-[0_0_30px_hsl(var(--primary)/0.5)]" : "";
+    // Effet glow utilisant la couleur primaire du thème - uniquement au montage
+    const glowEffect = showPulseAnimation ? "animate-pulse shadow-[0_0_30px_hsl(var(--primary)/0.5)]" : "";
     
-    // Alerte visuelle pour dépassement de dose maximale (clignotement limité à 3 secondes)
+    // Alerte visuelle pour dépassement de dose maximale (clignotement limité à 3 secondes au montage)
     const alertBorder = r.alertMax 
       ? `border-destructive ${showAlertAnimation ? "animate-pulse" : ""}` 
       : "border-primary/20";

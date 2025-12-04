@@ -739,7 +739,10 @@ export default function DoseMate() {
                       document.activeElement.blur();
                     }
                     pushToHistory();
+                    setResultPulse(true);
                     setActiveTab("result");
+                    // Reset pulse après délai
+                    setTimeout(() => setResultPulse(false), 100);
                   }}
                   onToggleExtra={() => {
                     setForceExtra((f) => !f);
@@ -764,7 +767,11 @@ export default function DoseMate() {
                       setActiveTab("settings");
                       return;
                     }
+                    pushToHistory();
+                    setResultPulse(true);
                     setActiveTab("result");
+                    // Reset pulse après délai
+                    setTimeout(() => setResultPulse(false), 100);
                   }}
                 />
               </TabsContent>
