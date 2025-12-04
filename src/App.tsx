@@ -47,9 +47,9 @@ function AppContent() {
     hideSplash();
   }, [isChecking, isPaletteLoading, splashHidden]);
 
-  // Ne rien afficher tant que les contextes critiques ne sont pas chargés
+  // Afficher un fond noir pendant le chargement pour éviter le flash blanc
   if (isChecking || isPaletteLoading || !splashHidden) {
-    return null;
+    return <div className="h-screen w-screen bg-background" />;
   }
 
   return (
