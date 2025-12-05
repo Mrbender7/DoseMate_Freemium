@@ -7,7 +7,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { PaletteProvider, usePalette } from "./contexts/PaletteContext";
 import { ReinstallCleanupModal } from "./components/ReinstallCleanupModal";
+import { ConversionModal } from "./components/ConversionModal";
 import { useReinstallDetection } from "./hooks/use-reinstall-detection";
+import { useConversionModal } from "./hooks/use-conversion-modal";
 import { SplashScreen } from "@capacitor/splash-screen";
 import { Capacitor } from "@capacitor/core";
 import Index from "./pages/Index";
@@ -25,6 +27,7 @@ function AppContent() {
     keepResidualData,
   } = useReinstallDetection();
   
+  const { showModal: showConversionModal, closeModal: closeConversionModal } = useConversionModal();
   const { isLoading: isPaletteLoading } = usePalette();
   const [splashHidden, setSplashHidden] = useState(false);
   const [isAppReady, setIsAppReady] = useState(false);
@@ -121,6 +124,10 @@ function AppContent() {
         onCleanup={cleanupResidualData}
         onKeep={keepResidualData}
         isCleaningUp={isCleaningUp}
+      />
+      <ConversionModal
+        open={showConversionModal}
+        onClose={closeConversionModal}
       />
       <TooltipProvider>
         <Toaster />

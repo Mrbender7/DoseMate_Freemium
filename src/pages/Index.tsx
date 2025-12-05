@@ -12,9 +12,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../components/ui/alert-dialog";
-import { Sun, Moon, ArrowUp, AlertTriangle } from "lucide-react";
+import { Sun, Moon, ArrowUp, AlertTriangle, Lock, Crown } from "lucide-react";
 import { PaletteSelector } from "../components/PaletteSelector";
 import { LanguageToggle } from "../components/LanguageToggle";
+import { PremiumBadge } from "../components/PremiumBadge";
+import { isPremium, PREMIUM_URL } from "../config/freemium";
 import { SteampunkClock } from "../components/ui/clock";
 import { GlycemiaCard } from "../components/insulin/GlycemiaCard";
 import { MealCard } from "../components/insulin/MealCard";
@@ -615,18 +617,26 @@ export default function DoseMate() {
               </div>
               
               <div className="flex items-center gap-2">
-                <PaletteSelector />
+                {/* Thèmes - Premium Only */}
+                <PremiumBadge featureName={language === 'fr' ? 'Les thèmes' : 'Themes'}>
+                  <PaletteSelector />
+                </PremiumBadge>
                 
-                <button
-                  onClick={() => {
-                    setDarkMode((d) => !d);
-                    showToast(darkMode ? t.header.lightMode : t.header.darkMode);
-                  }}
-                  className="glass-button-sm p-2 flex items-center gap-2"
-                  title="Toggle theme"
-                >
-                  <span className="text-base">{darkMode ? "🌙" : "☀️"}</span>
-                </button>
+                {/* Mode Clair/Sombre - Premium Only */}
+                <PremiumBadge featureName={language === 'fr' ? 'Le mode clair/sombre' : 'Light/dark mode'}>
+                  <button
+                    onClick={() => {
+                      if (isPremium()) {
+                        setDarkMode((d) => !d);
+                        showToast(darkMode ? t.header.lightMode : t.header.darkMode);
+                      }
+                    }}
+                    className="glass-button-sm p-2 flex items-center gap-2"
+                    title="Toggle theme"
+                  >
+                    <span className="text-base">{darkMode ? "🌙" : "☀️"}</span>
+                  </button>
+                </PremiumBadge>
               </div>
               
               <Tabs value={expertTabValue} onValueChange={setExpertTabValue} className="w-full">
@@ -664,12 +674,26 @@ export default function DoseMate() {
         ) : (
           /* All devices: Tabs layout */
           <div>
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <Tabs value={activeTab} onValueChange={(val) => {
+              // Bloquer l'accès à l'historique en mode FREE
+              if (val === 'history' && !isPremium()) {
+                window.open(PREMIUM_URL, '_blank');
+                return;
+              }
+              setActiveTab(val);
+            }} className="w-full">
               <TabsList className="grid w-full grid-cols-4 mb-2">
                 <TabsTrigger value="glycemia" className="text-xs md:text-sm">{t.tabs.glycemia}</TabsTrigger>
                 <TabsTrigger value="meal" className="text-xs md:text-sm">{t.tabs.meal}</TabsTrigger>
                 <TabsTrigger value="result" className="text-xs md:text-sm">{t.tabs.result}</TabsTrigger>
-                <TabsTrigger value="history" className="text-xs md:text-sm">{t.tabs.history}</TabsTrigger>
+                {isPremium() ? (
+                  <TabsTrigger value="history" className="text-xs md:text-sm">{t.tabs.history}</TabsTrigger>
+                ) : (
+                  <TabsTrigger value="history" className="text-xs md:text-sm opacity-60 relative">
+                    <Lock className="w-3 h-3 mr-1 text-amber-500" />
+                    {t.tabs.history}
+                  </TabsTrigger>
+                )}
               </TabsList>
 
               <TabsContent value="glycemia" className="mt-0">
@@ -730,12 +754,37 @@ export default function DoseMate() {
               </TabsContent>
 
               <TabsContent value="history" className="mt-0">
-                <HistoryCard
-                  history={history}
-                  onClearHistory={clearHistory}
-                  onDeleteEntry={deleteHistoryEntry}
-                  showToast={showToast}
-                />
+                {isPremium() ? (
+                  <HistoryCard
+                    history={history}
+                    onClearHistory={clearHistory}
+                    onDeleteEntry={deleteHistoryEntry}
+                    showToast={showToast}
+                  />
+                ) : (
+                  <Card className="p-6 text-center">
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
+                        <Crown className="w-8 h-8 text-white" />
+                      </div>
+                      <h3 className="text-lg font-semibold">
+                        {language === 'fr' ? 'Historique Premium' : 'Premium History'}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {language === 'fr' 
+                          ? 'Accédez à l\'historique complet de vos doses avec la version Premium.'
+                          : 'Access your complete dose history with the Premium version.'}
+                      </p>
+                      <Button
+                        onClick={() => window.open(PREMIUM_URL, '_blank')}
+                        className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700"
+                      >
+                        <Crown className="w-4 h-4 mr-2" />
+                        {language === 'fr' ? 'Passer à Premium' : 'Upgrade to Premium'}
+                      </Button>
+                    </div>
+                  </Card>
+                )}
               </TabsContent>
             </Tabs>
           </div>
