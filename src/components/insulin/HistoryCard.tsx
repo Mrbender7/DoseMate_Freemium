@@ -1,14 +1,14 @@
 import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
-import { Download, RotateCcw, BarChart3, X } from "lucide-react";
-import { momentIcon } from "../../utils/calculations";
+import { Download, RotateCcw, BarChart3, Trash2, Droplet, Utensils, Syringe, Clock } from "lucide-react";
 import type { HistoryEntry } from "../../types/insulin";
 import * as XLSX from "xlsx";
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { Capacitor } from '@capacitor/core';
 import { useLanguage } from "../../contexts/LanguageContext";
+import { cn } from "@/lib/utils";
 
 interface HistoryCardProps {
   history: HistoryEntry[];
@@ -18,8 +18,35 @@ interface HistoryCardProps {
   compact?: boolean;
 }
 
+const getMomentConfig = (moment: string, language: string) => {
+  const configs: Record<string, { label: string; emoji: string; bgClass: string }> = {
+    morning: { 
+      label: language === 'fr' ? 'Matin' : 'Morning', 
+      emoji: '☀️',
+      bgClass: 'bg-amber-500/20 text-amber-600 dark:text-amber-400'
+    },
+    noon: { 
+      label: language === 'fr' ? 'Midi' : 'Noon', 
+      emoji: '🌤️',
+      bgClass: 'bg-orange-500/20 text-orange-600 dark:text-orange-400'
+    },
+    evening: { 
+      label: language === 'fr' ? 'Soir' : 'Evening', 
+      emoji: '🌙',
+      bgClass: 'bg-indigo-500/20 text-indigo-600 dark:text-indigo-400'
+    },
+    extra: { 
+      label: language === 'fr' ? 'Extra' : 'Extra', 
+      emoji: '➕',
+      bgClass: 'bg-rose-500/20 text-rose-600 dark:text-rose-400'
+    }
+  };
+  return configs[moment] || configs.extra;
+};
+
 export function HistoryCard({ history, onClearHistory, onDeleteEntry, showToast, compact = false }: HistoryCardProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  
   const sevenDaySummary = useMemo(() => {
     const now = new Date();
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 3600 * 1000);
@@ -50,8 +77,7 @@ export function HistoryCard({ history, onClearHistory, onDeleteEntry, showToast,
     
     if (isNative) {
       try {
-        // Sur mobile, on enregistre et partage le fichier
-        const fileName = `glucoflow_history_${new Date().toISOString().split('T')[0]}.csv`;
+        const fileName = `dosemate_history_${new Date().toISOString().split('T')[0]}.csv`;
         const result = await Filesystem.writeFile({
           path: fileName,
           data: csvContent,
@@ -60,10 +86,10 @@ export function HistoryCard({ history, onClearHistory, onDeleteEntry, showToast,
         });
         
         await Share.share({
-          title: 'Historique GlucoFlow',
-          text: 'Voici votre historique GlucoFlow',
+          title: 'Historique DoseMate',
+          text: 'Voici votre historique DoseMate',
           url: result.uri,
-          dialogTitle: 'Partager l\'historique'
+          dialogTitle: "Partager l'historique"
         });
         
         showToast("CSV prêt à partager");
@@ -72,11 +98,10 @@ export function HistoryCard({ history, onClearHistory, onDeleteEntry, showToast,
         showToast("Erreur lors du téléchargement CSV");
       }
     } else {
-      // Sur web, téléchargement classique
       const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = `glucoflow_history_${new Date().toISOString().split('T')[0]}.csv`;
+      link.download = `dosemate_history_${new Date().toISOString().split('T')[0]}.csv`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -103,9 +128,8 @@ export function HistoryCard({ history, onClearHistory, onDeleteEntry, showToast,
       XLSX.utils.book_append_sheet(wb, ws, "Historique");
       
       if (isNative) {
-        // Sur mobile, on convertit en base64 et partage
         const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'base64' });
-        const fileName = `glucoflow_history_${new Date().toISOString().split('T')[0]}.xlsx`;
+        const fileName = `dosemate_history_${new Date().toISOString().split('T')[0]}.xlsx`;
         
         const result = await Filesystem.writeFile({
           path: fileName,
@@ -114,16 +138,15 @@ export function HistoryCard({ history, onClearHistory, onDeleteEntry, showToast,
         });
         
         await Share.share({
-          title: 'Historique GlucoFlow',
-          text: 'Voici votre historique GlucoFlow',
+          title: 'Historique DoseMate',
+          text: 'Voici votre historique DoseMate',
           url: result.uri,
-          dialogTitle: 'Partager l\'historique'
+          dialogTitle: "Partager l'historique"
         });
         
         showToast("XLSX prêt à partager");
       } else {
-        // Sur web, téléchargement classique
-        XLSX.writeFile(wb, `glucoflow_history_${new Date().toISOString().split('T')[0]}.xlsx`);
+        XLSX.writeFile(wb, `dosemate_history_${new Date().toISOString().split('T')[0]}.xlsx`);
         showToast("XLSX téléchargé");
       }
     } catch (error) {
@@ -138,8 +161,7 @@ export function HistoryCard({ history, onClearHistory, onDeleteEntry, showToast,
     
     if (isNative) {
       try {
-        // Sur mobile, on enregistre et partage le fichier
-        const fileName = `glucoflow_history_${new Date().toISOString().split('T')[0]}.json`;
+        const fileName = `dosemate_history_${new Date().toISOString().split('T')[0]}.json`;
         const result = await Filesystem.writeFile({
           path: fileName,
           data: jsonContent,
@@ -148,10 +170,10 @@ export function HistoryCard({ history, onClearHistory, onDeleteEntry, showToast,
         });
         
         await Share.share({
-          title: 'Historique GlucoFlow',
-          text: 'Voici votre historique GlucoFlow',
+          title: 'Historique DoseMate',
+          text: 'Voici votre historique DoseMate',
           url: result.uri,
-          dialogTitle: 'Partager l\'historique'
+          dialogTitle: "Partager l'historique"
         });
         
         showToast("JSON prêt à partager");
@@ -160,17 +182,24 @@ export function HistoryCard({ history, onClearHistory, onDeleteEntry, showToast,
         showToast("Erreur lors du téléchargement JSON");
       }
     } else {
-      // Sur web, téléchargement classique
       const blob = new Blob([jsonContent], { type: "application/json" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = `glucoflow_history_${new Date().toISOString().split('T')[0]}.json`;
+      link.download = `dosemate_history_${new Date().toISOString().split('T')[0]}.json`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       showToast("JSON téléchargé");
     }
   }
+
+  const formatDateTime = (dateISO: string) => {
+    const date = new Date(dateISO);
+    return {
+      time: date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
+      date: date.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" })
+    };
+  };
 
   return (
     <Card className="transition-all duration-300">
@@ -179,21 +208,28 @@ export function HistoryCard({ history, onClearHistory, onDeleteEntry, showToast,
           <BarChart3 className="h-4 w-4" />
           {t.history.title}
         </CardTitle>
-        <div className="flex items-center gap-1.5 text-muted-foreground mt-0.5 flex-wrap text-[10px]">
-          <span className="flex items-center gap-0.5">☀️ {t.history.morning}</span>
-          <span className="flex items-center gap-0.5">🌤️ {t.history.noon}</span>
-          <span className="flex items-center gap-0.5">🌙 {t.history.evening}</span>
-          <span className="flex items-center gap-0.5"><span className="text-destructive font-bold">+</span> {t.history.supplement}</span>
-        </div>
       </CardHeader>
       <CardContent className="space-y-2 py-2 px-3">
-        <div className="flex flex-col items-start gap-1.5 bg-muted/20 rounded-lg p-2">
-          <div className="text-[11px]">
-            <div className="font-semibold text-foreground">{t.history.entries} : {history.length}</div>
-            <div className="text-muted-foreground mt-0.5">
-              {sevenDaySummary.count > 0 
-                ? `7j: ${sevenDaySummary.avgGly} mg/dL - ${sevenDaySummary.avgDoseAdmin} u` 
-                : t.history.noData}
+        {/* Statistiques et exports */}
+        <div className="flex flex-col items-start gap-2 bg-muted/20 rounded-lg p-2.5">
+          <div className="flex items-center gap-4 w-full">
+            <div className="flex-1 grid grid-cols-3 gap-2 text-center">
+              <div className="p-1.5 rounded-lg bg-card/50 border border-border/30">
+                <div className="text-lg font-bold text-primary">{history.length}</div>
+                <div className="text-[9px] text-muted-foreground">{t.history.entries}</div>
+              </div>
+              <div className="p-1.5 rounded-lg bg-card/50 border border-border/30">
+                <div className="text-lg font-bold text-primary">
+                  {sevenDaySummary.avgDoseAdmin ?? '-'}U
+                </div>
+                <div className="text-[9px] text-muted-foreground">Moy. 7j</div>
+              </div>
+              <div className="p-1.5 rounded-lg bg-card/50 border border-border/30">
+                <div className="text-lg font-bold text-primary">
+                  {sevenDaySummary.avgGly ?? '-'}
+                </div>
+                <div className="text-[9px] text-muted-foreground">Glyc. moy</div>
+              </div>
             </div>
           </div>
 
@@ -213,35 +249,102 @@ export function HistoryCard({ history, onClearHistory, onDeleteEntry, showToast,
           </div>
         </div>
 
-        <div className="space-y-1 overflow-auto hide-scrollbar max-h-[40vh]">
+        {/* Liste des entrées */}
+        <div className="space-y-2 overflow-auto hide-scrollbar max-h-[40vh]">
           {history.length === 0 ? (
-            <div className="text-muted-foreground text-center py-3 text-xs">{t.history.empty}</div>
-          ) : (
-            history.map((h) => (
-              <div key={h.id} className="rounded-lg bg-card/50 border border-border/50 hover:bg-card/80 transition-colors p-2 relative">
-                <button
-                  onClick={() => onDeleteEntry(h.id)}
-                  className="absolute top-1 right-1 p-0.5 rounded hover:bg-destructive/20 text-muted-foreground hover:text-destructive transition-colors"
-                  aria-label={t.history.deleteEntry}
-                >
-                  <X className="h-3 w-3" />
-                </button>
-                <div className="flex items-center justify-between mb-0.5 pr-5">
-                  <div className="text-muted-foreground text-[10px]">
-                    {momentIcon(h.moment)} {new Date(h.dateISO).toLocaleString("fr-FR", { 
-                      day: "2-digit", 
-                      month: "2-digit", 
-                      hour: "2-digit", 
-                      minute: "2-digit" 
-                    })}
-                  </div>
-                </div>
-                <div className="font-medium text-foreground text-xs">{h.display}</div>
-                <div className="text-muted-foreground mt-0.5 text-[10px]">
-                  {t.history.admin}: {h.totalAdministered} u - {t.history.calc}: {Number(h.totalCalculated.toFixed(1))} u
-                </div>
+            <div className="text-center py-8 animate-fade-in">
+              <div className="w-14 h-14 mx-auto mb-3 rounded-full bg-muted/50 flex items-center justify-center">
+                <Syringe className="h-7 w-7 text-muted-foreground/30" />
               </div>
-            ))
+              <p className="text-sm font-medium text-foreground mb-1">
+                {language === 'fr' ? 'Aucune dose enregistrée' : 'No doses recorded'}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {language === 'fr' 
+                  ? 'Enregistrez votre première dose pour commencer.'
+                  : 'Save your first dose to get started.'}
+              </p>
+            </div>
+          ) : (
+            history.map((h, index) => {
+              const { time, date } = formatDateTime(h.dateISO);
+              const momentConfig = getMomentConfig(h.moment, language);
+              
+              return (
+                <div 
+                  key={h.id} 
+                  className={cn(
+                    "group rounded-xl bg-gradient-to-br from-card to-card/80 border border-border/50",
+                    "hover:border-primary/30 transition-all duration-300 p-3 relative",
+                    "animate-fade-in"
+                  )}
+                  style={{ animationDelay: `${index * 30}ms` }}
+                >
+                  {/* En-tête: Date/Heure + Moment */}
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                      <Clock className="h-3 w-3" />
+                      <span>{time}</span>
+                      <span className="opacity-50">•</span>
+                      <span>{date}</span>
+                    </div>
+                    <span className={cn(
+                      "px-2 py-0.5 rounded-full text-[10px] font-medium",
+                      momentConfig.bgClass
+                    )}>
+                      {momentConfig.emoji} {momentConfig.label}
+                    </span>
+                  </div>
+
+                  {/* Dose principale */}
+                  <div className="flex items-baseline gap-1.5 mb-2">
+                    <Syringe className="h-4 w-4 text-primary" />
+                    <span className="text-2xl font-bold text-primary">{h.totalAdministered}</span>
+                    <span className="text-sm text-primary/70">U</span>
+                    {h.totalCalculated !== h.totalAdministered && (
+                      <span className="text-xs text-muted-foreground ml-1">
+                        (calc: {Number(h.totalCalculated.toFixed(1))}U)
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Détails */}
+                  <div className="flex flex-wrap gap-2">
+                    {h.glycemia !== undefined && (
+                      <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-blue-500/10 text-xs">
+                        <Droplet className="h-3 w-3 text-blue-500" />
+                        <span className="font-medium">{h.glycemia}</span>
+                        <span className="text-muted-foreground">mg/dL</span>
+                        {h.base !== undefined && h.base !== null && (
+                          <span className="text-blue-500">→ {h.base}U</span>
+                        )}
+                      </div>
+                    )}
+                    {h.meal !== undefined && h.meal !== null && h.meal > 0 && (
+                      <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-orange-500/10 text-xs">
+                        <Utensils className="h-3 w-3 text-orange-500" />
+                        <span className="font-medium">{h.meal}U</span>
+                        <span className="text-orange-500">{language === 'fr' ? 'repas' : 'meal'}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Bouton supprimer */}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => onDeleteEntry(h.id)}
+                    className={cn(
+                      "absolute top-2 right-2 h-6 w-6",
+                      "text-muted-foreground/40 hover:text-destructive",
+                      "opacity-0 group-hover:opacity-100 transition-opacity"
+                    )}
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                </div>
+              );
+            })
           )}
         </div>
       </CardContent>

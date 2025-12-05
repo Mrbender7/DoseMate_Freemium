@@ -2,26 +2,72 @@ import { useUserPreferences, ThemeMode, ThemePalette } from '@/hooks/use-user-pr
 import { useLanguage } from '@/contexts/LanguageContext';
 import { usePalette, PALETTES, PaletteType } from '@/contexts/PaletteContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Settings as SettingsIcon, Sun, Moon, Palette, AlertCircle, Check } from 'lucide-react';
+import { Settings as SettingsIcon, Sun, Moon, Palette, AlertCircle, Check, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 
-// Palettes disponibles avec leurs couleurs de prévisualisation
-const PALETTE_PREVIEWS: Record<PaletteType, { bg: string; accent: string }> = {
-  blue: { bg: 'bg-blue-900', accent: 'bg-blue-400' },
-  mint: { bg: 'bg-emerald-900', accent: 'bg-emerald-400' },
-  rose: { bg: 'bg-pink-900', accent: 'bg-pink-400' },
-  lavender: { bg: 'bg-purple-900', accent: 'bg-purple-400' },
-  peach: { bg: 'bg-orange-900', accent: 'bg-orange-400' },
-  red: { bg: 'bg-red-900', accent: 'bg-red-400' },
-  cyan: { bg: 'bg-cyan-900', accent: 'bg-cyan-400' },
+// Configuration des palettes avec couleurs réelles
+const PALETTE_CONFIG: Record<PaletteType, { 
+  name: string;
+  emoji: string;
+  primary: string;
+  secondary: string;
+  gradient: string;
+}> = {
+  blue: { 
+    name: 'Ocean',
+    emoji: '🌊',
+    primary: 'bg-blue-500',
+    secondary: 'bg-blue-300',
+    gradient: 'from-blue-600 to-blue-400'
+  },
+  mint: { 
+    name: 'Menthe',
+    emoji: '🍃',
+    primary: 'bg-emerald-500',
+    secondary: 'bg-emerald-300',
+    gradient: 'from-emerald-600 to-emerald-400'
+  },
+  rose: { 
+    name: 'Rose',
+    emoji: '🌸',
+    primary: 'bg-pink-500',
+    secondary: 'bg-pink-300',
+    gradient: 'from-pink-600 to-pink-400'
+  },
+  lavender: { 
+    name: 'Lavande',
+    emoji: '💜',
+    primary: 'bg-purple-500',
+    secondary: 'bg-purple-300',
+    gradient: 'from-purple-600 to-purple-400'
+  },
+  peach: { 
+    name: 'Pêche',
+    emoji: '🍑',
+    primary: 'bg-orange-500',
+    secondary: 'bg-orange-300',
+    gradient: 'from-orange-600 to-orange-400'
+  },
+  red: { 
+    name: 'Ruby',
+    emoji: '❤️',
+    primary: 'bg-red-500',
+    secondary: 'bg-red-300',
+    gradient: 'from-red-600 to-red-400'
+  },
+  cyan: { 
+    name: 'Cyan',
+    emoji: '💎',
+    primary: 'bg-cyan-500',
+    secondary: 'bg-cyan-300',
+    gradient: 'from-cyan-600 to-cyan-400'
+  },
 };
 
 export default function Settings() {
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
   const { palette: currentPalette, setPalette, isLoading: isPaletteLoading } = usePalette();
   const { 
     preferences, 
@@ -103,8 +149,8 @@ export default function Settings() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Skeleton className="h-32 w-full" />
-            <Skeleton className="h-48 w-full" />
+            <Skeleton className="h-32 w-full rounded-xl" />
+            <Skeleton className="h-48 w-full rounded-xl" />
           </CardContent>
         </Card>
       </div>
@@ -128,75 +174,103 @@ export default function Settings() {
 
   return (
     <div className="container mx-auto p-4 space-y-4">
-      {/* Mode Clair/Sombre */}
-      <Card className="border-primary/20">
+      {/* En-tête */}
+      <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-lg">
-            {selectedMode === 'dark' ? (
-              <Moon className="h-5 w-5 text-primary" />
-            ) : (
-              <Sun className="h-5 w-5 text-amber-500" />
-            )}
-            {language === 'fr' ? 'Mode d\'affichage' : 'Display Mode'}
+            <div className="p-2 rounded-lg bg-primary/10">
+              <Sparkles className="h-5 w-5 text-primary" />
+            </div>
+            {language === 'fr' ? 'Personnalisation' : 'Customization'}
           </CardTitle>
           <CardDescription>
             {language === 'fr' 
-              ? 'Choisissez entre le mode clair et sombre'
-              : 'Choose between light and dark mode'}
+              ? "Personnalisez l'apparence de votre application"
+              : 'Customize your app appearance'}
           </CardDescription>
         </CardHeader>
+      </Card>
+
+      {/* Mode Clair/Sombre */}
+      <Card className="border-primary/20 overflow-hidden">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-base">
+            {selectedMode === 'dark' ? (
+              <Moon className="h-4 w-4 text-indigo-400" />
+            ) : (
+              <Sun className="h-4 w-4 text-amber-500" />
+            )}
+            {language === 'fr' ? "Mode d'affichage" : 'Display Mode'}
+          </CardTitle>
+        </CardHeader>
         <CardContent>
-          <RadioGroup 
-            value={selectedMode} 
-            onValueChange={(v) => handleModeChange(v as ThemeMode)}
-            className="grid grid-cols-2 gap-4"
-          >
-            <Label 
-              htmlFor="mode-light" 
+          <div className="grid grid-cols-2 gap-4">
+            {/* Mode Clair */}
+            <button
+              onClick={() => handleModeChange('light')}
               className={cn(
-                "flex flex-col items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all",
+                "relative flex flex-col items-center gap-3 p-4 rounded-xl border-2 transition-all duration-300",
+                "hover:scale-[1.02] active:scale-[0.98]",
                 selectedMode === 'light' 
-                  ? "border-primary bg-primary/10" 
-                  : "border-border hover:border-primary/50"
+                  ? "border-primary bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 shadow-lg shadow-primary/10" 
+                  : "border-border/50 hover:border-primary/30 bg-card/50"
               )}
             >
-              <RadioGroupItem value="light" id="mode-light" className="sr-only" />
-              <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center">
-                <Sun className="h-6 w-6 text-amber-600" />
+              {/* Aperçu visuel du mode clair */}
+              <div className="w-full aspect-[4/3] rounded-lg bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 p-2 relative overflow-hidden">
+                <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-gradient-to-br from-amber-300 to-orange-400 shadow-lg" />
+                <div className="h-2 w-3/4 rounded bg-slate-300 mb-1.5" />
+                <div className="h-2 w-1/2 rounded bg-slate-200" />
+                <div className="absolute bottom-2 left-2 right-2 h-4 rounded bg-blue-500/80" />
               </div>
-              <span className="font-medium">{language === 'fr' ? 'Clair' : 'Light'}</span>
+              <div className="flex items-center gap-2">
+                <Sun className="h-5 w-5 text-amber-500" />
+                <span className="font-medium">{language === 'fr' ? 'Clair' : 'Light'}</span>
+              </div>
               {selectedMode === 'light' && (
-                <Check className="h-4 w-4 text-primary absolute top-2 right-2" />
+                <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                  <Check className="h-4 w-4 text-primary-foreground" />
+                </div>
               )}
-            </Label>
-            
-            <Label 
-              htmlFor="mode-dark" 
+            </button>
+
+            {/* Mode Sombre */}
+            <button
+              onClick={() => handleModeChange('dark')}
               className={cn(
-                "flex flex-col items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all relative",
+                "relative flex flex-col items-center gap-3 p-4 rounded-xl border-2 transition-all duration-300",
+                "hover:scale-[1.02] active:scale-[0.98]",
                 selectedMode === 'dark' 
-                  ? "border-primary bg-primary/10" 
-                  : "border-border hover:border-primary/50"
+                  ? "border-primary bg-gradient-to-br from-slate-900/50 to-indigo-900/30 shadow-lg shadow-primary/10" 
+                  : "border-border/50 hover:border-primary/30 bg-card/50"
               )}
             >
-              <RadioGroupItem value="dark" id="mode-dark" className="sr-only" />
-              <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center">
-                <Moon className="h-6 w-6 text-slate-300" />
+              {/* Aperçu visuel du mode sombre */}
+              <div className="w-full aspect-[4/3] rounded-lg bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 p-2 relative overflow-hidden">
+                <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 shadow-lg opacity-80" />
+                <div className="h-2 w-3/4 rounded bg-slate-600 mb-1.5" />
+                <div className="h-2 w-1/2 rounded bg-slate-700" />
+                <div className="absolute bottom-2 left-2 right-2 h-4 rounded bg-blue-500/80" />
               </div>
-              <span className="font-medium">{language === 'fr' ? 'Sombre' : 'Dark'}</span>
+              <div className="flex items-center gap-2">
+                <Moon className="h-5 w-5 text-indigo-400" />
+                <span className="font-medium">{language === 'fr' ? 'Sombre' : 'Dark'}</span>
+              </div>
               {selectedMode === 'dark' && (
-                <Check className="h-4 w-4 text-primary absolute top-2 right-2" />
+                <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                  <Check className="h-4 w-4 text-primary-foreground" />
+                </div>
               )}
-            </Label>
-          </RadioGroup>
+            </button>
+          </div>
         </CardContent>
       </Card>
 
       {/* Palette de couleurs */}
       <Card className="border-primary/20">
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Palette className="h-5 w-5 text-primary" />
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Palette className="h-4 w-4 text-primary" />
             {language === 'fr' ? 'Palette de couleurs' : 'Color Palette'}
             {isSaving && (
               <span className="ml-auto text-xs text-muted-foreground animate-pulse">
@@ -206,15 +280,14 @@ export default function Settings() {
           </CardTitle>
           <CardDescription>
             {language === 'fr' 
-              ? 'Personnalisez l\'apparence de l\'application'
-              : 'Customize the app appearance'}
+              ? 'Choisissez votre couleur d\'accent préférée'
+              : 'Choose your preferred accent color'}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-            {(Object.keys(PALETTES) as PaletteType[]).map((paletteKey) => {
-              const paletteInfo = PALETTES[paletteKey];
-              const preview = PALETTE_PREVIEWS[paletteKey];
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            {(Object.keys(PALETTE_CONFIG) as PaletteType[]).map((paletteKey, index) => {
+              const config = PALETTE_CONFIG[paletteKey];
               const isSelected = selectedPalette === paletteKey;
               
               return (
@@ -222,28 +295,48 @@ export default function Settings() {
                   key={paletteKey}
                   onClick={() => handlePaletteChange(paletteKey)}
                   className={cn(
-                    "flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all",
+                    "relative flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all duration-300",
+                    "hover:scale-[1.02] active:scale-[0.98]",
+                    "animate-fade-in",
                     isSelected 
-                      ? "border-primary bg-primary/10 ring-2 ring-primary/30" 
-                      : "border-border hover:border-primary/50 hover:bg-muted/50"
+                      ? "border-primary shadow-lg shadow-primary/20" 
+                      : "border-border/50 hover:border-primary/30"
                   )}
+                  style={{ animationDelay: `${index * 30}ms` }}
                 >
+                  {/* Aperçu de la palette avec gradient */}
                   <div className={cn(
-                    "w-10 h-10 rounded-full flex items-center justify-center relative overflow-hidden",
-                    preview.bg
+                    "w-full aspect-square rounded-lg bg-gradient-to-br overflow-hidden relative",
+                    config.gradient
                   )}>
+                    {/* Effet de brillance */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/20 to-white/0" />
+                    
+                    {/* Cercles décoratifs */}
                     <div className={cn(
-                      "w-4 h-4 rounded-full",
-                      preview.accent
+                      "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full opacity-50",
+                      config.secondary
                     )} />
+                    <div className={cn(
+                      "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full",
+                      "bg-white/80"
+                    )} />
+
+                    {/* Checkmark pour la sélection */}
                     {isSelected && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                        <Check className="h-5 w-5 text-white" />
+                      <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
+                          <Check className="h-5 w-5 text-primary" />
+                        </div>
                       </div>
                     )}
                   </div>
-                  <span className="text-xs font-medium">{paletteInfo.emoji}</span>
-                  <span className="text-[10px] text-muted-foreground">{paletteInfo.name}</span>
+
+                  {/* Nom et emoji */}
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-base">{config.emoji}</span>
+                    <span className="text-sm font-medium">{config.name}</span>
+                  </div>
                 </button>
               );
             })}
@@ -253,13 +346,18 @@ export default function Settings() {
 
       {/* Indicateur de synchronisation */}
       {isAuthenticated && (
-        <Card className="bg-muted/30 border-muted">
+        <Card className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 border-green-500/30">
           <CardContent className="py-3">
-            <p className="text-xs text-muted-foreground text-center flex items-center justify-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              {language === 'fr' 
-                ? 'Vos préférences sont synchronisées avec votre compte'
-                : 'Your preferences are synced with your account'}
+            <p className="text-xs text-center flex items-center justify-center gap-2">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+              </span>
+              <span className="text-green-700 dark:text-green-400">
+                {language === 'fr' 
+                  ? 'Vos préférences sont synchronisées'
+                  : 'Your preferences are synced'}
+              </span>
             </p>
           </CardContent>
         </Card>
