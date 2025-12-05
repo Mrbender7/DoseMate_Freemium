@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@capacitor-community/http": "^1.4.1",
+    "@capacitor/app": "^7.1.0",
     "@capacitor/cli": "^7.4.4",
     "@capacitor/core": "^7.4.4",
     "@capacitor/filesystem": "^7.1.4",
