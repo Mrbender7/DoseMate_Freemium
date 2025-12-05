@@ -8,8 +8,10 @@ import { LanguageProvider } from "./contexts/LanguageContext";
 import { PaletteProvider, usePalette } from "./contexts/PaletteContext";
 import { ReinstallCleanupModal } from "./components/ReinstallCleanupModal";
 import { ConversionModal } from "./components/ConversionModal";
+import { ExitConfirmDialog } from "./components/ExitConfirmDialog";
 import { useReinstallDetection } from "./hooks/use-reinstall-detection";
 import { useConversionModal } from "./hooks/use-conversion-modal";
+import { useBackButton } from "./hooks/use-back-button";
 import { SplashScreen } from "@capacitor/splash-screen";
 import { Capacitor } from "@capacitor/core";
 import Index from "./pages/Index";
@@ -19,6 +21,27 @@ import NotFound from "./pages/NotFound";
 import dosemateLogo from "./assets/dosemate-logo.png";
 
 const queryClient = new QueryClient();
+
+// Composant séparé pour le contenu avec le router (nécessaire pour useBackButton)
+function AppRoutes() {
+  const { showExitDialog, confirmExit, cancelExit } = useBackButton();
+
+  return (
+    <>
+      <ExitConfirmDialog
+        open={showExitDialog}
+        onConfirm={confirmExit}
+        onCancel={cancelExit}
+      />
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/history" element={<History />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </>
+  );
+}
 
 function AppContent() {
   const {
@@ -39,21 +62,15 @@ function AppContent() {
   useEffect(() => {
     const initializeTheme = async () => {
       try {
-        // Appliquer le thème sombre par défaut immédiatement
-        // Le PaletteContext gère la persistence, ici on s'assure que le DOM est prêt
-        const isDarkMode = document.documentElement.classList.contains('dark') || 
-                          !document.documentElement.classList.contains('light');
-        
         // Forcer le mode sombre par défaut si aucun thème n'est défini
         if (!document.documentElement.classList.contains('dark') && 
             !document.documentElement.classList.contains('light')) {
           document.documentElement.classList.add('dark');
         }
         
-        console.log('[App] Theme initialized, dark mode:', isDarkMode);
+        console.log('[App] Theme initialized');
       } catch (error) {
         console.warn('[App] Theme initialization error:', error);
-        // En cas d'erreur, appliquer le mode sombre par défaut
         document.documentElement.classList.add('dark');
       } finally {
         setThemeInitialized(true);
@@ -66,15 +83,13 @@ function AppContent() {
   // Masquer le splash screen avec fondu de sécurité
   useEffect(() => {
     const hideSplash = async () => {
-      // Attendre que les contextes critiques soient chargés
       if (!isChecking && !isPaletteLoading && !splashHidden) {
         try {
           console.log('[App] All contexts loaded, preparing splash hide...');
           
-          // Fondu de sécurité : délai de 800ms pour couvrir le temps de rendu initial de la WebView
+          // Fondu de sécurité
           await new Promise(resolve => setTimeout(resolve, 800));
           
-          // Masquer le splash uniquement sur plateforme native
           if (Capacitor.isNativePlatform()) {
             console.log('[App] Native platform detected, hiding splash screen...');
             await SplashScreen.hide({ fadeOutDuration: 300 });
@@ -83,14 +98,12 @@ function AppContent() {
           setSplashHidden(true);
           console.log('[App] Splash screen hidden');
           
-          // Délai pour le fondu de l'interface (transition fluide)
           setTimeout(() => {
             setIsAppReady(true);
             console.log('[App] App ready, interface visible');
           }, 200);
           
         } catch (error) {
-          // En cas d'erreur (web), on masque quand même l'état de chargement
           console.log('[App] Splash screen hide failed (likely running in web):', error);
           setSplashHidden(true);
           setIsAppReady(true);
@@ -135,13 +148,7 @@ function AppContent() {
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/history" element={<History />} />
-            <Route path="/settings" element={<Settings />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <AppRoutes />
         </BrowserRouter>
       </TooltipProvider>
     </>
