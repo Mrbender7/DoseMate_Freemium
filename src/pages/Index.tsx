@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useRef } from "react";
+import { useEffect, useMemo, useState, useRef, useCallback } from "react";
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Alert, AlertDescription } from "../components/ui/alert";
@@ -13,6 +13,7 @@ import {
   AlertDialogTitle,
 } from "../components/ui/alert-dialog";
 import { Sun, Moon, ArrowUp, AlertTriangle, Lock, Crown, Settings, Palette, Check } from "lucide-react";
+import { validateGlycemia, validateFoodItemField, validateCarbRatio, type Language } from "../schemas/insulinFormSchema";
 import { PaletteSelector } from "../components/PaletteSelector";
 import { LanguageToggle } from "../components/LanguageToggle";
 import { PremiumBadge } from "../components/PremiumBadge";
@@ -260,6 +261,11 @@ export default function DoseMate() {
   const [activeTab, setActiveTab] = useState<string>("glycemia");
   const [showExpertCard, setShowExpertCard] = useState<boolean>(false);
   const [expertTabValue, setExpertTabValue] = useState<string>("meal");
+  
+  // Validation errors state
+  const [glycemiaError, setGlycemiaError] = useState<string | null>(null);
+  const [foodItemErrors, setFoodItemErrors] = useState<Record<string, { carbsPer100?: string | null; weight?: string | null }>>({});
+  const [carbRatioError, setCarbRatioError] = useState<string | null>(null);
 
   // Reset to glycemia tab on mount
   useEffect(() => {
@@ -468,7 +474,29 @@ export default function DoseMate() {
   
   function updateFoodItem(id: string, field: keyof FoodItem, val: string) {
     setFoodItems((prev) => prev.map((p) => (p.id === id ? { ...p, [field]: val } : p)));
+    
+    // Validate the field
+    if (field === 'carbsPer100' || field === 'weight') {
+      const error = validateFoodItemField(field, val, language as Language);
+      setFoodItemErrors(prev => ({
+        ...prev,
+        [id]: { ...prev[id], [field]: error }
+      }));
+    }
   }
+
+  // Handler pour glycemia avec validation
+  const handleGlycemiaChange = useCallback((value: string) => {
+    setGlycemia(value);
+    const error = validateGlycemia(value, language as Language);
+    setGlycemiaError(error);
+  }, [language]);
+
+  // Validate carbRatio when it changes
+  useEffect(() => {
+    const error = validateCarbRatio(carbRatio, language as Language);
+    setCarbRatioError(error);
+  }, [carbRatio, language]);
 
   const calculation = useMemo(() => {
     const gly = parseNumberInput(glycemia);
@@ -625,6 +653,59 @@ export default function DoseMate() {
   }
 
   async function pushToHistory() {
+    // Validation des entrées avant sauvegarde
+    const lang = language as Language;
+    
+    // Valider la glycémie si fournie
+    if (glycemia.trim() !== "") {
+      const glyError = validateGlycemia(glycemia, lang);
+      if (glyError) {
+        setGlycemiaError(glyError);
+        showToast("⚠️ " + glyError);
+        setActiveTab("glycemia");
+        return;
+      }
+    }
+    
+    // Valider les items alimentaires
+    let hasValidationError = false;
+    const newFoodErrors: Record<string, { carbsPer100?: string | null; weight?: string | null }> = {};
+    
+    foodItems.forEach(item => {
+      if (item.carbsPer100.trim() !== "" || item.weight.trim() !== "") {
+        const carbsError = validateFoodItemField("carbsPer100", item.carbsPer100, lang);
+        const weightError = validateFoodItemField("weight", item.weight, lang);
+        
+        if (carbsError || weightError) {
+          hasValidationError = true;
+          newFoodErrors[item.id] = { carbsPer100: carbsError, weight: weightError };
+        }
+      }
+    });
+    
+    if (hasValidationError) {
+      setFoodItemErrors(newFoodErrors);
+      showToast(language === 'fr' ? "⚠️ Vérifiez les valeurs saisies" : "⚠️ Check input values");
+      setActiveTab("meal");
+      return;
+    }
+    
+    // Valider le ratio si des glucides sont fournis
+    const hasCarbs = foodItems.some(item => 
+      item.carbsPer100.trim() !== "" && item.weight.trim() !== ""
+    );
+    
+    if (hasCarbs) {
+      const ratioError = validateCarbRatio(carbRatio, lang);
+      if (ratioError) {
+        setCarbRatioError(ratioError);
+        showToast("⚠️ " + ratioError);
+        setShowExpertCard(true);
+        setExpertTabValue("meal");
+        return;
+      }
+    }
+    
     // Sécurisation : vérifier la configuration avant d'enregistrer
     if (!isConfigComplete()) {
       showToast(t.settings.configurationMissing);
@@ -706,6 +787,10 @@ export default function DoseMate() {
     setGlycemia("");
     setFoodItems([{ id: "f-1", carbsPer100: "", weight: "" }]);
     setForceExtra(false);
+    
+    // Clear validation errors
+    setGlycemiaError(null);
+    setFoodItemErrors({});
     
     // Fermer la MealCard si elle contient des données
     const hasData = foodItems.some(item => item.carbsPer100 || item.weight);
@@ -923,7 +1008,7 @@ export default function DoseMate() {
                   glycemia={glycemia}
                   moment={calculation.moment}
                   forceExtra={forceExtra}
-                  onGlycemiaChange={setGlycemia}
+                  onGlycemiaChange={handleGlycemiaChange}
                   onReset={resetInputs}
                   onSave={() => {
                     if (document.activeElement instanceof HTMLElement) {
@@ -939,6 +1024,7 @@ export default function DoseMate() {
                     setForceExtra((f) => !f);
                     showToast(forceExtra ? t.toasts.supplementOff : t.toasts.supplementOn);
                   }}
+                  error={glycemiaError}
                 />
               </TabsContent>
 
@@ -952,18 +1038,13 @@ export default function DoseMate() {
                   isOpen={true}
                   onOpenChange={setIsMealCardOpen}
                   onSaveToResult={() => {
-                    if (!isConfigComplete()) {
-                      showToast("⚠️ Configuration manquante");
-                      setShowExpertCard(true);
-                      setActiveTab("settings");
-                      return;
-                    }
                     pushToHistory();
                     setResultPulse(true);
                     setActiveTab("result");
                     // Reset pulse après délai
                     setTimeout(() => setResultPulse(false), 100);
                   }}
+                  errors={foodItemErrors}
                 />
               </TabsContent>
 

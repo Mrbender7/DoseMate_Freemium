@@ -1,4 +1,4 @@
-import { forwardRef, useState } from "react";
+import { forwardRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -8,6 +8,11 @@ import type { FoodItem } from "../../types/insulin";
 import { hapticFeedback } from "../../utils/hapticFeedback";
 import { useLanguage } from "../../contexts/LanguageContext";
 
+interface FoodItemError {
+  carbsPer100?: string | null;
+  weight?: string | null;
+}
+
 interface MealCardProps {
   foodItems: FoodItem[];
   onAddItem: () => void;
@@ -16,10 +21,11 @@ interface MealCardProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   onSaveToResult: () => void;
+  errors?: Record<string, FoodItemError>;
 }
 
 export const MealCard = forwardRef<HTMLDivElement, MealCardProps>(
-  ({ foodItems, onAddItem, onRemoveItem, onUpdateItem, isOpen, onOpenChange, onSaveToResult }, ref) => {
+  ({ foodItems, onAddItem, onRemoveItem, onUpdateItem, isOpen, onOpenChange, onSaveToResult, errors = {} }, ref) => {
   const { t } = useLanguage();
   
   return (
@@ -37,50 +43,59 @@ export const MealCard = forwardRef<HTMLDivElement, MealCardProps>(
         <CollapsibleContent>
           <Card className="transition-all duration-300">
             <CardContent className="space-y-2 pt-3 px-3 pb-3">
-              {foodItems.map((it, idx) => (
-                <div key={it.id} className="p-2.5 rounded-lg bg-muted/30 border border-border/50">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="text-xs font-semibold text-foreground">{t.meal.foodItem} {idx + 1}</div>
-                    <div className="flex gap-1.5">
-                      {idx === foodItems.length - 1 && (
-                        <Button onClick={onAddItem} size="sm" variant="outline" className="h-7 w-7 p-0">
-                          <Plus className="h-3.5 w-3.5" />
-                        </Button>
-                      )}
-                      {foodItems.length > 1 && (
-                        <Button onClick={() => onRemoveItem(it.id)} size="sm" variant="outline" className="h-7 w-7 p-0 hover:bg-destructive/10">
-                          <Minus className="h-3.5 w-3.5" />
-                        </Button>
-                      )}
+              {foodItems.map((it, idx) => {
+                const itemErrors = errors[it.id] || {};
+                return (
+                  <div key={it.id} className="p-2.5 rounded-lg bg-muted/30 border border-border/50">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="text-xs font-semibold text-foreground">{t.meal.foodItem} {idx + 1}</div>
+                      <div className="flex gap-1.5">
+                        {idx === foodItems.length - 1 && (
+                          <Button onClick={onAddItem} size="sm" variant="outline" className="h-7 w-7 p-0">
+                            <Plus className="h-3.5 w-3.5" />
+                          </Button>
+                        )}
+                        {foodItems.length > 1 && (
+                          <Button onClick={() => onRemoveItem(it.id)} size="sm" variant="outline" className="h-7 w-7 p-0 hover:bg-destructive/10">
+                            <Minus className="h-3.5 w-3.5" />
+                          </Button>
+                        )}
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
-                    <div>
-                      <label className="text-xs font-medium text-muted-foreground">🥐 {t.meal.carbsPer100}</label>
-                      <Input 
-                        type="number"
-                        inputMode="decimal"
-                        value={it.carbsPer100} 
-                        onChange={(e) => onUpdateItem(it.id, "carbsPer100", e.target.value)} 
-                        placeholder={t.meal.carbsPlaceholder}
-                        className="mt-0.5 h-9 text-sm" 
-                      />
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium text-muted-foreground">{t.meal.weight}</label>
-                      <Input 
-                        type="number"
-                        inputMode="decimal"
-                        value={it.weight} 
-                        onChange={(e) => onUpdateItem(it.id, "weight", e.target.value)} 
-                        placeholder={t.meal.weightPlaceholder}
-                        className="mt-0.5 h-9 text-sm" 
-                      />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
+                      <div>
+                        <label className="text-xs font-medium text-muted-foreground">🥐 {t.meal.carbsPer100}</label>
+                        <Input 
+                          type="number"
+                          inputMode="decimal"
+                          value={it.carbsPer100} 
+                          onChange={(e) => onUpdateItem(it.id, "carbsPer100", e.target.value)} 
+                          placeholder={t.meal.carbsPlaceholder}
+                          className={`mt-0.5 h-9 text-sm ${itemErrors.carbsPer100 ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                        />
+                        {itemErrors.carbsPer100 && (
+                          <p className="text-xs text-destructive mt-1">{itemErrors.carbsPer100}</p>
+                        )}
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium text-muted-foreground">{t.meal.weight}</label>
+                        <Input 
+                          type="number"
+                          inputMode="decimal"
+                          value={it.weight} 
+                          onChange={(e) => onUpdateItem(it.id, "weight", e.target.value)} 
+                          placeholder={t.meal.weightPlaceholder}
+                          className={`mt-0.5 h-9 text-sm ${itemErrors.weight ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                        />
+                        {itemErrors.weight && (
+                          <p className="text-xs text-destructive mt-1">{itemErrors.weight}</p>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
               
               <Button 
                 onClick={() => {

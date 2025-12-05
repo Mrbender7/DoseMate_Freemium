@@ -14,6 +14,7 @@ interface GlycemiaCardProps {
   onReset: () => void;
   onSave: () => void;
   onToggleExtra: () => void;
+  error?: string | null;
 }
 
 export function GlycemiaCard({
@@ -24,6 +25,7 @@ export function GlycemiaCard({
   onReset,
   onSave,
   onToggleExtra,
+  error,
 }: GlycemiaCardProps) {
   const { t, language } = useLanguage();
   
@@ -58,8 +60,11 @@ export function GlycemiaCard({
               if (value.length === 3) (e.target as HTMLInputElement).blur();
             }}
             placeholder={t.glycemia.placeholder}
-            className="mt-0.5 h-9 text-sm"
+            className={`mt-0.5 h-9 text-sm ${error ? 'border-destructive focus-visible:ring-destructive' : ''}`}
           />
+          {error && (
+            <p className="text-xs text-destructive mt-1">{error}</p>
+          )}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
