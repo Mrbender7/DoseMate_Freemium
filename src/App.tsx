@@ -9,6 +9,7 @@ import { PaletteProvider, usePalette } from "./contexts/PaletteContext";
 import { ReinstallCleanupModal } from "./components/ReinstallCleanupModal";
 import { useReinstallDetection } from "./hooks/use-reinstall-detection";
 import { SplashScreen } from "@capacitor/splash-screen";
+import { Capacitor } from "@capacitor/core";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
@@ -25,21 +26,39 @@ function AppContent() {
   
   const { isLoading: isPaletteLoading } = usePalette();
   const [splashHidden, setSplashHidden] = useState(false);
+  const [isAppReady, setIsAppReady] = useState(false);
 
-  // Masquer le splash screen uniquement quand tous les contextes sont chargés
+  // Masquer le splash screen avec fondu de sécurité
   useEffect(() => {
     const hideSplash = async () => {
       // Attendre que les contextes critiques soient chargés
       if (!isChecking && !isPaletteLoading && !splashHidden) {
         try {
-          console.log('[App] All contexts loaded, hiding splash screen...');
-          await SplashScreen.hide();
+          console.log('[App] All contexts loaded, preparing splash hide...');
+          
+          // Fondu de sécurité : délai de 100ms avant de masquer le splash
+          await new Promise(resolve => setTimeout(resolve, 100));
+          
+          // Masquer le splash uniquement sur plateforme native
+          if (Capacitor.isNativePlatform()) {
+            console.log('[App] Native platform detected, hiding splash screen...');
+            await SplashScreen.hide({ fadeOutDuration: 300 });
+          }
+          
           setSplashHidden(true);
           console.log('[App] Splash screen hidden');
+          
+          // Délai pour le fondu de l'interface (transition fluide)
+          setTimeout(() => {
+            setIsAppReady(true);
+            console.log('[App] App ready, interface visible');
+          }, 200);
+          
         } catch (error) {
           // En cas d'erreur (web), on masque quand même l'état de chargement
           console.log('[App] Splash screen hide failed (likely running in web):', error);
           setSplashHidden(true);
+          setIsAppReady(true);
         }
       }
     };
@@ -47,9 +66,13 @@ function AppContent() {
     hideSplash();
   }, [isChecking, isPaletteLoading, splashHidden]);
 
-  // Afficher un fond noir pendant le chargement pour éviter le flash blanc
-  if (isChecking || isPaletteLoading || !splashHidden) {
-    return <div className="h-screen w-screen bg-background" />;
+  // Afficher un fond sombre pendant le chargement pour éviter le flash blanc
+  if (isChecking || isPaletteLoading || !splashHidden || !isAppReady) {
+    return (
+      <div className="h-screen w-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-teal-400 opacity-0 animate-pulse" />
+      </div>
+    );
   }
 
   return (
