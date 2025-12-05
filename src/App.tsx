@@ -28,6 +28,35 @@ function AppContent() {
   const { isLoading: isPaletteLoading } = usePalette();
   const [splashHidden, setSplashHidden] = useState(false);
   const [isAppReady, setIsAppReady] = useState(false);
+  const [themeInitialized, setThemeInitialized] = useState(false);
+
+  // Initialiser le thème immédiatement au montage pour éviter le flash
+  useEffect(() => {
+    const initializeTheme = async () => {
+      try {
+        // Appliquer le thème sombre par défaut immédiatement
+        // Le PaletteContext gère la persistence, ici on s'assure que le DOM est prêt
+        const isDarkMode = document.documentElement.classList.contains('dark') || 
+                          !document.documentElement.classList.contains('light');
+        
+        // Forcer le mode sombre par défaut si aucun thème n'est défini
+        if (!document.documentElement.classList.contains('dark') && 
+            !document.documentElement.classList.contains('light')) {
+          document.documentElement.classList.add('dark');
+        }
+        
+        console.log('[App] Theme initialized, dark mode:', isDarkMode);
+      } catch (error) {
+        console.warn('[App] Theme initialization error:', error);
+        // En cas d'erreur, appliquer le mode sombre par défaut
+        document.documentElement.classList.add('dark');
+      } finally {
+        setThemeInitialized(true);
+      }
+    };
+    
+    initializeTheme();
+  }, []);
 
   // Masquer le splash screen avec fondu de sécurité
   useEffect(() => {
@@ -68,7 +97,7 @@ function AppContent() {
   }, [isChecking, isPaletteLoading, splashHidden]);
 
   // Afficher un fond sombre avec logo animé pendant le chargement
-  if (isChecking || isPaletteLoading || !splashHidden || !isAppReady) {
+  if (isChecking || isPaletteLoading || !splashHidden || !isAppReady || !themeInitialized) {
     return (
       <div className="h-screen w-screen bg-gray-900 flex flex-col items-center justify-center gap-6">
         <img 
