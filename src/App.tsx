@@ -13,6 +13,7 @@ import { useConversionModal } from "./hooks/use-conversion-modal";
 import { SplashScreen } from "@capacitor/splash-screen";
 import { Capacitor } from "@capacitor/core";
 import Index from "./pages/Index";
+import History from "./pages/History";
 import NotFound from "./pages/NotFound";
 import dosemateLogo from "./assets/dosemate-logo.png";
 
@@ -135,6 +136,7 @@ function AppContent() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/history" element={<History />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

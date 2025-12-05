@@ -27,6 +27,7 @@ import { ResultCard } from "../components/insulin/ResultCard";
 import { HistoryCard } from "../components/insulin/HistoryCard";
 import { OnboardingModal } from "../components/OnboardingModal";
 import { uid, parseNumberInput, nowISO, getMomentOfDay } from "../utils/calculations";
+import { useDoseHistory } from "../hooks/use-dose-history";
 
 import { getNativeItem, setNativeItem, removeNativeItem } from "../utils/nativeStorage";
 import { useLanguage } from "../contexts/LanguageContext";
@@ -51,6 +52,14 @@ import {
 export default function DoseMate() {
   const { t, language } = useLanguage();
   const { hasAccepted, acceptOnboarding, isLoading: isLoadingOnboarding } = useOnboarding();
+  
+  // Firebase dose history hook
+  const { 
+    history: firebaseHistory, 
+    isAuthenticated: isFirebaseAuth, 
+    addDose: addFirebaseDose, 
+    removeDose: removeFirebaseDose 
+  } = useDoseHistory();
 
   // State
   const [glycemia, setGlycemia] = useState<string>("");
@@ -438,7 +447,7 @@ export default function DoseMate() {
     return hasTableValues;
   }
 
-  function pushToHistory() {
+  async function pushToHistory() {
     // Sécurisation : vérifier la configuration avant d'enregistrer
     if (!isConfigComplete()) {
       showToast(t.settings.configurationMissing);
@@ -458,18 +467,32 @@ export default function DoseMate() {
       totalCalculated: Number(calculation.totalCalculated.toFixed(1)),
       moment: calculation.moment
     };
-    setHistory((prev) => {
-      const next = [entry, ...prev].slice(0, 25);
-      // Sauvegarde asynchrone sans bloquer l'UI
-      setNativeItem(STORAGE_KEY, JSON.stringify(next)).catch(e => 
-        console.error("Failed to save history", e)
-      );
-      showToast(t.toasts.saved);
-      return next;
-    });
+    
+    // Sauvegarde Firebase si authentifié
+    if (isFirebaseAuth) {
+      try {
+        await addFirebaseDose(entry);
+        showToast(t.toasts.saved);
+      } catch (e) {
+        console.error("Failed to save to Firebase", e);
+        showToast("⚠️ Erreur de sauvegarde");
+      }
+    } else {
+      // Fallback localStorage
+      setHistory((prev) => {
+        const next = [entry, ...prev].slice(0, 25);
+        setNativeItem(STORAGE_KEY, JSON.stringify(next)).catch(e => 
+          console.error("Failed to save history", e)
+        );
+        showToast(t.toasts.saved);
+        return next;
+      });
+    }
   }
 
   function clearHistory() {
+    // Pour Firebase, on ne peut pas tout supprimer d'un coup facilement
+    // donc on garde la logique localStorage pour le moment
     setHistory([]);
     removeNativeItem(STORAGE_KEY).catch(e => 
       console.error("Failed to clear history", e)
@@ -477,16 +500,27 @@ export default function DoseMate() {
     showToast(t.history.cleared);
   }
 
-  function deleteHistoryEntry(id: string) {
-    setHistory((prev) => {
-      const next = prev.filter((entry) => entry.id !== id);
-      // Sauvegarde asynchrone sans bloquer l'UI
-      setNativeItem(STORAGE_KEY, JSON.stringify(next)).catch(e => 
-        console.error("Failed to delete history entry", e)
-      );
-      showToast(t.history.deleted);
-      return next;
-    });
+  async function deleteHistoryEntry(id: string) {
+    // Suppression Firebase si authentifié
+    if (isFirebaseAuth) {
+      try {
+        await removeFirebaseDose(id);
+        showToast(t.history.deleted);
+      } catch (e) {
+        console.error("Failed to delete from Firebase", e);
+        showToast("⚠️ Erreur de suppression");
+      }
+    } else {
+      // Fallback localStorage
+      setHistory((prev) => {
+        const next = prev.filter((entry) => entry.id !== id);
+        setNativeItem(STORAGE_KEY, JSON.stringify(next)).catch(e => 
+          console.error("Failed to delete history entry", e)
+        );
+        showToast(t.history.deleted);
+        return next;
+      });
+    }
   }
 
   // Auto-save useEffect supprimé - l'historique est sauvegardé uniquement via pushToHistory() lors du clic sur "Enregistrer"
@@ -756,7 +790,7 @@ export default function DoseMate() {
               <TabsContent value="history" className="mt-0">
                 {isPremium() ? (
                   <HistoryCard
-                    history={history}
+                    history={isFirebaseAuth ? firebaseHistory : history}
                     onClearHistory={clearHistory}
                     onDeleteEntry={deleteHistoryEntry}
                     showToast={showToast}
