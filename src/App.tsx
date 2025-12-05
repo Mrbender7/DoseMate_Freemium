@@ -12,6 +12,7 @@ import { SplashScreen } from "@capacitor/splash-screen";
 import { Capacitor } from "@capacitor/core";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import dosemateLogo from "./assets/dosemate-logo.png";
 
 const queryClient = new QueryClient();
 
@@ -66,11 +67,20 @@ function AppContent() {
     hideSplash();
   }, [isChecking, isPaletteLoading, splashHidden]);
 
-  // Afficher un fond sombre pendant le chargement pour éviter le flash blanc
+  // Afficher un fond sombre avec logo animé pendant le chargement
   if (isChecking || isPaletteLoading || !splashHidden || !isAppReady) {
     return (
-      <div className="h-screen w-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-teal-400 opacity-0 animate-pulse" />
+      <div className="h-screen w-screen bg-gray-900 flex flex-col items-center justify-center gap-6">
+        <img 
+          src={dosemateLogo} 
+          alt="DoseMate" 
+          className="w-32 h-32 animate-pulse drop-shadow-[0_0_15px_rgba(45,212,191,0.5)]"
+        />
+        <div className="flex gap-1.5">
+          <span className="w-2 h-2 bg-teal-400 rounded-full animate-bounce [animation-delay:-0.3s]" />
+          <span className="w-2 h-2 bg-teal-400 rounded-full animate-bounce [animation-delay:-0.15s]" />
+          <span className="w-2 h-2 bg-teal-400 rounded-full animate-bounce" />
+        </div>
       </div>
     );
   }
