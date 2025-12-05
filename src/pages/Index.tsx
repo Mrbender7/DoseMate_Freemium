@@ -12,7 +12,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../components/ui/alert-dialog";
-import { Sun, Moon, ArrowUp, AlertTriangle, Lock, Crown } from "lucide-react";
+import { Sun, Moon, ArrowUp, AlertTriangle, Lock, Crown, Settings, Palette, Check } from "lucide-react";
 import { PaletteSelector } from "../components/PaletteSelector";
 import { LanguageToggle } from "../components/LanguageToggle";
 import { PremiumBadge } from "../components/PremiumBadge";
@@ -28,9 +28,12 @@ import { HistoryCard } from "../components/insulin/HistoryCard";
 import { OnboardingModal } from "../components/OnboardingModal";
 import { uid, parseNumberInput, nowISO, getMomentOfDay } from "../utils/calculations";
 import { useDoseHistory } from "../hooks/use-dose-history";
+import { useUserPreferences, ThemeMode, ThemePalette } from "../hooks/use-user-preferences";
+import { cn } from "../lib/utils";
 
 import { getNativeItem, setNativeItem, removeNativeItem } from "../utils/nativeStorage";
 import { useLanguage } from "../contexts/LanguageContext";
+import { usePalette, PALETTES, PaletteType } from "../contexts/PaletteContext";
 import { useOnboarding } from "../hooks/use-onboarding";
 import dosemateLogo from "../assets/dosemate-logo.png";
 import type { 
@@ -49,9 +52,176 @@ import {
   DEFAULT_INSULIN_TABLE,
 } from "../types/insulin";
 
+// Palettes disponibles avec leurs couleurs de prévisualisation
+const PALETTE_PREVIEWS: Record<PaletteType, { bg: string; accent: string }> = {
+  blue: { bg: 'bg-blue-900', accent: 'bg-blue-400' },
+  mint: { bg: 'bg-emerald-900', accent: 'bg-emerald-400' },
+  rose: { bg: 'bg-pink-900', accent: 'bg-pink-400' },
+  lavender: { bg: 'bg-purple-900', accent: 'bg-purple-400' },
+  peach: { bg: 'bg-orange-900', accent: 'bg-orange-400' },
+  red: { bg: 'bg-red-900', accent: 'bg-red-400' },
+  cyan: { bg: 'bg-cyan-900', accent: 'bg-cyan-400' },
+};
+
+interface SettingsTabContentProps {
+  darkMode: boolean;
+  setDarkMode: (value: boolean | ((prev: boolean) => boolean)) => void;
+  palette: PaletteType;
+  setPalette: (palette: PaletteType) => void;
+  isPrefsAuth: boolean;
+  updateTheme: (mode: ThemeMode, palette: ThemePalette) => Promise<void>;
+  language: string;
+  showToast: (text: string) => void;
+}
+
+function SettingsTabContent({
+  darkMode,
+  setDarkMode,
+  palette,
+  setPalette,
+  isPrefsAuth,
+  updateTheme,
+  language,
+  showToast
+}: SettingsTabContentProps) {
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleModeChange = async (isDark: boolean) => {
+    setDarkMode(isDark);
+    
+    // Sauvegarder si authentifié
+    if (isPrefsAuth) {
+      setIsSaving(true);
+      try {
+        await updateTheme(isDark ? 'dark' : 'light', palette);
+      } catch (e) {
+        console.error('Failed to save theme mode', e);
+      } finally {
+        setIsSaving(false);
+      }
+    }
+  };
+
+  const handlePaletteChange = async (newPalette: PaletteType) => {
+    setPalette(newPalette);
+    
+    // Sauvegarder si authentifié
+    if (isPrefsAuth) {
+      setIsSaving(true);
+      try {
+        await updateTheme(darkMode ? 'dark' : 'light', newPalette);
+        showToast(language === 'fr' ? '✓ Thème sauvegardé' : '✓ Theme saved');
+      } catch (e) {
+        console.error('Failed to save palette', e);
+      } finally {
+        setIsSaving(false);
+      }
+    }
+  };
+
+  return (
+    <Card>
+      <CardContent className="pt-4 space-y-4">
+        {/* Mode Clair/Sombre */}
+        <div className="space-y-2">
+          <h4 className="text-sm font-medium flex items-center gap-2">
+            {darkMode ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+            {language === 'fr' ? 'Mode d\'affichage' : 'Display Mode'}
+          </h4>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={() => handleModeChange(false)}
+              className={cn(
+                "flex items-center justify-center gap-2 p-3 rounded-lg border-2 transition-all",
+                !darkMode 
+                  ? "border-primary bg-primary/10" 
+                  : "border-border hover:border-primary/50"
+              )}
+            >
+              <Sun className="w-5 h-5 text-amber-500" />
+              <span className="text-sm">{language === 'fr' ? 'Clair' : 'Light'}</span>
+              {!darkMode && <Check className="w-4 h-4 text-primary" />}
+            </button>
+            <button
+              onClick={() => handleModeChange(true)}
+              className={cn(
+                "flex items-center justify-center gap-2 p-3 rounded-lg border-2 transition-all",
+                darkMode 
+                  ? "border-primary bg-primary/10" 
+                  : "border-border hover:border-primary/50"
+              )}
+            >
+              <Moon className="w-5 h-5 text-slate-400" />
+              <span className="text-sm">{language === 'fr' ? 'Sombre' : 'Dark'}</span>
+              {darkMode && <Check className="w-4 h-4 text-primary" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Palette de couleurs */}
+        <div className="space-y-2">
+          <h4 className="text-sm font-medium flex items-center gap-2">
+            <Palette className="w-4 h-4" />
+            {language === 'fr' ? 'Palette de couleurs' : 'Color Palette'}
+            {isSaving && (
+              <span className="ml-auto text-xs text-muted-foreground animate-pulse">
+                {language === 'fr' ? 'Sauvegarde...' : 'Saving...'}
+              </span>
+            )}
+          </h4>
+          <div className="grid grid-cols-4 gap-2">
+            {(Object.keys(PALETTES) as PaletteType[]).map((paletteKey) => {
+              const paletteInfo = PALETTES[paletteKey];
+              const preview = PALETTE_PREVIEWS[paletteKey];
+              const isSelected = palette === paletteKey;
+              
+              return (
+                <button
+                  key={paletteKey}
+                  onClick={() => handlePaletteChange(paletteKey)}
+                  className={cn(
+                    "flex flex-col items-center gap-1 p-2 rounded-lg border-2 transition-all",
+                    isSelected 
+                      ? "border-primary bg-primary/10 ring-2 ring-primary/30" 
+                      : "border-border hover:border-primary/50"
+                  )}
+                >
+                  <div className={cn(
+                    "w-8 h-8 rounded-full flex items-center justify-center relative overflow-hidden",
+                    preview.bg
+                  )}>
+                    <div className={cn("w-3 h-3 rounded-full", preview.accent)} />
+                    {isSelected && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                        <Check className="w-4 h-4 text-white" />
+                      </div>
+                    )}
+                  </div>
+                  <span className="text-xs">{paletteInfo.emoji}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Indicateur de synchronisation */}
+        {isPrefsAuth && (
+          <p className="text-xs text-muted-foreground text-center flex items-center justify-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+            {language === 'fr' 
+              ? 'Synchronisé avec votre compte'
+              : 'Synced with your account'}
+          </p>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function DoseMate() {
   const { t, language } = useLanguage();
   const { hasAccepted, acceptOnboarding, isLoading: isLoadingOnboarding } = useOnboarding();
+  const { palette, setPalette } = usePalette();
   
   // Firebase dose history hook
   const { 
@@ -60,6 +230,13 @@ export default function DoseMate() {
     addDose: addFirebaseDose, 
     removeDose: removeFirebaseDose 
   } = useDoseHistory();
+  
+  // Firebase user preferences hook
+  const {
+    preferences,
+    isAuthenticated: isPrefsAuth,
+    updateTheme
+  } = useUserPreferences();
 
   // State
   const [glycemia, setGlycemia] = useState<string>("");
@@ -709,14 +886,14 @@ export default function DoseMate() {
           /* All devices: Tabs layout */
           <div>
             <Tabs value={activeTab} onValueChange={(val) => {
-              // Bloquer l'accès à l'historique en mode FREE
-              if (val === 'history' && !isPremium()) {
+              // Bloquer l'accès aux fonctionnalités Premium en mode FREE
+              if ((val === 'history' || val === 'settings') && !isPremium()) {
                 window.open(PREMIUM_URL, '_blank');
                 return;
               }
               setActiveTab(val);
             }} className="w-full">
-              <TabsList className="grid w-full grid-cols-4 mb-2">
+              <TabsList className="grid w-full grid-cols-5 mb-2">
                 <TabsTrigger value="glycemia" className="text-xs md:text-sm">{t.tabs.glycemia}</TabsTrigger>
                 <TabsTrigger value="meal" className="text-xs md:text-sm">{t.tabs.meal}</TabsTrigger>
                 <TabsTrigger value="result" className="text-xs md:text-sm">{t.tabs.result}</TabsTrigger>
@@ -726,6 +903,17 @@ export default function DoseMate() {
                   <TabsTrigger value="history" className="text-xs md:text-sm opacity-60 relative">
                     <Lock className="w-3 h-3 mr-1 text-amber-500" />
                     {t.tabs.history}
+                  </TabsTrigger>
+                )}
+                {isPremium() ? (
+                  <TabsTrigger value="settings" className="text-xs md:text-sm">
+                    <Settings className="w-3 h-3 mr-1" />
+                    {language === 'fr' ? 'Thèmes' : 'Themes'}
+                  </TabsTrigger>
+                ) : (
+                  <TabsTrigger value="settings" className="text-xs md:text-sm opacity-60 relative">
+                    <Lock className="w-3 h-3 mr-1 text-amber-500" />
+                    {language === 'fr' ? 'Thèmes' : 'Themes'}
                   </TabsTrigger>
                 )}
               </TabsList>
@@ -808,6 +996,44 @@ export default function DoseMate() {
                         {language === 'fr' 
                           ? 'Accédez à l\'historique complet de vos doses avec la version Premium.'
                           : 'Access your complete dose history with the Premium version.'}
+                      </p>
+                      <Button
+                        onClick={() => window.open(PREMIUM_URL, '_blank')}
+                        className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700"
+                      >
+                        <Crown className="w-4 h-4 mr-2" />
+                        {language === 'fr' ? 'Passer à Premium' : 'Upgrade to Premium'}
+                      </Button>
+                    </div>
+                  </Card>
+                )}
+              </TabsContent>
+
+              <TabsContent value="settings" className="mt-0">
+                {isPremium() ? (
+                  <SettingsTabContent
+                    darkMode={darkMode}
+                    setDarkMode={setDarkMode}
+                    palette={palette}
+                    setPalette={setPalette}
+                    isPrefsAuth={isPrefsAuth}
+                    updateTheme={updateTheme}
+                    language={language}
+                    showToast={showToast}
+                  />
+                ) : (
+                  <Card className="p-6 text-center">
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
+                        <Crown className="w-8 h-8 text-white" />
+                      </div>
+                      <h3 className="text-lg font-semibold">
+                        {language === 'fr' ? 'Thèmes Premium' : 'Premium Themes'}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {language === 'fr' 
+                          ? 'Personnalisez l\'apparence de l\'application avec la version Premium.'
+                          : 'Customize the app appearance with the Premium version.'}
                       </p>
                       <Button
                         onClick={() => window.open(PREMIUM_URL, '_blank')}
