@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'app.lovable.4d26950436a4432a92c9f592806d27b3',
-  appName: 'dosmatefreemium',
+  appId: 'com.dosemate.premium',
+  appName: 'DoseMate Premium',
   webDir: 'dist',
   server: {
     url: 'https://4d269504-36a4-432a-92c9-f592806d27b3.lovableproject.com?forceHideBadge=true',
