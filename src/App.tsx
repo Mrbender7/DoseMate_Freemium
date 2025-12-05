@@ -37,8 +37,8 @@ function AppContent() {
         try {
           console.log('[App] All contexts loaded, preparing splash hide...');
           
-          // Fondu de sécurité : délai de 100ms avant de masquer le splash
-          await new Promise(resolve => setTimeout(resolve, 100));
+          // Fondu de sécurité : délai de 800ms pour couvrir le temps de rendu initial de la WebView
+          await new Promise(resolve => setTimeout(resolve, 800));
           
           // Masquer le splash uniquement sur plateforme native
           if (Capacitor.isNativePlatform()) {
